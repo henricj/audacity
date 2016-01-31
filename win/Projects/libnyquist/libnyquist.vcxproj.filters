@@ -669,8 +669,14 @@
     <ClCompile Include="..\..\..\lib-src\libnyquist\nyquist\nyqsrc\pvshell.c">
       <Filter>nyquist\nyqsrc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\libnyquist\nyquist\tran\whiteg.c">
+      <Filter>nyquist\tran</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\lib-src\libnyquist\nyquist\nyqstk\src\stdafx.cpp">
       <Filter>nyquist\nyqstk\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\libnyquist\RngSupport.cpp">
+      <Filter>nyquist\nyqstk\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1062,5 +1068,6 @@
     <ClInclude Include="..\..\..\lib-src\libnyquist\nyquist\nyqstk\src\stdafx.h">
       <Filter>nyquist\nyqstk\pch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\lib-src\libnyquist\RngSupport.h" />
   </ItemGroup>
 </Project>
