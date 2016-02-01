@@ -110,10 +110,20 @@ static RNG CreateRootGenerator()
     return generator;
 }
 
+#ifdef _MSC_VER
+#if _MSC_VER < 1900
+#define THREAD_LOCAL __declspec(thread)
+#else
+#define THREAD_LOCAL thread_local
+#endif
+#else
+#define THREAD_LOCAL __thread
+#endif
+
 template <class RNG = nyq_generator>
 static RNG& GetRootGenerator()
 {
-    static thread_local auto generator = CreateRootGenerator<RNG>();
+    static THREAD_LOCAL auto generator = CreateRootGenerator<RNG>();
 
     return generator;
 }
@@ -130,7 +140,10 @@ std::vector<unsigned int> CreateSeedVector(std::vector<unsigned int>::size_type 
 
     auto rng = GetRootGenerator();
 
-    for (auto i = 0; i < size; ++i)
+    if (size < 1)
+       size = 1;
+
+    while (size--)
         seed.push_back(rng());
 
     return seed;
