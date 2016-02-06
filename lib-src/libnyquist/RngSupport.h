@@ -3,6 +3,12 @@
 
 #ifdef __cplusplus
 
+#if __cplusplus >= 201103L || (defined _MSC_VER && _MSC_VER >= 1600)
+#define NYQ_USE_RANDOM_HEADER
+#endif
+
+#if defined NYQ_USE_RANDOM_HEADER
+
 #include <vector>
 #include <random>
 
@@ -41,7 +47,18 @@ static void ReseedGenerator(RNG& generator, int size = 32)
 
     generator.seed(seq);
 }
+
+template <class RNG = nyq_generator>
+class NyqEngine : public RNG
+{
+public:
+   explicit NyqEngine(int size = 32) : RNG(CreateGenerator(size))
+   { }
+};
+
 } // namespace Nyq
+
+#endif // NYQ_USE_RANDOM_HEADER
 
 extern "C" {
 #endif // __cplusplus

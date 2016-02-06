@@ -1,5 +1,7 @@
 ﻿#include "RngSupport.h"
 
+#if defined NYQ_USE_RANDOM_HEADER
+
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -92,7 +94,7 @@ static vector<unsigned int> CreateRootSeedVector()
                 }
             }
         }
-    }
+}
 #endif
 
     return seed_data;
@@ -148,8 +150,8 @@ std::vector<unsigned int> CreateSeedVector(std::vector<unsigned int>::size_type 
 
     return seed;
 }
-}
-}
+} // namespace RngSupport
+} // namespace Nyq
 
 extern "C"
 void RandomFillUniformFloat(float* p, int count, float low, float high)
@@ -157,7 +159,7 @@ void RandomFillUniformFloat(float* p, int count, float low, float high)
     if (count < 1)
         return;
 
-    auto& generator = GetRootGenerator();
+    nyq_generator& generator = GetRootGenerator();
 
     nyq_uniform_float_distribution uniform{ low, high };
 
@@ -171,7 +173,7 @@ void RandomFillNormalFloat(float* p, int count, float mean, float sigma)
     if (count < 1)
         return;
 
-    auto& generator = GetRootGenerator();
+    nyq_generator& generator = GetRootGenerator();
 
     nyq_normal_float_distribution uniform{ mean, sigma };
 
@@ -185,7 +187,7 @@ int RandomFillClampedNormalFloat(float* p, int count, float mean, float sigma, f
     if (count < 1)
         return 1;
 
-    auto& generator = GetRootGenerator();
+    nyq_generator& generator = GetRootGenerator();
 
     nyq_normal_float_distribution uniform{ mean, sigma };
 
@@ -230,3 +232,155 @@ int RandomUniformInt(int lowInclusive, int highExclusive)
 
     return uniform(generator);
 }
+
+#else // NYQ_USE_RANDOM_HEADER
+
+#include <stdlib.h>
+#include <math.h>
+
+const float fRandScale = 1.f / RAND_MAX;
+const float f2RandScale = 2.f / RAND_MAX;
+
+inline void TwoNormalFloats(float& a, float& b)
+{
+    float u, v, d2;
+
+    do {
+        u = f2RandScale * rand() - 1;
+        v = f2RandScale * rand() - 1;
+        d2 = u * u + v * v;
+    } while (d2 >= 1 || d2 == 0);
+
+    float scale = static_cast<float>(sqrt(-2. * log(d2) / d2));
+
+    a = v * scale;
+    b = u * scale;
+}
+
+extern "C"
+void RandomFillUniformFloat(float* p, int count, float low, float high)
+{
+    if (count < 1)
+        return;
+
+    const float scale = fRandScale * (high - low);
+
+    while (count--)
+        *p++ = low + scale * rand();
+}
+
+extern "C"
+void RandomFillNormalFloat(float* p, int count, float mean, float sigma)
+{
+    if (count < 1)
+        return;
+
+    for (; count >= 2; count -= 2)
+    {
+        float a, b;
+
+        TwoNormalFloats(a, b);
+
+        *p++ = mean + sigma * a;
+        *p++ = mean + sigma * b;
+    }
+
+    if (count > 1)
+    {
+        float a, b;
+
+        TwoNormalFloats(a, b);
+
+        *p++ = mean + sigma * a;
+    }
+}
+
+extern "C"
+int RandomFillClampedNormalFloat(float* p, int count, float mean, float sigma, float low, float high)
+{
+    if (count < 1)
+        return 1;
+
+    int reject = 0;
+    const int max_reject = 5;
+
+    for (int i = 0; i < count; )
+    {
+        float a, b;
+
+        TwoNormalFloats(a, b);
+
+        a = mean + sigma * a;
+
+        if (a >= low && a <= high)
+        {
+            ++i;
+            *p++ = a;
+            reject = 0;
+        }
+        else
+        {
+            if (++reject >= max_reject)
+                return 0;
+        }
+
+        if (i < count)
+        {
+            b = mean + sigma * b;
+
+            if (b >= low && b <= high)
+            {
+                ++i;
+                *p++ = b;
+                reject = 0;
+            }
+            else
+            {
+                if (++reject >= max_reject)
+                    return 0;
+            }
+        }
+    }
+
+    if (count > 1)
+    {
+        float a, b;
+
+        TwoNormalFloats(a, b);
+
+        *p++ = mean + sigma * a;
+    }
+
+    return 1;
+}
+
+extern "C"
+float RandomUniformFloat(float low, float high)
+{
+    return low + (high - low) * fRandScale * rand();
+}
+
+extern "C"
+int RandomUniformInt(int lowInclusive, int highExclusive)
+{
+    const int range = highExclusive - lowInclusive;
+
+    if (range < 1 || range > RAND_MAX)
+        return lowInclusive;
+
+    const int whole = RAND_MAX / range;
+    const int max_uniform = whole * range;
+
+    if (max_uniform < 1)
+        return lowInclusive;
+
+    for (;;)
+    {
+        int r = rand();
+
+        if (r <= max_uniform)
+            return r % range + lowInclusive;
+    }
+}
+
+#endif // NYQ_USE_RANDOM_HEADER
