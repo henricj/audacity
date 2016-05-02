@@ -1795,212 +1795,211 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\ny.rules" />
     <None Include="..\..\po.rules" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand1.raw">
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand1.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand10.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand10.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand11.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand11.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand12.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand12.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand2.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand2.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand3.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand3.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand4.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand4.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand5.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand5.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand6.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand6.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand7.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand7.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand8.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand8.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mand9.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mand9.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\mandpluk.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\mandpluk.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\marmstk1.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\marmstk1.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\rawwaves\sinewave.raw">
+    </AudacityNyquistRaw>
+    <AudacityNyquistRaw Include="..\..\..\nyquist\rawwaves\sinewave.raw">
       <Filter>nyquist\rawwaves</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\dspprims.lsp">
+    </AudacityNyquistRaw>
+    <AudacityNyquist Include="..\..\..\nyquist\dspprims.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\envelopes.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\envelopes.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\equalizer.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\equalizer.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\evalenv.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\evalenv.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\fileio.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\fileio.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\follow.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\follow.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\init.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\init.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\misc.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\misc.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\nyinit.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\nyinit.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\nyqmisc.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\nyqmisc.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\nyquist-plot.txt">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\nyquist-plot.txt">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\nyquist.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\nyquist.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\printrec.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\printrec.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\profile.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\profile.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\sal-parse.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\sal-parse.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\sal.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\sal.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\seq.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\seq.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\seqfnint.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\seqfnint.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\seqmidi.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\seqmidi.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\sndfnint.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\sndfnint.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\stk.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\stk.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\lib-src\libnyquist\nyquist\sys\win\msvc\system.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\lib-src\libnyquist\nyquist\sys\win\msvc\system.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\xlinit.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\xlinit.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\xm.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\xm.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\velocity.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\velocity.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\upic.sal">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\upic.sal">
       <Filter>nyquist</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\nyquist\test.lsp">
+    </AudacityNyquist>
+    <AudacityNyquist Include="..\..\..\nyquist\test.lsp">
       <Filter>nyquist</Filter>
-    </CustomBuild>
+    </AudacityNyquist>
   </ItemGroup>
   <ItemGroup>
-    <copy Include="..\..\..\plug-ins\adjustable-fade.ny">
+    <AudacityPlugIns Include="..\..\..\plug-ins\adjustable-fade.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\beat.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\beat.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\clicktrack.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\clicktrack.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\clipfix.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\clipfix.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\delay.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\delay.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\equalabel.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\equalabel.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\highpass.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\highpass.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\lowpass.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\lowpass.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\notch.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\notch.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\pluck.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\pluck.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\rissetdrum.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\rissetdrum.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\sample-data-export.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\sample-data-export.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\SilenceMarker.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\SilenceMarker.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\SoundFinder.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\SoundFinder.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\StudioFadeOut.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\StudioFadeOut.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\tremolo.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\tremolo.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\vocalremover.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\vocalremover.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\vocoder.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\vocoder.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\crossfadetracks.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\crossfadetracks.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\SpectralEditMulti.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\SpectralEditMulti.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\SpectralEditParametricEQ.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\SpectralEditParametricEQ.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\SpectralEditShelves.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\SpectralEditShelves.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\crossfadeclips.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\crossfadeclips.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\limiter.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\limiter.ny">
       <Filter>plug-ins</Filter>
-    </copy>
-    <copy Include="..\..\..\plug-ins\vocalrediso.ny">
+    </AudacityPlugIns>
+    <AudacityPlugIns Include="..\..\..\plug-ins\vocalrediso.ny">
       <Filter>plug-ins</Filter>
-    </copy>
+    </AudacityPlugIns>
   </ItemGroup>
 </Project>
