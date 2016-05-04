@@ -164,7 +164,7 @@ static void pm_winmm_general_inputs()
     UINT i;
     WORD wRtn;
     midi_num_inputs = midiInGetNumDevs();
-    midi_in_caps = (MIDIINCAPS *) pm_alloc(sizeof(MIDIINCAPS) * 
+    midi_in_caps = (MIDIINCAPSA *) pm_alloc(sizeof(MIDIINCAPSA) *
                                            midi_num_inputs);
     if (midi_in_caps == NULL) {
         /* if you can't open a particular system-level midi interface
@@ -175,8 +175,8 @@ static void pm_winmm_general_inputs()
     }
 
     for (i = 0; i < midi_num_inputs; i++) {
-        wRtn = midiInGetDevCaps(i, (LPMIDIINCAPS) & midi_in_caps[i],
-                                sizeof(MIDIINCAPS));
+        wRtn = midiInGetDevCapsA(i, (LPMIDIINCAPSA) & midi_in_caps[i],
+                                sizeof(MIDIINCAPSA));
         if (wRtn == MMSYSERR_NOERROR) {
             /* ignore errors here -- if pm_descriptor_max is exceeded, some
                devices will not be accessible. */
@@ -194,9 +194,9 @@ static void pm_winmm_mapper_input()
         can, but current system fails to retrieve input mapper
         capabilities) then you still should retrieve some formof
         setup info. */
-    wRtn = midiInGetDevCaps((UINT) MIDIMAPPER,
-                            (LPMIDIINCAPS) & midi_in_mapper_caps, 
-                            sizeof(MIDIINCAPS));
+    wRtn = midiInGetDevCapsA((UINT) MIDIMAPPER,
+                            (LPMIDIINCAPSA) & midi_in_mapper_caps,
+                            sizeof(MIDIINCAPSA));
     if (wRtn == MMSYSERR_NOERROR) {
         pm_add_device("MMSystem", midi_in_mapper_caps.szPname, TRUE,
                       MIDIMAPPER, &pm_winmm_in_dictionary);
@@ -209,7 +209,7 @@ static void pm_winmm_general_outputs()
     UINT i;
     DWORD wRtn;
     midi_num_outputs = midiOutGetNumDevs();
-    midi_out_caps = pm_alloc( sizeof(MIDIOUTCAPS) * midi_num_outputs );
+    midi_out_caps = pm_alloc( sizeof(MIDIOUTCAPSA) * midi_num_outputs );
 
     if (midi_out_caps == NULL) {
         /* no error is reported -- see pm_winmm_general_inputs */
@@ -217,8 +217,8 @@ static void pm_winmm_general_outputs()
     }
 
     for (i = 0; i < midi_num_outputs; i++) {
-        wRtn = midiOutGetDevCaps(i, (LPMIDIOUTCAPS) & midi_out_caps[i],
-                                 sizeof(MIDIOUTCAPS));
+        wRtn = midiOutGetDevCapsA(i, (LPMIDIOUTCAPSA) & midi_out_caps[i],
+                                 sizeof(MIDIOUTCAPSA));
         if (wRtn == MMSYSERR_NOERROR) {
             pm_add_device("MMSystem", midi_out_caps[i].szPname, FALSE,
                           i, &pm_winmm_out_dictionary);
@@ -233,8 +233,8 @@ static void pm_winmm_mapper_output()
     /* Note: if MIDIMAPPER opened as output (pseudo MIDI device
         maps device independent messages into device dependant ones,
         via NT midimapper program) you still should get some setup info */
-    wRtn = midiOutGetDevCaps((UINT) MIDIMAPPER, (LPMIDIOUTCAPS)
-                             & midi_out_mapper_caps, sizeof(MIDIOUTCAPS));
+    wRtn = midiOutGetDevCapsA((UINT) MIDIMAPPER, (LPMIDIOUTCAPSA)
+                             & midi_out_mapper_caps, sizeof(MIDIOUTCAPSA));
     if (wRtn == MMSYSERR_NOERROR) {
         pm_add_device("MMSystem", midi_out_mapper_caps.szPname, FALSE,
                       MIDIMAPPER, &pm_winmm_out_dictionary);
@@ -282,7 +282,7 @@ static void winmm_get_host_error(PmInternal * midi, char * msg, UINT len)
             if (m->error != MMSYSERR_NOERROR) {
                 int n = str_copy_len(msg, hdr1, len);
                 /* read and record host error */
-                int err = midiInGetErrorText(m->error, msg + n, len - n);
+                int err = midiInGetErrorTextA(m->error, msg + n, len - n);
                 assert(err == MMSYSERR_NOERROR);
                 m->error = MMSYSERR_NOERROR;
             }
@@ -291,7 +291,7 @@ static void winmm_get_host_error(PmInternal * midi, char * msg, UINT len)
         if (m) {
             if (m->error != MMSYSERR_NOERROR) {
                 int n = str_copy_len(msg, hdr1, len);
-                int err = midiOutGetErrorText(m->error, msg + n, len - n);
+                int err = midiOutGetErrorTextA(m->error, msg + n, len - n);
                 assert(err == MMSYSERR_NOERROR);
                 m->error = MMSYSERR_NOERROR;
             }
