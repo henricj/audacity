@@ -175,9 +175,7 @@ bool FileNames::HardLinkFile( const FilePath& file1, const FilePath& file2 )
 {
 #ifdef __WXMSW__
 
-   // Fix forced ASCII conversions and wrong argument order - MJB - 29/01/2019
-   //return ::CreateHardLinkA( file1.c_str(), file2.c_str(), NULL );  
-   return ( 0 != ::CreateHardLink( file2, file1, NULL ) );
+   return ( 0 != ::CreateHardLinkW( file2, file1, NULL ) );
 
 #else
 
