@@ -86,7 +86,7 @@ static void dprintf(const char *format, ...)
 
    if (cnt > 0) {
       buf[cnt] = '\0';
-      OutputDebugString(buf);
+      OutputDebugStringA(buf);
    }
 }
 #endif
