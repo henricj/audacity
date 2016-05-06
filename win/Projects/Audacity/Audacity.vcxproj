@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Static Release|Win32">
+      <Configuration>Static Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Static Release|x64">
+      <Configuration>Static Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1D64095C-F936-4FCF-B609-56E9DDF941FA}</ProjectGuid>
@@ -44,11 +52,23 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <LocalDebuggerEnvironment>PATH=$(WXWIN)\lib\vc_dll;%PATH%</LocalDebuggerEnvironment>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>$(AudacityPlatformToolset)</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>$(AudacityPlatformToolset)</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <LocalDebuggerEnvironment>PATH=$(WXWIN)\lib\vc_x64_dll;%PATH%</LocalDebuggerEnvironment>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>$(AudacityPlatformToolset)</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -63,7 +83,13 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -74,11 +100,21 @@
     <OutDir>$(AudacityOutDir)</OutDir>
     <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'">
     <OutDir>$(AudacityOutDir)</OutDir>
     <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(AudacityOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(AudacityOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'">
     <OutDir>$(AudacityOutDir)</OutDir>
     <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
@@ -95,7 +131,6 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>.\$(Configuration)/audacity.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level3</WarningLevel>
       <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -120,6 +155,41 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_lib\mswu;$(WXWIN)\include;..\..;..\..\..\include;..\..\..\lib-src\expat\lib;..\..\..\lib-src\FileDialog;..\..\..\lib-src\FileDialog\win;..\..\..\lib-src\ffmpeg\win32;..\..\..\lib-src\ffmpeg;..\..\..\lib-src\lib-widget-extra;..\..\..\lib-src\libflac\include;..\..\..\lib-src\libid3tag;..\..\..\lib-src\libmad\msvc++;..\..\..\lib-src\libmad;..\..\..\lib-src\libnyquist;..\..\..\lib-src\libogg\include;..\..\..\lib-src\libscorealign;..\libsndfile;..\..\..\lib-src\libsoxr\src;..\..\..\lib-src\libvamp;..\..\..\lib-src\libvorbis\include;..\..\..\lib-src\portaudio-v19\include;..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portsmf;..\..\..\lib-src\sbsms\include;..\..\..\lib-src\soundtouch\include;..\..\..\lib-src\twolame\libtwolame;..\..\..\lib-src\portmidi\pm_common;..\..\..\lib-src\portmidi\pm_win;..\..\..\lib-src\portmidi\porttime;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\suil;..\..\..\lib-src\lame;$(GSTREAMER_SDK)\include\gstreamer-1.0;$(GSTREAMER_SDK)\include\glib-2.0;$(GSTREAMER_SDK)\lib\glib-2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILDING_AUDACITY;AUDACITY_DLL_API=;FLAC__NO_DLL;XML_STATIC;__STDC_CONSTANT_MACROS;__WXMSW__;wxDEBUG_LEVEL=0;NDEBUG;WIN32;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>AudacityHeaders.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>AudacityHeaders.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <WarningLevel>Level3</WarningLevel>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>expat.lib;filedialog.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;rpcrt4.lib;uuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(AudacityLibOutDir);$(AudacityLibReleaseOutDir);$(WXWIN)\lib\vc_lib;$(GSTREAMER_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Windows</SubSystem>
+      <StackReserveSize>8388608</StackReserveSize>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
@@ -128,7 +198,6 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>.\$(Configuration)/audacity.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level3</WarningLevel>
       <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -148,6 +217,40 @@
     <Link>
       <AdditionalDependencies>expat.lib;filedialog.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(AudacityLibOutDir);$(WXWIN)\lib\vc_x64_dll;$(GSTREAMER_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <SubSystem>Windows</SubSystem>
+      <StackReserveSize>8388608</StackReserveSize>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_x64_lib\mswu;$(WXWIN)\include;..\..;..\..\..\include;..\..\..\lib-src\expat\lib;..\..\..\lib-src\FileDialog;..\..\..\lib-src\FileDialog\win;..\..\..\lib-src\ffmpeg\win32;..\..\..\lib-src\ffmpeg;..\..\..\lib-src\lib-widget-extra;..\..\..\lib-src\libflac\include;..\..\..\lib-src\libid3tag;..\..\..\lib-src\libmad\msvc++;..\..\..\lib-src\libmad;..\..\..\lib-src\libnyquist;..\..\..\lib-src\libogg\include;..\..\..\lib-src\libscorealign;..\libsndfile;..\..\..\lib-src\libsoxr\src;..\..\..\lib-src\libvamp;..\..\..\lib-src\libvorbis\include;..\..\..\lib-src\portaudio-v19\include;..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portsmf;..\..\..\lib-src\sbsms\include;..\..\..\lib-src\soundtouch\include;..\..\..\lib-src\twolame\libtwolame;..\..\..\lib-src\portmidi\pm_common;..\..\..\lib-src\portmidi\pm_win;..\..\..\lib-src\portmidi\porttime;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\suil;..\..\..\lib-src\lame;$(GSTREAMER_SDK)\include\gstreamer-1.0;$(GSTREAMER_SDK)\include\glib-2.0;$(GSTREAMER_SDK)\lib\glib-2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BUILDING_AUDACITY;AUDACITY_DLL_API=;FLAC__NO_DLL;XML_STATIC;__STDC_CONSTANT_MACROS;__WXMSW__;wxDEBUG_LEVEL=0;NDEBUG;WIN32;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderFile>AudacityHeaders.h</PrecompiledHeaderFile>
+      <ForcedIncludeFiles>AudacityHeaders.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <CompileAs>Default</CompileAs>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Link>
+      <AdditionalDependencies>expat.lib;filedialog.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;comctl32.lib;rpcrt4.lib;uuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(AudacityLibOutDir);$(AudacityLibReleaseOutDir);$(WXWIN)\lib\vc_x64_lib;$(GSTREAMER_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>8388608</StackReserveSize>
     </Link>
@@ -230,6 +333,8 @@
     <ClCompile Include="..\..\..\src\AudacityHeaders.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\..\src\AudacityLogger.cpp" />
     <ClCompile Include="..\..\..\src\AudioIO.cpp" />
@@ -309,9 +414,13 @@
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Static Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
       <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
+      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Static Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
     </ClCompile>
     <ClCompile Include="..\..\..\src\Spectrum.cpp" />
     <ClCompile Include="..\..\..\src\SplashDialog.cpp" />
@@ -977,24 +1086,24 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="CopyPlugins" Inputs="@(AudacityPlugins)" Outputs="@(AudacityPlugins-&gt;'$(OutDir)Plug-Ins\%(Filename)%(Extension)">
-    <Copy SourceFiles="@(AudacityPlugins)" DestinationFiles="@(AudacityPlugins-&gt;'$(OutDir)Plug-Ins\%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(AudacityPlugins)" DestinationFiles="@(AudacityPlugins->'$(OutDir)Plug-Ins\%(Filename)%(Extension)')" />
   </Target>
   <Target Name="CopyNyquist" Inputs="@(AudacityNyquist)" Outputs="@(AudacityNyquist-&gt;'$(OutDir)Nyquist\%(Filename)%(Extension)">
-    <Copy SourceFiles="@(AudacityNyquist)" DestinationFiles="@(AudacityNyquist-&gt;'$(OutDir)Nyquist\%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(AudacityNyquist)" DestinationFiles="@(AudacityNyquist->'$(OutDir)Nyquist\%(Filename)%(Extension)')" />
   </Target>
   <Target Name="CopyNyquistRaw" Inputs="@(AudacityNyquistRaw)" Outputs="@(AudacityNyquistRaw-&gt;'$(OutDir)Nyquist\rawwaves\%(Filename)%(Extension)">
-    <Copy SourceFiles="@(AudacityNyquistRaw)" DestinationFiles="@(AudacityNyquistRaw-&gt;'$(OutDir)Nyquist\rawwaves\%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(AudacityNyquistRaw)" DestinationFiles="@(AudacityNyquistRaw->'$(OutDir)Nyquist\rawwaves\%(Filename)%(Extension)')" />
   </Target>
   <Target Name="CleanPlugins">
-    <Delete Files="@(AudacityPlugins-&gt;'$(OutDir)Plug-Ins\%(Filename)%(Extension)')" />
+    <Delete Files="@(AudacityPlugins->'$(OutDir)Plug-Ins\%(Filename)%(Extension)')" />
     <RemoveDir Directories="$(OutDir)Plug-Ins\" />
   </Target>
   <Target Name="CleanNyquist">
-    <Delete Files="@(AudacityNyquist-&gt;'$(OutDir)Nyquist\%(Filename)%(Extension)')" />
+    <Delete Files="@(AudacityNyquist->'$(OutDir)Nyquist\%(Filename)%(Extension)')" />
     <RemoveDir Directories="$(OutDir)Nyquist\" />
   </Target>
   <Target Name="CleanNyquistRaw">
-    <Delete Files="@(AudacityNyquistRaw-&gt;'$(OutDir)Nyquist\rawwaves\%(Filename)%(Extension)')" />
+    <Delete Files="@(AudacityNyquistRaw->'$(OutDir)Nyquist\rawwaves\%(Filename)%(Extension)')" />
     <RemoveDir Directories="$(OutDir)Nyquist\rawwaves\" />
   </Target>
   <PropertyGroup>

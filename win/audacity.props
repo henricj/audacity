@@ -5,7 +5,7 @@
     <BaseAudacityPlatformToolset>v120</BaseAudacityPlatformToolset>
     <BaseAudacityPlatformToolset Condition="'$(VisualStudioVersion)' &gt; '12.0'">v140</BaseAudacityPlatformToolset>
     <!-- Only enable XP support for 32-bit release builds. -->
-    <AudacityPlatformPostfix Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_xp</AudacityPlatformPostfix>
+    <AudacityPlatformPostfix Condition="'$(Configuration)|$(Platform)'=='Release|Win32' Or '$(Configuration)|$(Platform)'=='Static Release|Win32'">_xp</AudacityPlatformPostfix>
     <AudacityPlatformToolset>$(BaseAudacityPlatformToolset)$(AudacityPlatformPostfix)</AudacityPlatformToolset>
 
     <!--<AudacityOutDir>$(SolutionDir)$(Configuration)\</AudacityOutDir>
@@ -15,6 +15,7 @@
     <AudacityBuildDir>$(SolutionDir)build\</AudacityBuildDir>
     <AudacityOutDir>$(AudacityBuildDir)bin\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\</AudacityOutDir>
     <AudacityLibOutDir>$(AudacityBuildDir)lib\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\</AudacityLibOutDir>
+    <AudacityLibReleaseOutDir>$(AudacityBuildDir)lib\$(AudacityPlatformToolset)\$(Platform)\Release\</AudacityLibReleaseOutDir>
     <AudacityIntDir>$(AudacityBuildDir)obj\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\$(ProjectName)\</AudacityIntDir>
 
     <WXWIN Condition=" '$(WXWIN_VS2013)' != '' And Exists('$(WXWIN_VS2013)\build\msw') And '$(VisualStudioVersion)' == '12.0'">$(WXWIN_VS2013)</WXWIN>

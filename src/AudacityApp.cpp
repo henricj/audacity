@@ -223,6 +223,11 @@ It handles initialization and termination by subclassing wxApp.
 #  pragma comment(lib, "wxjpeg"       D)
 #  pragma comment(lib, "wxtiff"       D)
 
+#ifndef WXUSINGDLL
+#  pragma comment(lib, "wxbase" V "u" D "_xml")
+#  pragma comment(lib, "wxregexu"     D)
+#endif
+
 #  undef V
 #  undef D
 
