@@ -13,7 +13,7 @@
     <msgfmt>
       <Verbose>False</Verbose>
       <OutputName>$(OutDir)Languages\%(Filename)\Audacity.mo</OutputName>
-      <CommandLineTemplate>msgfmt [AllOptions] [AdditionalOptions] [inputs]</CommandLineTemplate>
+      <CommandLineTemplate>"$(MsgfmtCommand)" [AllOptions] [AdditionalOptions] [inputs]</CommandLineTemplate>
       <Outputs>%(OutputName)</Outputs>
       <ExecutionDescription>Compiling %(Filename) locale</ExecutionDescription>
     </msgfmt>
