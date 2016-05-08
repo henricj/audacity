@@ -16,6 +16,7 @@
     <AudacityOutDir>$(AudacityBuildDir)bin\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\</AudacityOutDir>
     <AudacityLibOutDir>$(AudacityBuildDir)lib\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\</AudacityLibOutDir>
     <AudacityLibReleaseOutDir>$(AudacityBuildDir)lib\$(AudacityPlatformToolset)\$(Platform)\Release\</AudacityLibReleaseOutDir>
+    <AudacityLibDebugOutDir>$(AudacityBuildDir)lib\$(AudacityPlatformToolset)\$(Platform)\Debug\</AudacityLibDebugOutDir>
     <AudacityIntDir>$(AudacityBuildDir)obj\$(AudacityPlatformToolset)\$(Platform)\$(Configuration)\$(ProjectName)\</AudacityIntDir>
 
     <WXWIN Condition=" '$(WXWIN_VS2013)' != '' And Exists('$(WXWIN_VS2013)\build\msw') And '$(VisualStudioVersion)' == '12.0'">$(WXWIN_VS2013)</WXWIN>
