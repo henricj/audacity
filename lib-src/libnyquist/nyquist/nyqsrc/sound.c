@@ -266,7 +266,7 @@ sound_type sound_create(
 {
     sound_type sound;
     falloc_sound(sound, "sound_create");
-    if (((long) sound) & 3) errputstr("sound not word aligned\n");
+    if (((intptr_t) sound) & 3) errputstr("sound not word aligned\n");
     last_sound = sound; /* debug */
     if (t0 < 0) xlerror("attempt to create a sound with negative starting time", s_unbound); 
     /* nyquist_printf("sound_create %p gets %g\n", sound, t0); */
