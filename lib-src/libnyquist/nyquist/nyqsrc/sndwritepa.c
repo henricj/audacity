@@ -360,7 +360,7 @@ double sound_save(
   LVAL play)
 {
     LVAL result;
-    float *buf;
+    float *buf = NULL;
     long ntotal;
     double max_sample;
     SNDFILE *sndfile = NULL;
