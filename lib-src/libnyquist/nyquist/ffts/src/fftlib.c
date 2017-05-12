@@ -945,7 +945,7 @@ for (; StageCnt > 0 ; StageCnt--){
 		f1i = f1i * Two - f3i;
 
 		if (DiffUCnt == NDiffU/2)
-			Uinc4 = -Uinc4;
+			Uinc4 = 0UL - Uinc4;
 
 		u0r += Uinc4;
 		u0i -= Uinc4;
@@ -2012,7 +2012,7 @@ for (; StageCnt > 0 ; StageCnt--){
 		f1i = f1i * Two - f3i;
 
 		if (DiffUCnt == NDiffU/2)
-			Uinc4 = -Uinc4;
+			Uinc4 = 0UL - Uinc4;
 
 		u0r += Uinc4;
 		u0i -= Uinc4;
