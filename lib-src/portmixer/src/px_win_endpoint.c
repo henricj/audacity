@@ -61,7 +61,7 @@ static void dprintf(const char *format, ...)
    int cnt;
 
    va_start(args, format);
-   cnt = _vsnprintf(buf, sizeof(buf) - 1, format, args);
+   cnt = vsnprintf(buf, sizeof(buf) - 1, format, args);
    va_end(args);
 
    if (cnt > 0) {
