@@ -370,18 +370,9 @@ bool EffectPhaser::TransferDataFromWindow()
 
 void EffectPhaser::InstanceInit(EffectPhaserState & data, float sampleRate)
 {
+   memset(&data, 0, sizeof data);
+
    data.samplerate = sampleRate;
-
-   for (int j = 0; j < mStages; j++)
-   {
-      data.old[j] = 0;
-   }
-
-   data.skipcount = 0;
-   data.gain = 0;
-   data.fbout = 0;
-   data.laststages = 0;
-   data.outgain = 0;
 
    return;
 }
