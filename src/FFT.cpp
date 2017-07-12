@@ -74,7 +74,7 @@ static bool IsPowerOfTwo(size_t x)
 static size_t NumberOfBitsNeeded(size_t PowerOfTwo)
 {
    if (PowerOfTwo < 2) {
-      wxFprintf(stderr, "Error: FFT called with size %ld\n", PowerOfTwo);
+      wxFprintf(stderr, "Error: FFT called with size %zu\n", PowerOfTwo);
       exit(1);
    }
 
@@ -138,7 +138,7 @@ void FFT(size_t NumSamples,
    double tr, ti;                /* temp real, temp imaginary */
 
    if (!IsPowerOfTwo(NumSamples)) {
-      wxFprintf(stderr, "%ld is not a power of two\n", NumSamples);
+      wxFprintf(stderr, "%zu is not a power of two\n", NumSamples);
       exit(1);
    }
 
