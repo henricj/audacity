@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Fragment>
+    <!-- We let the MSM handle the C++ issues.  We need only download the redist if
+    the ucrt is required. Should the version be checked? -->
+    <!--<Property Id="UCRTINSTALLED">-->
+    <util:FileSearch Id="UCRTFileSearch" Path="[WindowsFolder]System32\ucrtbase.dll" Result="exists" Variable="UCRTInstalled"/>
+    <!--</Property>-->
+    <PackageGroup Id="redist_vc141_x86">
+      <ExePackage
+        Id="vc141_x86"
+        Cache="yes"
+        PerMachine="yes"
+        Permanent="yes"
+        Vital="yes"
+        Compressed="no"
+        DownloadUrl="https://go.microsoft.com/fwlink/?LinkId=746571"
+        Name="vcredist_vc141_x86"
+        InstallCommand="/quiet /norestart"
+        DetectCondition="UCRTInstalled">
+        <RemotePayload
+          Description="Microsoft Visual C++ 2017 Redistributable (x86) - 14.10.25017"
+          ProductName="Microsoft Visual C++ 2017 Redistributable (x86) - 14.10.25017"
+          Size="14408752"
+          Version="14.10.25017.0"
+          Hash="6B8151A85E062D43CCDCBE2B7B932656EA81828E" />
+      </ExePackage>
+    </PackageGroup>
+    <PackageGroup Id="redist_vc141_x64">
+      <ExePackage
+        Id="vc141_x64"
+        Cache="yes"
+        PerMachine="yes"
+        Permanent="yes"
+        Vital="yes"
+        Compressed="no"
+        DownloadUrl="https://go.microsoft.com/fwlink/?LinkId=746572"
+        Name="vcredist_vc141_x86"
+        InstallCommand="/quiet /norestart"
+        DetectCondition="UCRTInstalled">
+        <RemotePayload
+          Description="Microsoft Visual C++ 2017 Redistributable (x64) - 14.10.25017"
+          ProductName="Microsoft Visual C++ 2017 Redistributable (x64) - 14.10.25017"
+          Size="15254384"
+          Version="14.10.25017.0"
+          Hash="514B622144E7BDE76B52E369E91B05A59D0E1B96" />
+      </ExePackage>
+    </PackageGroup>
+  </Fragment>
+</Wix>
