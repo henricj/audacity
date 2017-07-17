@@ -53,8 +53,8 @@ public:
   float s[N];
   FloatTwiddles() {
     for(int k=0; k<N; k++) {
-      c[k] = cos(TWOPI * (float)k / (float)N);
-      s[k] = sin(TWOPI * (float)(-dir*k) / (float)N);
+      c[k] = cosf(TWOPI * k / N);
+      s[k] = sinf(TWOPI * -dir * k / N);
     }
   }
 };
