@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <?include ../AudacityInstaller/Variables.wxi ?>
+  <Bundle Name="Audacity $(var.Platform)" Version="$(var.VersionNumber)" Manufacturer="Audacity Team" UpgradeCode="$(var.BundleUpgradeCode)">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication
+        LicenseFile="..\..\audacity_InnoWizard_InfoBefore.rtf"
+        LogoFile="..\..\audacity_InnoWizardSmallImage.bmp"
+      />
+    </BootstrapperApplicationRef>
+
+    <Chain>
+      <PackageGroupRef Id="redist_vc141_$(var.Platform)" />
+      <MsiPackage Compressed="no" SourceFile="$(var.AudacityInstaller.TargetPath)" />
+    </Chain>
+  </Bundle>
+</Wix>

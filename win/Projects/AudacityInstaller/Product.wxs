@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi ?>
+  <Product Id="*" Name="$(var.ProductName) $(var.VersionNumber)" Language="1033"
+           Version="$(var.VersionNumber)" Manufacturer="Audacity Team" UpgradeCode="$(var.UpgradeCode)">
+    <Package InstallerVersion="301" Compressed="yes" InstallScope="perMachine"
+             Manufacturer="Audacity Team" Description ="Audacity Installer" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Icon Id="audacity.ico" SourceFile="..\..\audacity.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="audacity.ico" />
+
+    <Feature Id="ProductFeature" Title="Audacity" Level="1">
+      <ComponentGroupRef Id="Audacity" />
+    </Feature>
+    <Feature Id="VCRedist" Title="Visual C++ Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist"/>
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="INSTALLFOLDER" Name="Audacity" />
+      </Directory>
+      <!--<Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Audacity"/>
+      </Directory>-->
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <DirectoryRef Id="TARGETDIR">
+      <Merge Id="VCRedist" SourceFile="$(var.DevEnvDir)..\..\VC\Redist\MSVC\14.10.25008\MergeModules\Microsoft_VC150_CRT_$(var.Platform).msm" DiskId="1" Language="0"/>
+    </DirectoryRef>
+  </Fragment>
+</Wix>
