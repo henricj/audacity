@@ -14,6 +14,11 @@
   <PropertyGroup>
     <MMPath>$(VCInstallDir)Redist\MSVC\14.10.25008\MergeModules\</MMPath>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
+    <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>$(AudacitySetupDir)</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
@@ -30,17 +35,23 @@
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
     <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Static Release|x64' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Debug|x64' ">
     <OutputPath>$(AudacitySetupDir)</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
     <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Static Release|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Debug|x86' ">
+    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
+    <DefineConstants>Debug</DefineConstants>
+    <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Release|x64' ">
     <OutputPath>$(AudacitySetupDir)</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
     <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Release|x86' ">
     <OutputPath>$(AudacitySetupDir)</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
     <SuppressSpecificWarnings>1076</SuppressSpecificWarnings>
