@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
+  <?ifndef AudacityProductCode ?>
+  <?define AudacityProductCode = "*" ?>
+  <?endif ?>
   <?if $(var.Platform) = x64 ?>
   <?define ProductName = "Audacity (64 bit)" ?>
   <?define Win64 = "yes" ?>
@@ -11,7 +14,7 @@
   <?define Win64 = "no" ?>
   <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
   <?define UpgradeCode="1D98C185-3D36-4FFF-900B-3F1649F9249B" ?>
-  <?define BundleUpgradeCode="{61CE078E-F821-4B8B-B98A-9DB5920355C6}" ?>
+  <?define BundleUpgradeCode="61CE078E-F821-4B8B-B98A-9DB5920355C6" ?>
   <?endif ?>
   <?define MajorVersion="2" ?>
   <?define MinorVersion="2" ?>
