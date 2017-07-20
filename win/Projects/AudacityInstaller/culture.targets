@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <CultureFile>
+      <Culture>%(FileName)</Culture>
+      <CulturePath>%(Culture),$(DefaultCulturePath)</CulturePath>
+    </CultureFile>
+    <TorchFile>
+      <BaselineFile>$(TargetDir)$(DefaultCulture)\$(TargetFileName)</BaselineFile>
+      <UpdateFile>$(TargetDir)\%(FileName)\$(TargetFileName)</UpdateFile>
+      <OutputFile>$(TargetDir)torch\%(FileName).mst</OutputFile>
+    </TorchFile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CultureFile Include="$(DefaultCultureFile)">
+      <CulturePath>$(DefaultCulturePath)</CulturePath>
+    </CultureFile>
+    <CultureFile Include="@(EmbeddedResource)" Exclude="@(CultureFile)" />
+    <TorchFile Include="@(CultureFile)" Exclude="@(TorchFile);$(DefaultCultureFile)" />
+  </ItemGroup>
+  <PropertyGroup>
+    <Cultures>@(CultureFile-&gt;'%(CulturePath)')</Cultures>
+  </PropertyGroup>
+  <Target Name="BuildMst" Inputs="@(TorchFile)" Outputs="%(TorchFile.OutputFile)">
+    <Torch ToolPath="$(WixToolPath)" AdditionalOptions="-t Language"
+	    BaselineFile="%(TorchFile.BaselineFile)" UpdateFile="%(UpdateFile)" OutputFile="%(OutputFile)" />
+  </Target>
+</Project>
