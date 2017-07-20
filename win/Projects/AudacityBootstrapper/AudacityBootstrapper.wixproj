@@ -11,37 +11,20 @@
     <OutputType>Bundle</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <OutputPath>$(AudacitySetupDir)final\</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <OutputPath>$(AudacitySetupDir)final\</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <OutputPath>$(AudacitySetupDir)final\</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
-    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Debug|x86' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
-    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Debug|x64' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
-    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Release|x86' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
-    <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DLL Release|x64' ">
-    <OutputPath>$(AudacitySetupDir)</OutputPath>
+    <OutputPath>$(AudacitySetupDir)final\</OutputPath>
     <IntermediateOutputPath>$(AudacityIntDir)AudacitySetup\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
