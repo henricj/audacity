@@ -8,16 +8,20 @@
 
     <!--<MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />-->
     <MajorUpgrade AllowSameVersionUpgrades="yes"  DowngradeErrorMessage="!(loc.NewerVersionInstalled)" />
-    <MediaTemplate EmbedCab="yes"/>
 
-    <Icon Id="audacity.ico" SourceFile="..\..\audacity.ico"/>
+    <!--<MediaTemplate EmbedCab="yes" />-->
+    <Media Id="1" Cabinet="audacity.cab" EmbedCab="yes" />
+    <Media Id="2" Cabinet="vcredit.cab" EmbedCab="yes" />
+
+    <Icon Id="audacity.ico" SourceFile="..\..\audacity.ico" />
     <Property Id="ARPPRODUCTICON" Value="audacity.ico" />
+    <Property Id="CULTUREENGLISH" Value="!(loc.EnglishCultureName)" />
 
     <Feature Id="ProductFeature" Title="Audacity" Level="1">
       <ComponentGroupRef Id="Audacity" />
     </Feature>
-    <Feature Id="VCRedist" Title="Visual C++ Runtime" AllowAdvertise="no" Display="hidden" Level="1">
-      <MergeRef Id="VCRedist"/>
+    <Feature Id="VCRedist" Title="Microsoft Visual C++ 2017 Runtime ($(var.Platform))" AllowAdvertise="no" Display="hidden" Level="1">
+      <MergeRef Id="VCRedist" />
     </Feature>
 
     <UIRef Id="WixUI_ErrorProgressText" />
@@ -36,7 +40,7 @@
 
   <Fragment>
     <DirectoryRef Id="TARGETDIR">
-      <Merge Id="VCRedist" SourceFile="$(var.DevEnvDir)..\..\VC\Redist\MSVC\14.10.25008\MergeModules\Microsoft_VC150_CRT_$(var.Platform).msm" DiskId="1" Language="0"/>
+      <Merge Id="VCRedist" SourceFile="$(var.DevEnvDir)..\..\VC\Redist\MSVC\14.10.25008\MergeModules\Microsoft_VC150_CRT_$(var.Platform).msm" DiskId="2" Language="0" />
     </DirectoryRef>
   </Fragment>
 </Wix>

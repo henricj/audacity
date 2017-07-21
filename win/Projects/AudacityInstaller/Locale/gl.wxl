@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="gl" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">86</String>
+  <String Id="Codepage">1252</String>
+  <String Id="NativeCultureName">galego</String>
+  <String Id="EnglishCultureName">Galician</String>
+  <String Id="ResetPrefs">Restabelecer as preferencias?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
