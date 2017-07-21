@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="de-DE" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">1031</String>
+  <String Id="Codepage">1252</String>
+  <String Id="NativeCultureName">Deutsch (Deutschland)</String>
+  <String Id="EnglishCultureName">German (Germany)</String>
+  <String Id="ResetPrefs">Einstellungen zurücksetzen?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>

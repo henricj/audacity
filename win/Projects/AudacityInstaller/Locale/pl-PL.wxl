@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="pl-PL" Codepage="1250" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">1045</String>
+  <String Id="Codepage">1250</String>
+  <String Id="NativeCultureName">polski (Polska)</String>
+  <String Id="EnglishCultureName">Polish (Poland)</String>
+  <String Id="ResetPrefs">Zresetować ustawienia?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
