@@ -13,9 +13,10 @@
       <PackageGroupRef Id="redist_vc141_$(var.Platform)" />
       <MsiPackage Compressed="no" SourceFile="$(var.AudacityInstaller.TargetDir)en-US\$(var.AudacityInstaller.TargetName).msi">
         <MsiProperty Name="INSTALL_LANG" Value="1033" />
-        <MsiProperty Name="TRANSFORMS" Value="[SystemLanguageID].mst"/>
-        <Payload Id="2057.mst" Compressed="yes" Name="2057.mst" SourceFile="$(var.AudacityInstaller.TargetDir)torch\en-GB.mst" />
+        <MsiProperty Name="TRANSFORMS" Value="[SystemLanguageID].mst"  />
+        <!--<Payload Id="2057.mst" Compressed="yes" Name="2057.mst" SourceFile="$(var.AudacityInstaller.TargetDir)torch\en-GB.mst" />-->
         <Payload Id="1034.mst" Compressed="yes" Name="1034.mst" SourceFile="$(var.AudacityInstaller.TargetDir)torch\es-ES.mst" />
+        <Payload Id="1053.mst" Compressed="yes" Name="1053.mst" SourceFile="$(var.AudacityInstaller.TargetDir)torch\sv-SE.mst" />
       </MsiPackage>
     </Chain>
   </Bundle>

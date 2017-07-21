@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ro" Codepage="1250" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">24</String>
+  <String Id="Codepage">1250</String>
+  <String Id="NativeCultureName">română</String>
+  <String Id="EnglishCultureName">Romanian</String>
+  <!--<String Id="ResetPrefs">Reset Preferences</String>-->
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
