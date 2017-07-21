@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ta" Codepage="0" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">73</String>
+  <String Id="Codepage">0</String>
+  <String Id="NativeCultureName">தமிழ்</String>
+  <String Id="EnglishCultureName">Tamil</String>
+  <String Id="ResetPrefs">"விருப்பங்களை மீட்டமைக்க?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
