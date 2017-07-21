@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="he" Codepage="1255" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">13</String>
+  <String Id="Codepage">1255</String>
+  <String Id="NativeCultureName">עברית</String>
+  <String Id="EnglishCultureName">Hebrew</String>
+  <String Id="ResetPrefs">?אתה רוצה לשחזר העדפות</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>

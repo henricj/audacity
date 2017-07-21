@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="LookupLcid" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" >
+    <ParameterGroup>
+      <CultureMetadata />
+      <LcidMetadata />
+      <CodePageMetadata />
+      <Cultures ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.Globalization"/>
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+        var lcidName = string.IsNullOrWhiteSpace(LcidMetadata) ? "LCID" : LcidMetadata;
+
+        foreach (var culture in Cultures)
+        {
+            Log.LogMessage("Looking up LCID for " + culture.ItemSpec, MessageImportance.High);
+
+            var name = string.IsNullOrWhiteSpace(CultureMetadata)
+                ? culture.ItemSpec
+                : culture.GetMetadata(CultureMetadata);
+
+            if (string.IsNullOrWhiteSpace(name))
+                continue;
+
+            Log.LogMessage("Looking up culture for " + name, MessageImportance.High);
+
+            var cultureInfo = CultureInfo.GetCultureInfo(name);
+
+            if (CultureInfo.InvariantCulture.Equals(cultureInfo))
+                continue;
+
+            Log.LogMessage("Found LCID " + cultureInfo.LCID + " CodePage " + cultureInfo.TextInfo.ANSICodePage, MessageImportance.High);
+
+            culture.SetMetadata(lcidName, cultureInfo.LCID.ToString(CultureInfo.InvariantCulture));
+
+            if (!string.IsNullOrWhiteSpace(CodePageMetadata))
+              culture.SetMetadata(CodePageMetadata, cultureInfo.TextInfo.ANSICodePage.ToString(CultureInfo.InvariantCulture)); 
+        }
+]]>
+      </Code>
+    </Task>
+  </UsingTask>
+</Project>
