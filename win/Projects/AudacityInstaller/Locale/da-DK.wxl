@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="da-DK" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">1030</String>
+  <String Id="Codepage">1252</String>
+  <String Id="NativeCultureName">dansk (Danmark)</String>
+  <String Id="EnglishCultureName">Danish (Denmark)</String>
+  <String Id="ResetPrefs">Gendan indstillinger?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="lv-LV" Codepage="1257" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">1062</String>
+  <String Id="Codepage">1257</String>
+  <String Id="NativeCultureName">latviešu (Latvija)</String>
+  <String Id="EnglishCultureName">Latvian (Latvia)</String>
+  <!--<String Id="ResetPrefs">Reset Preferences</String>-->
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
