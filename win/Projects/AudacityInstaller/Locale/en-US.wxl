@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="en-US" xmlns="http://schemas.microsoft.com/wix/2006/localization">
   <String Id="LCID" Overridable="yes">1033</String>
-  <String Id="NewerVersionInstalled" Overridable="yes">A newer version of [ProductName] is already installed.</String>
+  <String Id="NativeCultureName" Overridable="yes">English (United States)</String>
+  <String Id="EnglishCultureName" Overridable="yes">English (United States)</String>
+  <!--<String Id="Codepage" Overridable="yes">1252</String>
+  <String Id="NewerVersionInstalled" Overridable="yes">A newer version of [ProductName] is already installed.</String>-->
 </WixLocalization>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="nl" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">19</String>
+  <String Id="Codepage">1252</String>
+  <String Id="NativeCultureName">Nederlands</String>
+  <String Id="EnglishCultureName">Dutch</String>
+  <String Id="ResetPrefs">Voorkeuren herstellen?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
