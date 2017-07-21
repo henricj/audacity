@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="lcid.targets" />
+  <PropertyGroup>
+    <AudacityBaselineFile>$(TargetDir)\$(DefaultCulture)\$(TargetFileName)</AudacityBaselineFile>
+  </PropertyGroup>
   <ItemDefinitionGroup>
-    <CultureFile>
+    <AudacityCultureFile>
       <Culture>%(FileName)</Culture>
       <CulturePath>%(Culture),$(DefaultCulturePath)</CulturePath>
-    </CultureFile>
-    <TorchFile>
-      <BaselineFile>$(TargetDir)$(DefaultCulture)\$(TargetFileName)</BaselineFile>
+    </AudacityCultureFile>
+    <AudacityTorch>
+      <BaselineFile>$(AudacityBaselineFile)</BaselineFile>
       <UpdateFile>$(TargetDir)\%(FileName)\$(TargetFileName)</UpdateFile>
       <OutputFile>$(TargetDir)torch\%(FileName).mst</OutputFile>
-    </TorchFile>
+    </AudacityTorch>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CultureFile Include="$(DefaultCultureFile)">
-      <CulturePath>$(DefaultCulturePath)</CulturePath>
-    </CultureFile>
-    <CultureFile Include="@(EmbeddedResource)" Exclude="@(CultureFile)" />
-    <TorchFile Include="@(CultureFile)" Exclude="@(TorchFile);$(DefaultCultureFile)" />
+    <!--<AudacityCultureFile Include="Locale\hi-IN.wxl">
+      <CulturePath>hi-IN</CulturePath>
+    </AudacityCultureFile>
+    <AudacityCultureFile Include="Locale\hi.wxl">
+      <CulturePath>hi,hi-IN</CulturePath>
+    </AudacityCultureFile>-->
+    <AudacityCultureFile Include="@(EmbeddedResource)" Exclude="@(AudacityCultureFile);@(ExcludeAudacityCultureFile)" />
+    <AudacityCulture Include="@(AudacityCultureFile)" Exclude="@(AudacityCulture);@(ExcludeAudacityCulture)" />
+    <AudacityTorch Include="@(AudacityCultureFile)" Exclude="@(AudacityTorch);@(ExcludeAudacityTorch)" />
   </ItemGroup>
   <PropertyGroup>
-    <Cultures>@(CultureFile-&gt;'%(CulturePath)')</Cultures>
+    <Cultures>@(AudacityCulture-&gt;'%(CulturePath)')</Cultures>
   </PropertyGroup>
-  <Target Name="BuildMst" Inputs="@(TorchFile)" Outputs="%(TorchFile.OutputFile)">
+  <Target Name="ShowMsiInfo" BeforeTargets="Compile">
+    <Message Text="Product Code: $(AudacityProductCode)" />
+    <Message Text="Culture %(AudacityCultureFile.Culture): %(CulturePath) (%(AudacityCultureFile.LCID))" />
+  </Target>
+  <Target Name="AnnotateCulture">
+    <LookupLcid CultureMetadata="Culture" Cultures="@(AudacityCultureFile)" />
+    <Message Text="Culture2 %(AudacityCultureFile.Culture): %(CulturePath) (%(AudacityCultureFile.LCID))" />
+  </Target>
+  <Target Name="BuildMst" Inputs="%(AudacityTorch.UpdateFile);%(AudacityTorch.BaselineFile)" Outputs="%(AudacityTorch.OutputFile)"
+      DependsOnTargets="AnnotateCulture;ShowMsiInfo">
+    <Message Text="Generating %(AudacityTorch.OutputFile)" />
     <Torch ToolPath="$(WixToolPath)" AdditionalOptions="-t Language"
-	    BaselineFile="%(TorchFile.BaselineFile)" UpdateFile="%(UpdateFile)" OutputFile="%(OutputFile)" />
+	    BaselineFile="%(AudacityTorch.BaselineFile)" UpdateFile="%(UpdateFile)" OutputFile="%(OutputFile)" />
   </Target>
 </Project>
