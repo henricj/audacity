@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="sr-RS" Codepage="1250" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="LCID">4096</String>
+  <String Id="Codepage">1250</String>
+  <String Id="NativeCultureName">Unknown Locale (sr-RS)</String>
+  <String Id="EnglishCultureName">Unknown Locale (sr-RS)</String>
+  <String Id="ResetPrefs">Да вратим на старе поставке?</String>
+  <!--<String Id="NewerVersionInstalled">A newer version of [ProductName] is already installed.</String>-->
+</WixLocalization>
