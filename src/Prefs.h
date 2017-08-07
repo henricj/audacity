@@ -35,6 +35,9 @@
 
 #include <wx/fileconf.h>  // to inherit wxFileConfig
 
+#include <iterator>
+#include <vector>
+
 void InitPreferences();
 void FinishPreferences();
 
@@ -138,5 +141,116 @@ private:
    const int *mIntValues;
    const wxString mOldKey;
 };
+
+struct PrefsDefaultConfigRef { static wxConfigBase* get() { return wxConfigBase::Get(); } };
+struct PrefsGlobalConfigRef { static wxConfigBase* get() { return gPrefs; } };
+
+template<typename T>
+class PreferenceVariable final
+{
+   const wxString name_;
+   const T defaultValue_;
+public:
+   explicit PreferenceVariable(const wxString& name, T defaultValue = T())
+      : name_(name), defaultValue_(defaultValue)
+   { }
+   explicit PreferenceVariable(wxString&& name, T defaultValue = T())
+      : name_(name), defaultValue_(defaultValue)
+   { }
+
+   const wxString& name() const { return name_; }
+
+   bool Exists() const { return gPrefs->HasEntry(name_); }
+   bool Delete(bool groupIfEmptyAlso = true) const { return gPrefs->DeleteEntry(name_, groupIfEmptyAlso); }
+
+   bool Read(T& value) const { return gPrefs->Read(name_, &value, defaultValue_); }
+   T Read() const { return gPrefs->Read(name_, defaultValue_); }
+
+   bool Write(const T& value) const { return gPrefs->Write(name_, value); }
+   bool Write(T&& value) const { return gPrefs->Write(name_, value); }
+};
+
+template<>
+inline bool PreferenceVariable<bool>::Read() const { return gPrefs->ReadBool(name_, defaultValue_); }
+template<>
+inline long PreferenceVariable<long>::Read() const { return gPrefs->ReadLong(name_, defaultValue_); }
+template<>
+inline double PreferenceVariable<double>::Read() const { return gPrefs->ReadDouble(name_, defaultValue_); }
+
+typedef PreferenceVariable<wxString> PreferenceVariableString;
+typedef PreferenceVariable<bool> PreferenceVariableBool;
+typedef PreferenceVariable<long> PreferenceVariableLong;
+typedef PreferenceVariable<double> PreferenceVariableDouble;
+
+template<typename TConfigRef = PrefsGlobalConfigRef>
+class PreferenceGroup final
+{
+   const wxString name_;
+public:
+   explicit PreferenceGroup(const wxString& name) : name_(name)
+   { }
+   explicit PreferenceGroup(wxString&& name)
+      : name_(name)
+   { }
+
+   const wxString& name() const { return name_; }
+
+   bool Exists() const { return gPrefs->HasGroup(name_); }
+   bool Delete() const { return gPrefs->DeleteGroup(name_); }
+
+   std::vector<wxString> Groups() const;
+   std::vector<wxString> Entries() const;
+};
+
+
+template<typename TConfigRef>
+std::vector<wxString> PreferenceGroup<TConfigRef>::Groups() const
+{
+   auto oldPath = gPrefs->GetPath();
+   gPrefs->SetPath(name_);
+
+   std::vector<wxString> v;
+
+   long index;
+   wxString name;
+
+   auto x = gPrefs->GetFirstGroup(name, index);
+
+   while (x)
+   {
+      v.push_back(name);
+
+      x = gPrefs->GetNextGroup(name, index);
+   }
+
+   gPrefs->SetPath(oldPath);
+
+   return v;
+}
+
+template<typename TConfigRef>
+std::vector<wxString> PreferenceGroup<TConfigRef>::Entries() const
+{
+   auto oldPath = gPrefs->GetPath();
+   gPrefs->SetPath(name_);
+
+   std::vector<wxString> v;
+
+   long index;
+   wxString name;
+
+   auto x = gPrefs->GetFirstEntry(name, index);
+
+   while (x)
+   {
+      v.push_back(name);
+
+      x = gPrefs->GetNextEntry(name, index);
+   }
+
+   gPrefs->SetPath(oldPath);
+
+   return v;
+}
 
 #endif

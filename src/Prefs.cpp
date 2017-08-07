@@ -72,6 +72,26 @@ std::unique_ptr<AudacityPrefs> ugPrefs {};
 AudacityPrefs *gPrefs = NULL;
 int gMenusDirty = 0;
 
+struct PrefsObject
+{
+   PreferenceVariableString LocaleLanguage{ wxT("/Locale/Language") };
+   PreferenceVariableBool NewPrefsInitialized{ wxT("/NewPrefsInitialized") };
+   PreferenceVariableString PrefsVersion{ wxT("/PrefsVersion") };
+   PreferenceVariableLong VersionMajor{ wxT("/Version/Major") };
+   PreferenceVariableLong VersionMinor{ wxT("/Version/Minor") };
+   PreferenceVariableLong VersionMicro{ wxT("/Version/Micro") };
+};
+
+PrefsObject Prefs;
+
+struct PrefsGuiObject
+{
+};
+
+PrefsGuiObject PrefsGui;
+
+PreferenceGroup<> PrefsToolbars{ wxT("/GUI/ToolBars") };
+
 #if 0
 // Copy one entry from one wxConfig object to another
 static void CopyEntry(wxString path, wxConfigBase *src, wxConfigBase *dst, wxString entry)
@@ -103,7 +123,6 @@ static void CopyEntry(wxString path, wxConfigBase *src, wxConfigBase *dst, wxStr
    }
    }
 }
-
 
 // Recursive routine to copy all groups and entries from one wxConfig object to another
 static void CopyEntriesRecursive(wxString path, wxConfigBase *src, wxConfigBase *dst)
@@ -245,12 +264,15 @@ void InitPreferences()
    // old preferences.
    bool newPrefsInitialized = false;
    gPrefs->Read(wxT("/NewPrefsInitialized"), &newPrefsInitialized, false);
+   newPrefsInitialized = Prefs.NewPrefsInitialized.Read();
    if (newPrefsInitialized) {
+      Prefs.NewPrefsInitialized.Delete();
       gPrefs->DeleteEntry(wxT("/NewPrefsInitialized"), true);  // take group as well if empty
    }
 
    // record the Prefs version for future checking (this has not been used for a very
    // long time).
+   Prefs.PrefsVersion.Write(wxT(AUDACITY_PREFS_VERSION_STRING));
    gPrefs->Write(wxT("/PrefsVersion"), wxString(wxT(AUDACITY_PREFS_VERSION_STRING)));
 
    // Check if some prefs updates need to happen based on audacity version.
@@ -258,9 +280,31 @@ void InitPreferences()
    // In the future we may want to integrate that better.
    // these are done on a case-by-case basis for now so they must be backwards compatible
    // (meaning the changes won't mess audacity up if the user goes back to an earlier version)
-   int vMajor = gPrefs->Read(wxT("/Version/Major"), (long) 0);
-   int vMinor = gPrefs->Read(wxT("/Version/Minor"), (long) 0);
-   int vMicro = gPrefs->Read(wxT("/Version/Micro"), (long) 0);
+   int vMajor = gPrefs->Read(wxT("/Version/Major"), (long)0);
+   vMajor = Prefs.VersionMajor.Read();
+   int vMinor = gPrefs->Read(wxT("/Version/Minor"), (long)0);
+   vMinor = Prefs.VersionMinor.Read();
+   int vMicro = gPrefs->Read(wxT("/Version/Micro"), (long)0);
+   vMicro = Prefs.VersionMicro.Read();
+
+   auto groups = PrefsToolbars.Groups();
+   for (auto&& n : groups)
+   {
+      auto name = PrefsToolbars.name() + wxT("/") + n;
+
+      PreferenceGroup<> gp{ name };
+
+      auto e = gp.Exists();
+   }
+
+   auto playMeter = PreferenceGroup<>(L"GUI/ToolBars/PlayMeter");
+   auto entries = playMeter.Entries();
+   for (auto&& n : entries)
+   {
+      PreferenceVariableString pref{ playMeter.name() + L"/" + n };
+
+      auto value = pref.Read();
+   }
 
    wxGetApp().SetVersionKeysInit(vMajor, vMinor, vMicro);   // make a note of these initial values
                                                             // for use by ToolManager::ReadConfig()
