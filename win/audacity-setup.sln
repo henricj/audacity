@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Audacity", "Projects\Audacity\Audacity.vcxproj", "{1D64095C-F936-4FCF-B609-56E9DDF941FA}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -235,7 +235,9 @@ Global
 		{02F94A40-586A-4403-8464-13B50801FFEC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{02F94A40-586A-4403-8464-13B50801FFEC}.Debug|x64.ActiveCfg = Debug|x64
 		{02F94A40-586A-4403-8464-13B50801FFEC}.Release|Win32.ActiveCfg = Release|Win32
+		{02F94A40-586A-4403-8464-13B50801FFEC}.Release|Win32.Build.0 = Release|Win32
 		{02F94A40-586A-4403-8464-13B50801FFEC}.Release|x64.ActiveCfg = Release|x64
+		{02F94A40-586A-4403-8464-13B50801FFEC}.Release|x64.Build.0 = Release|x64
 		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Debug|Win32.Build.0 = Debug|Win32
 		{AF9AD75C-4785-4432-BAC3-ADAB1E7F1192}.Debug|x64.ActiveCfg = Debug|x64
@@ -256,10 +258,8 @@ Global
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Debug|Win32.Build.0 = Debug|Win32
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Debug|x64.ActiveCfg = Debug|x64
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Debug|x64.Build.0 = Debug|x64
-		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Debug|x64.Deploy.0 = Debug|x64
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|Win32.ActiveCfg = Release|Win32
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|Win32.Build.0 = Release|Win32
-		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|Win32.Deploy.0 = Release|Win32
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|x64.ActiveCfg = Release|x64
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|x64.Build.0 = Release|x64
 		{87F97433-D6C7-4C01-AD43-45B656552431}.Debug|Win32.ActiveCfg = Debug|x86
@@ -277,5 +277,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {665B4A0E-B5EA-45CB-9041-160BFDE3ABFF}
 	EndGlobalSection
 EndGlobal
