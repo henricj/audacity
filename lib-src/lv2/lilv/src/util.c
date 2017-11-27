@@ -29,7 +29,9 @@
 #include <string.h>
 
 #ifdef _WIN32
-#    define _WIN32_WINNT 0x0600  /* for CreateSymbolicLink */
+#    ifndef _WIN32_WINNT
+#        define _WIN32_WINNT 0x0600  /* for CreateSymbolicLink */
+#    endif
 #    include <windows.h>
 #    include <direct.h>
 #    include <io.h>
@@ -426,7 +428,12 @@ lilv_symlink(const char* oldpath, const char* newpath)
 	int ret = 0;
 	if (strcmp(oldpath, newpath)) {
 #ifdef _WIN32
+#if _WIN32_WINNT >= _WIN32_WINNT_VISTA
 		ret = !CreateSymbolicLink(newpath, oldpath, 0);
+#else
+		errno = ENOSYS;
+		ret = 1;
+#endif
 #else
 		ret = symlink(oldpath, newpath);
 #endif
