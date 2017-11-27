@@ -475,10 +475,15 @@ lilv_symlink(const char* oldpath, const char* newpath)
 	int ret = 0;
 	if (strcmp(oldpath, newpath)) {
 #ifdef _WIN32
+#if _WIN32_WINNT >= _WIN32_WINNT_VISTA
 		ret = !CreateSymbolicLink(newpath, oldpath, 0);
 		if (ret) {
 			ret = !CreateHardLink(newpath, oldpath, 0);
 		}
+#else
+		errno = ENOSYS;
+		ret = 1;
+#endif
 #else
 		ret = symlink(oldpath, newpath);
 #endif
