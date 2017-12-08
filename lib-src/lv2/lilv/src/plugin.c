@@ -258,7 +258,7 @@ lilv_plugin_load_ports_if_necessary(const LilvPlugin* const_p)
 				error = true;
 				goto done;
 			}
-
+			{ /* Scope */
 			uint32_t  this_index = lilv_node_as_int(index);
 			LilvPort* this_port  = NULL;
 			if (p->num_ports > this_index) {
@@ -294,7 +294,7 @@ lilv_plugin_load_ports_if_necessary(const LilvPlugin* const_p)
 				}
 			}
 			sord_iter_free(types);
-
+			}
 		done:
 			lilv_node_free(symbol);
 			lilv_node_free(index);
