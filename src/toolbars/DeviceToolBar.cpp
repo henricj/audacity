@@ -233,7 +233,7 @@ void DeviceToolBar::UpdatePrefs()
 
    int hostSelectionIndex = mHost->GetSelection();
    wxString oldHost = hostSelectionIndex >= 0 ? mHost->GetString(hostSelectionIndex) :
-                                                wxT("");
+                                                wxString{ wxT("") };
    hostName = gPrefs->Read(wxT("/AudioIO/Host"), wxT(""));
 
    // if the prefs host name doesn't match the one displayed, it changed

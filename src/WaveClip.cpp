@@ -258,7 +258,7 @@ public:
    {
       using namespace std;
       const int *begin = &bl[0];
-      return count_if(begin + startIn, begin + endIn, bind2nd(less<int>(), 0));
+      return count_if(begin + startIn, begin + endIn, bind(less<int>(), placeholders::_1, 0));
    }
 
 protected:
@@ -766,7 +766,7 @@ bool WaveClip::GetWaveDisplay(WaveDisplay &display, double t0,
       using namespace std;
       isLoadingOD =
          count_if(display.ownBl.begin(), display.ownBl.end(),
-                  bind2nd(less<int>(), 0)) > 0;
+                  bind(less<int>(), placeholders::_1, 0)) > 0;
    }
 
    return true;
