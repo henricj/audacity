@@ -31,6 +31,8 @@
 
 # ifdef HAVE_UNISTD_H
 #  include <unistd.h>
+# elif defined(_MSC_VER)
+#  include <io.h>
 # endif
 
 # ifdef HAVE_ASSERT_H

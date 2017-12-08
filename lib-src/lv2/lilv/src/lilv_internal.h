@@ -38,7 +38,7 @@ extern "C" {
 #            define snprintf _snprintf
 #        endif
 #    endif
-static inline char* dlerror(void) { return "Unknown error"; }
+static inline const char* dlerror(void) { return "Unknown error"; }
 #else
 #    include <dlfcn.h>
 #endif
