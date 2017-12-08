@@ -134,7 +134,6 @@ void SelectionBar::Create(wxWindow * parent)
    ToolBar::Create(parent);
 }
 
-
 auStaticText * SelectionBar::AddTitle( const wxString & Title, wxSizer * pSizer ){
    auStaticText * pTitle = safenew auStaticText(this, Title );
    pTitle->SetBackgroundColour( theTheme.Colour( clrMedium ));
@@ -546,7 +545,7 @@ void SelectionBar::SetDrivers( int driver1, int driver2 )
 
       wxString Temp = Text[i];
       // i18n-hint: %s is replaced e.g by 'Length', to indicate that it will be calculated from other parameters.
-      wxString Format = ( (id!=mDrive1) && (id!=mDrive2 ) ) ? _("%s - driven") : "%s";
+      wxString Format = ((id != mDrive1) && (id != mDrive2)) ? _("%s - driven") : wxString{ "%s" };
       wxString Title= wxString::Format( Format, Temp );
       // i18n-hint: %s1 is replaced e.g by 'Length', %s2 e.g by 'Center'.
       wxString VoiceOverText = wxString::Format(_("Selection %s. %s won't change."), Temp, Text[fixed]);
