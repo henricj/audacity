@@ -152,7 +152,6 @@ void SelectionBar::Create(wxWindow * parent)
    UpdatePrefs();
 }
 
-
 auStaticText * SelectionBar::AddTitle( const wxString & Title, wxSizer * pSizer ){
    auStaticText * pTitle = safenew auStaticText(this, Title );
    pTitle->SetBackgroundColour( theTheme.Colour( clrMedium ));

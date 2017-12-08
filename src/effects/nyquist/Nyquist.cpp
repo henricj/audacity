@@ -243,7 +243,7 @@ TranslatableString NyquistEffect::GetDescription()
 wxString NyquistEffect::ManualPage()
 {
       return mIsPrompt
-         ? wxT("Nyquist_Prompt")
+         ? wxString{ wxT("Nyquist_Prompt") }
          : mManPage;
 }
 
