@@ -353,7 +353,7 @@ void Alg_midifile_reader::Mf_seqnum(int n)
 }
 
 
-static const char *fpsstr[4] = {"24", "25", "29.97", "30"};
+static const char * const fpsstr[4] = {"24", "25", "29.97", "30"};
 
 void Alg_midifile_reader::Mf_smpte(int hours, int mins, int secs,
                                    int frames, int subframes)
