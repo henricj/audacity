@@ -619,8 +619,41 @@ void AboutDialog::PopulateInformationPage( ShuttleGui & S )
 
 #ifdef _MSC_FULL_VER
    AddBuildinfoRow(&informationStr, _("Compiler:"),
-	   wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
+      wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
+
+   AddBuildinfoRow(&informationStr, _("Instruction set:"),
+      wxString::Format(_("%s/%s"),
+#if defined(_M_IX86)
+      _("x86")
+#elif defined(_M_X64)
+      _("x64")
+#elif defined(_M_ARM)
+      _("ARM")
+#elif defined(_M_ARM64)
+      _("ARM64")
+#else
+      _("Unknown")
 #endif
+         ,
+#if defined(__AVX2__)
+      _("AVX2")
+#elif defined(__AVX__)
+      _("AVX")
+#elif defined(_M_IX86_FP)
+#if _M_IX86_FP == 0
+      _("x87 FPU")
+#elif  _M_IX86_FP == 1
+      _("SSE")
+#elif  _M_IX86_FP == 2
+      _("SSE2")
+#else
+      _("Unknown")
+#endif
+#else
+      _("Default")
+#endif
+   ));
+#endif // _MSC_FULL_VER
 
 #ifdef __GNUC_PATCHLEVEL__
 #ifdef __MINGW32__
