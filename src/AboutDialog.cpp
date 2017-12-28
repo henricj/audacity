@@ -716,7 +716,40 @@ void AboutDialog::PopulateInformationPage( ShuttleGui & S )
 #ifdef _MSC_FULL_VER
    AddBuildinfoRow(&informationStr, XO("Compiler:"),
 	   wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
+
+   AddBuildinfoRow(&informationStr, XO("Instruction set:"),
+      wxString::Format(XO("%s/%s"),
+#if defined(_M_IX86)
+      XO("x86")
+#elif defined(_M_X64)
+      XO("x64")
+#elif defined(_M_ARM)
+      XO("ARM")
+#elif defined(_M_ARM64)
+      XO("ARM64")
+#else
+      XO("Unknown")
 #endif
+         ,
+#if defined(__AVX2__)
+      XO("AVX2")
+#elif defined(__AVX__)
+      XO("AVX")
+#elif defined(_M_IX86_FP)
+#if _M_IX86_FP == 0
+      XO("x87 FPU")
+#elif  _M_IX86_FP == 1
+      XO("SSE")
+#elif  _M_IX86_FP == 2
+      XO("SSE2")
+#else
+      XO("Unknown")
+#endif
+#else
+      XO("Default")
+#endif
+   ));
+#endif // _MSC_FULL_VER
 
 #ifdef __GNUC_PATCHLEVEL__
 #ifdef __MINGW32__
