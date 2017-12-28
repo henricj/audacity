@@ -39,6 +39,7 @@ hold information about one contributor to Audacity.
 #include <wx/intl.h>
 #include <wx/sstream.h>
 #include <wx/txtstrm.h>
+#include <wx/url.h>
 
 #include "FileNames.h"
 #include "HelpText.h"
@@ -63,16 +64,16 @@ hold information about one contributor to Audacity.
 // RevisionIdent.h may contain #defines like these ones:
 //#define REV_LONG "28864acb238cb3ca71dda190a2d93242591dd80e"
 //#define REV_TIME "Sun Apr 12 12:40:22 2015 +0100"
-#include <RevisionIdent.h>
+#include "RevisionIdent.h"
 
 #ifndef REV_TIME
 #define REV_TIME "unknown date and time"
 #endif
 
-#ifdef REV_LONG
-#define REV_IDENT wxString( "[[https://github.com/audacity/audacity/commit/" )+ REV_LONG + "|" + wxString( REV_LONG ).Left(6) + "]] of " +  REV_TIME 
-#else
-#define REV_IDENT (XO("No revision identifier was provided").Translation())
+#define AUDACITY_REPO_URL "https://github.com/audacity/audacity.git"
+
+#ifndef REV_REPO_URL
+#define REV_REPO_URL AUDACITY_REPO_URL
 #endif
 
 // To substitute into many other translatable strings
@@ -753,7 +754,42 @@ void AboutDialog::PopulateInformationPage( ShuttleGui & S )
 
    // Current date
    AddBuildinfoRow(&informationStr, XO("Program build date:"), __TDATE__);
-   AddBuildinfoRow(&informationStr, XO("Commit Id:"), REV_IDENT );
+
+   wxString revIdent;
+#ifdef REV_LONG
+   auto repoUrl = wxString{ REV_REPO_URL };
+
+   if (wxURL(repoUrl).GetServer() == wxURL(wxT(AUDACITY_REPO_URL)).GetServer())
+   {
+      if (repoUrl.ends_with(wxT(".git")))
+         repoUrl = repoUrl.substr(0, repoUrl.length() - 4);
+
+      revIdent = wxString(wxT("[[") + repoUrl + wxT("/commit/" REV_LONG "|")) + wxString(wxT(REV_LONG)).Left(6) + wxT("]] of " REV_TIME);
+   }
+   else
+   {
+      revIdent = wxT("[[") + repoUrl + wxT("|") + wxString(wxT(REV_LONG)).Left(6) + wxT("]] of " REV_TIME);
+   }
+#else
+   revIdent = (XO("No revision identifier was provided").Translation());
+#endif
+
+   AddBuildinfoRow(&informationStr, XO("Commit Id:"), revIdent);
+
+#ifdef REV_REPO_BRANCH
+   const auto repoBranch = wxString{ wxT(REV_REPO_BRANCH) };
+
+   if (repoBranch != wxT("master"))
+      AddBuildinfoRow(&informationStr, XO("Branch:"), repoBranch);
+#endif
+
+#ifdef REV_DESCRIBE
+   AddBuildinfoRow(&informationStr, XO("Git describe:"), wxT(REV_DESCRIBE));
+#endif
+
+#ifdef REV_DESCRIBE_MERGE_BASE
+   AddBuildinfoRow(&informationStr, XO("Branched from:"), wxT(REV_DESCRIBE_MERGE_BASE));
+#endif
 
    auto buildType =
 #ifdef _DEBUG
@@ -772,10 +808,63 @@ void AboutDialog::PopulateInformationPage( ShuttleGui & S )
 
    AddBuildinfoRow(&informationStr, XO("Build type:"), buildType.Translation());
 
+   AddBuildinfoRow(&informationStr, XO("C++ standard:"), wxString::Format(wxT("%ld"), __cplusplus));
+
 #ifdef _MSC_FULL_VER
    AddBuildinfoRow(&informationStr, XO("Compiler:"),
-	   wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
+      wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
+
+   AddBuildinfoRow(&informationStr, XO("MSVC runtime:"),
+#if defined(_MT)
+      wxT("MT ")
 #endif
+#if defined(_DLL)
+      wxT("DLL")
+#else
+      wxT("Static")
+#endif
+   );
+
+   AddBuildinfoRow(&informationStr, XO("Instruction set:"),
+      wxString::Format(wxT("%s/%s"),
+#if defined(_M_IX86)
+      wxT("x86")
+#elif defined(_M_X64)
+      wxT("x64")
+#elif defined(_M_ARM64)
+      wxT("ARM64")
+#elif defined(_M_ARM)
+      wxT("ARM")
+#else
+      wxT("Unknown")
+#endif
+         ,
+#if defined(__AVX512F__)
+      wxT("AVX512")
+#elif defined(__AVX2__)
+      wxT("AVX2")
+#elif defined(__AVX__)
+      wxT("AVX")
+#elif defined(_M_IX86_FP)
+   #if _M_IX86_FP == 0
+        wxT("x87 FPU")
+   #elif  _M_IX86_FP == 1
+        wxT("SSE")
+   #elif  _M_IX86_FP == 2
+        wxT("SSE2")
+   #else
+        wxT("Unknown")
+   #endif
+#else
+      wxT("Default")
+#endif
+   ));
+
+#ifdef AUDACITY_WINDOWS_SDK_VERSION
+   AddBuildinfoRow(&informationStr, XO("Windows SDK:"), wxT(AUDACITY_WINDOWS_SDK_VERSION));
+#endif
+
+#endif // _MSC_FULL_VER
 
 #ifdef __GNUC_PATCHLEVEL__
 #ifdef __MINGW32__
