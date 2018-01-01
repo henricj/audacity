@@ -43,7 +43,7 @@ void nyquist_printf(char *format, ...);
 #define NEED_USHORT 1
 #define NEED_BYTE 1
 
-#define NEED_ROUND 1
+//#define NEED_ROUND 1
 
 #undef NEED_DEFINE_MALLOC
 

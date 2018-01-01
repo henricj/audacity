@@ -227,7 +227,7 @@ LVAL xlc_snd_xform(void)
 /**/
 LVAL xlc_block_watch(void)
 {
-    long arg1 = getfixnum(xlgafixnum());
+   FIXTYPE arg1 = getfixnum(xlgafixnum());
 
     xllastarg();
     block_watch(arg1);
