@@ -157,7 +157,7 @@ void multiread_fetch(snd_susp_type a_susp, snd_list_type snd_list)
 
         /* process one channel at a time, multiple passes through input */
         for (j = 0; j < susp->sf_info.channels; j++) {
-            register sample_block_values_type out_ptr;
+            sample_block_values_type out_ptr;
             /* offset by channel number: */
             float *float_ptr = input_buffer + j;
 
@@ -268,13 +268,12 @@ void multiread_free(snd_susp_type a_susp)
     }
     if (!active) {
         /* stdputstr("all channels freed, freeing susp now\n"); */
-        read_free(susp);
+        read_free(a_susp);
     }
 }
 
 
-LVAL multiread_create(susp)
-  read_susp_type susp;
+LVAL multiread_create(read_susp_type susp)
 {
     LVAL result;
     int j;

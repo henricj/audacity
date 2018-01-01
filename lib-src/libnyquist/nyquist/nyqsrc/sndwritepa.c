@@ -798,8 +798,8 @@ D       nyquist_printf("save scale factor %ld = %g\n", i, state[i].scale);
         for (i = 0; i < chans; i++) {
             if (state[i].cnt == 0) {
                 if (sndwrite_trace) {
-                    nyquist_printf("CALLING SOUND_GET_NEXT ON CHANNEL %ld (%lx)\n",
-				   i, (unsigned long) state[i].sound); /* jlh 64 bit issue */
+                    nyquist_printf("CALLING SOUND_GET_NEXT ON CHANNEL %ld (%p)\n",
+				   i, state[i].sound); /* jlh 64 bit issue */
                     sound_print_tree(state[i].sound);
                 }
                 state[i].ptr = sound_get_next(state[i].sound,

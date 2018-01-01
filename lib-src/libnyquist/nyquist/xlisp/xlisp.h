@@ -43,11 +43,15 @@ extern "C" {
 /* for the Win32 environment */
 #ifdef WIN32
 #define NNODES		2000
-#define AFMT		"%lx"
-#define OFFTYPE		long
+#define AFMT		"%p"
+#define OFFTYPE		intptr_t
 #define SAVERESTORE
 #define XL_LITTLE_ENDIAN 
 #define _longjmp longjmp
+#define FIXTYPE intptr_t
+#if defined(_M_X64) || defined(_M_IX86)
+#define XL_LITTLE_ENDIAN
+#endif
 #endif
 
 /* for the Turbo C compiler - MS-DOS, large model */
@@ -163,7 +167,7 @@ extern long ptrtoabs();
 /* Apple CC */
 #ifdef __APPLE__
 #define NNODES 2000
-#define AFMT "%lx"
+#define AFMT "%p"
 #define OFFTYPE long
 #define NIL (void *)0
 #define SAVERESTORE
