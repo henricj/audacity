@@ -164,10 +164,10 @@ int     IOnochar;       /* Value to be returned by IOgetchar()
 *
 ****************************************************************************/
 
+#ifdef MACINTOSH
 int GetReadFileName();
 int GetWriteFileName();
 
-#ifdef MACINTOSH
 private void PtoC_StrCopy(char *p1, char *p2);
 #endif
 
@@ -192,7 +192,7 @@ public int abort_flag;          /* control C or control G equivalent */
 public int redirect_flag;		/* check whether the I/O has been redirected--
                                     Added by Ning Hu	Apr.2001*/
 /* extern void musicterm(); */ /*DMH: from macmidi.c, to allow abort_check*/
-public boolean ascii_input();
+public boolean ascii_input(char* c);
 
 /****************************************************************************
 *
@@ -444,9 +444,7 @@ public void init_abort_handler()
 *    prompts user for yes or no input, returns result
 ****************************************************************************/
 
-int askbool(prompt, deflt)
-char *prompt;
-int deflt;
+int askbool(const char* prompt, int deflt)
 {
 #define undefined -1
     char defchar;    /* the default answer */
@@ -499,11 +497,11 @@ int deflt;
 
 char fileopen_name[100];        /* name of the opened file */
 
-FILE *fileopen(deflt, extension, mode, prompt)
-  char *deflt;
-  char *extension;    /* default extension */
-  char *mode;   /* read "r" or write "w" */
-  char *prompt;    /* prompt for user */
+FILE *fileopen(const char* deflt, const char* extension, const char* mode, const char* prompt)
+  //char *deflt;
+  //char *extension;    /* default extension */
+  //char *mode;   /* read "r" or write "w" */
+  //char *prompt;    /* prompt for user */
 {
     char extname[100];          /* trial name with extension added */
     FILE *fp = NULL;            /* file corresponding to filename */
@@ -775,10 +773,9 @@ int check_aborted()
 *    Reads and discards characters until a newline is seen
 ****************************************************************************/
 
-void readln(fp)
-  register FILE *fp;
+void readln(FILE* fp)
 {
-    register int c;
+    int c;
     while (((c = getc(fp)) != '\n') && (c != EOF)) ;
 }
 
@@ -811,7 +808,7 @@ void readln(fp)
 #ifdef DOTS_FOR_ARGS
 
 /* define with ... in arg list and use vsnprintf to get temp1 */
-public void gprintf(long where, char *format, ...)
+public void gprintf(long where, const char *format, ...)
 {
     char temp1[GPRINTF_MESSAGE_LEN];
 #ifdef AMIGA
@@ -969,8 +966,7 @@ int c;
     return(c);
 }
 #else
-public int gputchar(c)
-int c;
+public int gputchar(int c)
 {
     putchar((char)c);
     return(c);
@@ -1004,8 +1000,7 @@ public int ggetchar()
 
 #ifndef ggets
 
-public char *ggets(str)
-  char *str;
+public char *ggets(char* str)
 {
     char *s = str;
     int c;
@@ -1048,8 +1043,7 @@ public char *ggets(str)
 *    the character is returned in *c.
 ****************************************************************************/
 
-public boolean get_ascii(c)
-  char *c;
+public boolean get_ascii(char* c)
 {
     check_aborted(); /* input buffer check */
     if (type_ahead_count == 0) return FALSE;
@@ -1088,8 +1082,7 @@ char *c;
 #endif
 
 #ifdef DOS
-public boolean ascii_input(c)
-char *c;
+public boolean ascii_input(char* c)
 {
     if (abort_flag == ABORT_LEVEL) {
             *c=ABORT_CHAR;

@@ -445,7 +445,7 @@ void sampler_print_tree(snd_susp_type a_susp, int n)
 
 sound_type snd_make_sampler(sound_type s, double step, double loop_start, rate_type sr, double hz, time_type t0, sound_type s_fm, long npoints)
 {
-    register sampler_susp_type susp;
+    sampler_susp_type susp;
     /* sr specified as input parameter */
     /* t0 specified as input parameter */
     int interp_desc = 0;

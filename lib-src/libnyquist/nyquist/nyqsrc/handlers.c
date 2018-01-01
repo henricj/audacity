@@ -2,11 +2,11 @@
 
 #include "musiprog.h"
 
-char *app_syntax = "";
+const char *app_syntax = "";
 
 /* note -- a simple way to make a midi note on channel 1 */
 /**/
-void note(pitch, dur)
+void note(int pitch, int dur)
 {
 }
 
@@ -35,8 +35,7 @@ void keydown(int c, int k, int v)
 
 /* midievent -- handle a midi message */
 /**/
-void midievent(midi_data)
-  byte midi_data[4];
+void midievent(byte midi_data[4])
 {
     /* this is only called if mididecode is false so */
     /* you can assume this function is never called  */
