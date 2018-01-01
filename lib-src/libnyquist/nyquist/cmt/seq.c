@@ -147,11 +147,7 @@ private void cycle(seq_type seq)
 * WARNING: this implementation assumes that individual events are never freed!!
 ****************************************************************************/
 
-private event_type event_create(seq, size, etime, eline)
-  seq_type seq;
-  int size;
-  time_type etime;
-  int eline;
+private event_type event_create(seq_type seq, int size, time_type etime, int eline)
 {
     event_type result = (event_type) chunk_alloc(seq, size);
     if (result) {
@@ -167,17 +163,10 @@ private event_type event_create(seq, size, etime, eline)
 
 /* insert_call -- add a call event to the seq */
 /**/
-event_type insert_call(seq, ctime, cline, voice, addr, value, n)
-  seq_type seq;
-  time_type ctime;
-  int cline;
-  int voice;
-  int (*addr)();
-  long value[SEQ_MAX_PARMS];
-  int n;
+event_type insert_call(seq_type seq, time_type ctime, int cline, int voice, int (*addr)(), long value[SEQ_MAX_PARMS], int n)
 {
     int i;
-    register event_type event = event_create(seq, callsize, ctime, cline);
+    event_type event = event_create(seq, callsize, ctime, cline);
     if (seq_print) {
         gprintf(TRANS, 
             "call(%lx): time %ld, line %d, voice %d, fn %lx,\n\tvalues:",
@@ -200,11 +189,7 @@ event_type insert_call(seq, ctime, cline, voice, addr, value, n)
   
 /* insert_clock -- add a clock cmd to the seq */
 /**/
-event_type insert_clock(seq, ctime, cline, ticksize)
-  seq_type seq;
-  time_type ctime;
-  int cline;
-  time_type ticksize;
+event_type insert_clock(seq_type seq, time_type ctime, int cline, time_type ticksize)
 {
     register event_type event = event_create(seq, clocksize, ctime, cline);
 
@@ -223,15 +208,9 @@ event_type insert_clock(seq, ctime, cline, ticksize)
 
 /* insert_ctrl -- add a control to the seq */
 /**/
-event_type insert_ctrl(seq, ctime, cline, ctrl, voice, value)
-  seq_type seq;
-  time_type ctime;
-  int cline;
-  int ctrl;
-  int voice;
-  int value;
+event_type insert_ctrl(seq_type seq, time_type ctime, int cline, int ctrl, int voice, int value)
 {
-    register event_type event = event_create(seq, ctrlsize, ctime, cline);
+    event_type event = event_create(seq, ctrlsize, ctime, cline);
     if (seq_print) {
         gprintf(TRANS,
             "ctrl(%lx): time %ld, line %d, ctrl %d, voice %d, value %d\n",
@@ -249,15 +228,7 @@ event_type insert_ctrl(seq, ctime, cline, ctrl, voice, value)
 
 /* insert_ctrlramp -- add a control ramp event to the seq */
 /**/
-event_type insert_ctrlramp(seq, rtime, rline, voice, step, dur, ctrl, v1, v2)
-  seq_type seq;
-  time_type rtime;
-  int rline;
-  int voice;
-  time_type step;
-  time_type dur;
-  int ctrl;
-  int v1, v2;
+event_type insert_ctrlramp(seq_type seq, time_type rtime, int rline, int voice, time_type step, time_type dur, int ctrl, int v1, int v2)
 {
     register event_type event = event_create(seq, ctrlrampsize, rtime, rline);
     if (seq_print) {
@@ -287,11 +258,7 @@ event_type insert_ctrlramp(seq, rtime, rline, voice, step, dur, ctrl, v1, v2)
 
 /* insert_def -- add a definition to the dictionary */
 /**/
-def_type insert_def(seq, symbol, definition, deflen)
-  seq_type seq;
-  char *symbol;
-  unsigned char *definition;
-  int deflen;
+def_type insert_def(seq_type seq, char* symbol, unsigned char* definition, int deflen)
 {
     int i;
     def_type defn = (def_type) chunk_alloc(seq, sizeof(def_node));
@@ -314,21 +281,14 @@ def_type insert_def(seq, symbol, definition, deflen)
 
 /* insert_deframp -- add a def ramp event to the seq */
 /**/
-event_type insert_deframp(seq, rtime, rline, voice, step, dur,
-                          def, nparms, parms, parm_num, to_value)
-  seq_type seq;
-  time_type rtime;
-  int rline;
-  int voice;
-  time_type step;
-  time_type dur;
-  def_type def;
-  int nparms;           /* number of parameters for macro */
-  short parms[];        /* actual parameter vector */
-  int parm_num;         /* which of the actual parameters to ramp */
-  int to_value;         /* final destination of ramp */
+event_type insert_deframp(seq_type seq, time_type rtime, int rline, int voice, time_type step, time_type dur,
+                          def_type def, int nparms, short parms[], int parm_num, int to_value)
+  //int nparms;           /* number of parameters for macro */
+  //short parms[];        /* actual parameter vector */
+  //int parm_num;         /* which of the actual parameters to ramp */
+  //int to_value;         /* final destination of ramp */
 {
-    register event_type event = event_create(seq, deframpsize, rtime, rline);
+    event_type event = event_create(seq, deframpsize, rtime, rline);
     if (seq_print) {
         int i;
         gprintf(TRANS, 
@@ -383,9 +343,7 @@ event_type insert_deframp(seq, rtime, rline, voice, step, dur,
 *    command occurs as another hint, but we don't.
 ****************************************************************************/
 
-private void insert_event(seq, event)
-  seq_type seq;
-  register event_type event;
+private void insert_event(seq_type seq, event_type event)
 {
     event_type *evlptr = &(seq_eventlist(seq));
     if ((*evlptr == NULL) ||
@@ -400,8 +358,8 @@ private void insert_event(seq, event)
 		 * it set, the client may access the sequence before the next
 		 * insert.
          */
-        register event_type previous;
-        register event_type insert_before;
+        event_type previous;
+        event_type insert_before;
 
 		if (!seq->current) {
 			seq->current = seq_eventlist(seq);
@@ -432,15 +390,9 @@ private void insert_event(seq, event)
 
 /* insert_macctrl -- add a control to the seq */
 /**/
-event_type insert_macctrl(seq, ctime, cline, ctrl, voice, value)
-  seq_type seq;
-  time_type ctime;
-  int cline;
-  int ctrl;
-  int voice;
-  int value;
+event_type insert_macctrl(seq_type seq, time_type ctime, int cline, int ctrl, int voice, int value)
 {
-    register event_type event = event_create(seq, macctrlsize, ctime, cline);
+    event_type event = event_create(seq, macctrlsize, ctime, cline);
     if (seq_print) {
         gprintf(TRANS, 
             "macctrl(%lx): time %ld, line %d, ctrl %d, voice %d, value %d\n",
@@ -460,16 +412,9 @@ event_type insert_macctrl(seq, ctime, cline, ctrl, voice, value)
 
 /* insert_macro -- insert a macro call seq */
 /**/
-event_type insert_macro(seq, ctime, cline, def, voice, nparms, parms)
-  seq_type seq;
-  time_type ctime;
-  int cline;
-  def_type def;
-  int voice;
-  int nparms;
-  short *parms;
+event_type insert_macro(seq_type seq, time_type ctime, int cline, def_type def, int voice, int nparms, short* parms)
 {
-    register event_type event = event_create(seq, macrosize, ctime, cline);
+    event_type event = event_create(seq, macrosize, ctime, cline);
     if (seq_print) {
         int i;
         gprintf(TRANS, 
@@ -494,14 +439,7 @@ event_type insert_macro(seq, ctime, cline, def, voice, nparms, parms)
 
 /* insert_note -- add a note to the seq */
 /**/
-event_type insert_note(seq, ntime, nline, voice, pitch, dur, loud)
-  seq_type seq;
-  time_type ntime;
-  int nline;
-  int voice;
-  int pitch;
-  time_type dur;
-  int loud;
+event_type insert_note(seq_type seq, time_type ntime, int nline, int voice, int pitch, time_type dur, int loud)
 {
     register event_type event = event_create(seq, notesize, ntime, nline);
 
@@ -525,15 +463,9 @@ event_type insert_note(seq, ntime, nline, voice, pitch, dur, loud)
 
 /* insert_seti -- add a seti event to the seq */
 /**/
-event_type insert_seti(seq, stime, sline, voice, addr, value)
-  seq_type seq;
-  time_type stime;
-  int sline;
-  int voice;
-  int *addr;
-  int value;
+event_type insert_seti(seq_type seq, time_type stime, int sline, int voice, int* addr, int value)
 {
-    register event_type event = event_create(seq, setisize, stime, sline);
+    event_type event = event_create(seq, setisize, stime, sline);
     if (seq_print) {
         gprintf(TRANS, 
             "seti(%ld): time %ld, line %d, voice %d, addr %ld, value %d\n",
@@ -555,10 +487,9 @@ event_type insert_seti(seq, stime, sline, voice, addr, value)
 void noop(seq_type seq) {}
 
 
-private void process_event(seq)
-  seq_type seq;
+private void process_event(seq_type seq)
 {
-    register event_type event;
+    event_type event;
     if (!seq->runflag) return;
     while ((event = seq->current) && (event->ntime <= virttime)) {
         int voice;
@@ -693,14 +624,7 @@ private void process_event(seq)
 
 /* ramp_event -- generate a ramp */
 /**/
-private void ramp_event(seq, event, value, to_value, increment, step, n)
-  seq_type seq;
-  register event_type event;
-  unsigned int value;
-  unsigned int to_value;
-  int increment;
-  time_type step;
-  int n;
+private void ramp_event(seq_type seq, event_type event, unsigned int value, unsigned int to_value, int increment, time_type step, int n)
 {
     if (seq->runflag) {
         int voice = vc_voice(event->nvoice);
@@ -732,8 +656,7 @@ private void ramp_event(seq, event, value, to_value, increment, step, n)
 /*
  * to fit on one line, write out ranges, e.g. 1-5 9-11 
  */
-void report_enabled_channels(seq)
-  seq_type seq;
+void report_enabled_channels(seq_type seq)
 {
     ulong mask = seq_channel_mask(seq);
     int i, range_open_at = 0;
@@ -760,13 +683,7 @@ void report_enabled_channels(seq)
  *       parameter["parm_num"]
  */
 /*private*/
-void send_macro(ptr, voice, parameter, parm_num, value, nline)
-  register unsigned char *ptr;
-  int voice;
-  short parameter[];
-  int parm_num;
-  int value;    
-  int nline;
+void send_macro(unsigned char *ptr, int voice, short parameter[], int parm_num, int value, int nline)
 {
     register unsigned char code, *loc;
     while ((code = *ptr++)) {
@@ -878,8 +795,7 @@ void seq_cycle(seq_type seq, boolean flag, time_type dur)
 /*
  * Assumes that noteoff_count was incremented when event started.
  */
-void seq_end_event(seq)
-  seq_type seq;
+void seq_end_event(seq_type seq)
 {
     /*gprintf(TRANS, "nd");*/
     seq->noteoff_count--;
@@ -903,8 +819,7 @@ void seq_end_event(seq)
 *    frees storage occupied by a seq
 ****************************************************************************/
 
-private void seq_free_meth(seq)
-  seq_type seq;
+private void seq_free_meth(seq_type seq)
 {
     seq_free_chunks(seq);
     if (seq->timebase) timebase_free(seq->timebase);
@@ -924,8 +839,7 @@ private void seq_free_meth(seq)
  * the seq_type itself.  Reference counts are checked and chunks are
  * only freed when the last reference is removed.
  */
-public void seq_free_chunks(seq)
-  seq_type seq;
+public void seq_free_chunks(seq_type seq)
 {
     chunk_type tail;
     chunk_type head;
@@ -942,9 +856,7 @@ public void seq_free_chunks(seq)
 }
 
 
-seq_type seq_init(seq, create_chunk)
-    seq_type seq;
-    int create_chunk;
+seq_type seq_init(seq_type seq, int create_chunk)
 {
     if (!seq || !(seq->timebase = timebase_create(50))) {
         return NULL;
@@ -1058,8 +970,7 @@ time_type seq_pause(seq_type seq, boolean flag)
 
 /* seq_play -- play a sequence from the current event forward */
 /**/
-void seq_play(seq)
-  seq_type seq;
+void seq_play(seq_type seq)
 {
     timebase_type prev_timebase = timebase;
     register timebase_type reg_timebase = seq->timebase;
@@ -1124,18 +1035,14 @@ void seq_reset_meth(seq_type seq)
 
 /* seq_set_loudness -- set the loudness offset of a sequence */
 /**/
-void seq_set_loudness(seq, loud)
-  seq_type seq;
-  int loud;
+void seq_set_loudness(seq_type seq, int loud)
 {
     seq->loudness = loud;
 }
 
 /* seq_set_rate -- set the rate of a sequence */
 /**/
-void seq_set_rate(seq, rate)
-  seq_type seq;
-  time_type rate;
+void seq_set_rate(seq_type seq, time_type rate)
 {
     seq->rate = rate;
     if (!seq->paused) set_rate(seq->timebase, rate);
@@ -1144,9 +1051,7 @@ void seq_set_rate(seq, rate)
 
 /* seq_set_transpose -- set the sequence transposition */
 /**/
-void seq_set_transpose(seq, trans)
-  seq_type seq;
-  int trans;
+void seq_set_transpose(seq_type seq, int trans)
 {
     seq->transpose = trans;
 }
@@ -1154,9 +1059,7 @@ void seq_set_transpose(seq, trans)
 
 /* seq_start_time -- set the current pointer so the sequence starts here */
 /**/
-void seq_start_time(seq, start_time)
-  seq_type seq;
-  time_type start_time;
+void seq_start_time(seq_type seq, time_type start_time)
 {
     timebase_type prev_timebase = timebase;
     if (!seq->runflag) {
@@ -1180,8 +1083,7 @@ void seq_start_time(seq, start_time)
 
 /* seq_stop -- stop a sequence, clear out all pending events */
 /**/
-void seq_stop(seq)
-  seq_type seq;
+void seq_stop(seq_type seq)
 {
     timebase_type prev_timebase = timebase;
 

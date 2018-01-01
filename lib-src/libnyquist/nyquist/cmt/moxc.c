@@ -134,7 +134,7 @@ void callallcancel()
 /**/
 void catchup()
 {
-    register call_type call;
+    call_type call;
     /* Remember where we're going in virtual time because setting the
      * rate will also modify timebase->virt_base.  We don't want catchup
      * to stop short:
@@ -143,7 +143,7 @@ void catchup()
     /* remember timebase here because it's possible that a call will do
      * a timebase_use() and change it:
      */
-    register timebase_type my_base = timebase;
+    timebase_type my_base = timebase;
 
     while (my_base->heap_size != 0 &&
            (my_base->heap[1]->u.e.time < target_time)) {
@@ -345,8 +345,7 @@ private void callrun()
 *       Other "caused" calls will take place during the rest provided
 *       this routine is called from "mainscore" (see m_rest description).
 ****************************************************************************/
-void m_restuntil(time)
-  time_type time;
+void m_restuntil(time_type time)
 {
     time = virt_to_real(timebase, time);
     while(time > gettime()) {
@@ -367,10 +366,9 @@ void m_restuntil(time)
 *       "mainscore" without using "cause".
 ****************************************************************************/
 
-void m_rest(time)
-  time_type time;
+void m_rest(time_type time)
 {
-    m_restuntil(time + real_to_virt(timebase, gettime()));      
+    m_restuntil(time + real_to_virt(timebase, gettime()));
 }
 
 /****************************************************************************
@@ -381,9 +379,7 @@ void m_rest(time)
 * Effect: initializes moxc system
 ****************************************************************************/
 
-boolean moxcinit(argc, argv)
-    int argc;
-    char * argv[];
+boolean moxcinit(int argc, const char* argv[])
 {
     meminit();
     io_init();
@@ -444,8 +440,7 @@ boolean moxcinit(argc, argv)
 * Effect: dispatch on user inputs, cause calls
 ****************************************************************************/
 
-void moxcwait(dateoftimeout)
-  time_type dateoftimeout;
+void moxcwait(time_type dateoftimeout)
 {
     time_type maxtime = dateoftimeout;
 

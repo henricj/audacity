@@ -42,10 +42,10 @@
 
 static int sndread_file_open_count = 0;
 
-void read__fetch(susp, snd_list)
-  register read_susp_type susp;
-  snd_list_type snd_list;
+void read__fetch(struct snd_susp_struct * p, snd_list_type snd_list)
 {
+    read_susp_type susp = (read_susp_type)p;
+    
     long n; /* jlh Changed type to long, trying to make move_samples_... work */
     sample_block_type out;
     register sample_block_values_type out_ptr;

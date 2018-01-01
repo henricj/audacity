@@ -43,21 +43,21 @@ extern time_type clock_ticksize;  /* millisec per tick shifted 16 bits */
 extern boolean clock_running;     /* TRUE if clock is running */
 extern boolean use_midi_clock;
 
-private void smfw_bend();
-private void smfw_cause_noteoff();
-private void smfw_ctrl();
-private void smfw_deltatime();
-private void smfw_dotrack();
-private void smfw_exclusive();
-private void smfw_noteoff();
-private void smfw_noteon();
-private void smfw_process_event();
+private void smfw_bend(seq_type seq, int voice, int value);
+private void smfw_cause_noteoff(seq_type seq, time_type delay, int voice, int pitch);
+private void smfw_ctrl(seq_type seq, int voice, int ctrl_name, int value);
+private void smfw_deltatime(void);
+private void smfw_dotrack(seq_type seq);
+private void smfw_exclusive(int length, const unsigned char* msg);
+private void smfw_noteoff(seq_type seq, int voice, int pitch);
+private void smfw_noteon(seq_type seq, int voice, int pitch, int vel);
+private void smfw_process_event(seq_type seq);
 private void smfw_ramp_event(seq_type seq, event_type event, 
     unsigned int value, unsigned int to_value, int increment,
     time_type step, int n);
-private void smfw_send_macro();
+private void smfw_send_macro(unsigned char* ptr, int voice, short parameter[], int parm_num, int value);
 private void smfw_touch(seq_type seq, int voice, int value);
-private void writevarlen();
+private void writevarlen(long value);
 
 
 /* smfw_bend -- write a pitch bend to a midi file */
@@ -81,11 +81,7 @@ private void smfw_bend(seq_type seq, int voice, int value)
  * so no real timing delays occur.  The effect is to sort events by their
  * specified time.
  */
-private void smfw_cause_noteoff(seq, delay, voice, pitch)
-  seq_type seq;
-  time_type delay;
-  int voice;
-  int pitch;
+private void smfw_cause_noteoff(seq_type seq, time_type delay, int voice, int pitch)
 {
     if(debug)       gprintf(TRANS, "cause noteoff at %ld...", virttime + delay);
     pitch += seq->transpose;
@@ -97,8 +93,7 @@ private void smfw_cause_noteoff(seq, delay, voice, pitch)
     
 }
 
-private void smfw_clock_event(old_ticksize, new_ticksize)
-  time_type old_ticksize, new_ticksize;
+private void smfw_clock_event(time_type old_ticksize, time_type new_ticksize)
 {
     time_type temp_ticksize = new_ticksize;
     new_ticksize = scale(new_ticksize, 375L, 1024L);
@@ -139,7 +134,7 @@ private void smfw_ctrl(seq_type seq, int voice, int ctrl_name, int value)
 
 /* smfw_deltatime -- write the time difference between now an previous event */
 /**/
-private void smfw_deltatime()
+private void smfw_deltatime(void)
 {
     /* if last_ and clock_ are different, use last_ for clock deltatime*/
     time_type use_ticksize = (clock_ticksize != last_tick_size) ?
@@ -159,8 +154,7 @@ private void smfw_deltatime()
 
 
 /* smfw_dotrack -- write the remainder of a track  */
-private void smfw_dotrack(seq)
-  seq_type seq;
+private void smfw_dotrack(seq_type seq)
 {
     long end_marker;
     timebase_type old_timebase = timebase;
@@ -205,9 +199,7 @@ private void smfw_dotrack(seq)
 
 
 /* smfw_exclusive -- write a system excl. msg to midi file */
-private void smfw_exclusive(length, msg)
-int length;
-unsigned char *msg; 
+private void smfw_exclusive(int length, const unsigned char* msg)
 {
     int length_count = 0;
 
@@ -222,9 +214,7 @@ unsigned char *msg;
     if(*(--msg) != MIDI_EOX) gprintf(TRANS, "ERROR: no end of sysex\n");
 }
 
-private void smfw_msg_write(n,c1,c2,c3)
-  int n;
-  unsigned char c1,c2,c3;
+private void smfw_msg_write(int n, unsigned char c1, unsigned char c2, unsigned char c3)
 {
     if(debug)   gprintf(TRANS, "MSGWRITE %d bytes (time:%ld)\n", n, virttime);
     smfw_deltatime();
@@ -259,9 +249,7 @@ private void smfw_noteoff(seq_type seq, int voice, int pitch)
  * NOTE: the seq parameter is not used here, but is passed in by the
  * seq_noteon macro, so we have to have a placeholder for it.
  */
-private void smfw_noteon(seq, voice, pitch, vel)
-  seq_type seq;
-  int voice, pitch, vel;
+private void smfw_noteon(seq_type seq, int voice, int pitch, int vel)
 {
     if(debug)   gprintf(TRANS, "smfw_noteon %d: %d %d(time:%ld)\n", voice, pitch, vel, virttime);
     smfw_deltatime();
@@ -273,8 +261,7 @@ private void smfw_noteon(seq, voice, pitch, vel)
 
 /* smfw_process_event -- write a seq event to a midi file */
 /**/
-private void smfw_process_event(seq)
-  seq_type seq;
+private void smfw_process_event(seq_type seq)
 {
     register event_type event;
     if (!seq->runflag) return;
@@ -434,14 +421,7 @@ private void smfw_process_event(seq)
 }
 
 /* smfw_ramp_event -- generate a ramp to write*/
-private void smfw_ramp_event(seq, event, value, to_value, increment, step, n)
-  seq_type seq;
-  register event_type event;
-  unsigned int value;
-  unsigned int to_value;
-  int increment;
-  time_type step;
-  int n;
+private void smfw_ramp_event(seq_type seq, event_type event, unsigned int value, unsigned int to_value, int increment, time_type step, int n)
 {
     if(debug)   gprintf(TRANS, "ramp of %d: %d to %d\n", event->u.ramp.ctrl, value >> 8,
         to_value >> 8);     
@@ -468,14 +448,9 @@ private void smfw_ramp_event(seq, event, value, to_value, increment, step, n)
 
 /* smfw_send_macro -- write msg to midi file from a seq "macro" event */
 /**/
-private void smfw_send_macro(ptr, voice, parameter, parm_num, value)
-  register unsigned char *ptr;
-  int voice;
-  short parameter[];
-  int parm_num;
-  int value;
+private void smfw_send_macro(unsigned char* ptr, int voice, short parameter[], int parm_num, int value)
 {
-    register unsigned char code, *loc;
+    unsigned char code, *loc;
     while ((code = *ptr++)) {
         loc = ptr + *ptr;
         ptr++;
@@ -509,9 +484,7 @@ private void smfw_touch(seq_type seq, int voice, int value)
 }
 
 
-void seq_write_smf(seq, outfile)
-  seq_type seq;
-  FILE *outfile;
+void seq_write_smf(seq_type seq, FILE* outfile)
 {
     time_type put_tick_size;
     int i;
@@ -521,7 +494,7 @@ void seq_write_smf(seq, outfile)
     time_type starting_ticksize = 1638400L; /*default midifile tempo 100*/
     int track_count = 0;
     long track_count_marker;
-    register event_type event;
+    event_type event;
 
     seti_counter = 0;
     
@@ -630,10 +603,9 @@ void seq_write_smf(seq, outfile)
 
 /* writevarlen -- write a variable length integer to midi file */
 /**/
-private void writevarlen(value)
-  register long value;
+private void writevarlen(long value)
 {       
-    register ulong buffer;
+    ulong buffer;
 
     if(debug) gprintf(TRANS, "variable length quantity...");
 

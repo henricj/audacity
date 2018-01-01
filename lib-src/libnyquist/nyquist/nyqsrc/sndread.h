@@ -17,4 +17,4 @@ LVAL snd_make_read(unsigned char *filename, time_type offset, time_type t0,
         double *srate, double *dur, long *flags, long *byte_offset);
 /* LISP: (SND-READ STRING ANYNUM ANYNUM FIXNUM* FIXNUM* FIXNUM* FIXNUM* FIXNUM* ANYNUM* ANYNUM* FIXNUM^ FIXNUM^) */
 
-void read_free();
+void read_free(snd_susp_type a_susp);
