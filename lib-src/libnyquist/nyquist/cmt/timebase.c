@@ -21,7 +21,7 @@
 timebase_type timebase_queue = NULL;    /* waiting to run timebase queue */
 call_type callfree = NULL;      /* free list */
 
-private void fatal();
+private void fatal(const char* msg);
 
 
 /****************************************************************************
@@ -32,10 +32,9 @@ private void fatal();
 *       returns an initialized timebase_type
 ****************************************************************************/
 
-timebase_type timebase_create(maxsize)
-  int maxsize;
+timebase_type timebase_create(int maxsize)
 {
-   static char *error_msg = "Out of memory in timebase_create()";
+   static const char *error_msg = "Out of memory in timebase_create()";
     timebase_type base = (timebase_type) memget(sizeof(timebase_node));
     if (!base) fatal(error_msg);
     base->next = NULL;
@@ -61,9 +60,7 @@ timebase_type timebase_create(maxsize)
 *       linear insertion; to be changed to heap
 ****************************************************************************/
 
-void callinsert(base, call)
-  timebase_type base;
-  call_type call;
+void callinsert(timebase_type base, call_type call)
 {
     int i;
     register call_type *heap = base->heap;
@@ -120,13 +117,12 @@ void callinsert(base, call)
 * Assumes:
 *       call is not null
 ****************************************************************************/
-void callshow(call)
-    call_type call;
+void callshow(call_type call)
 {
     int i;
-    gprintf(TRANS,"address:  %lx\n", (ulong)call);
-    gprintf(TRANS,"time:     %ld\n", call->u.e.time);
-    gprintf(TRANS,"routine:  %lx\n", (ulong)call->u.e.routine);
+    gprintf(TRANS,"address:  %p\n", call);
+    gprintf(TRANS,"time:     %lu\n", call->u.e.time);
+    gprintf(TRANS,"routine:  %p\n", call->u.e.routine);
     gprintf(TRANS,"parameters:");
     for (i = 0; i < MAX_CALL_ARGS; i++) {
         gprintf(TRANS, " %d", call->u.e.p.arg[i]);
@@ -141,8 +137,7 @@ void callshow(call)
 * Effect: print message and exit program
 ***************************************************************/
 
-private void fatal(msg)
-  char *msg;
+private void fatal(const char* msg)
 {
     gprintf(FATAL, msg);
     EXIT(1);
@@ -155,8 +150,7 @@ private void fatal(msg)
 * Effect: deallocate the time base
 ***************************************************************/
 
-void timebase_free(timebase)
-  timebase_type timebase;
+void timebase_free(timebase_type timebase)
 {
     remove_base(timebase);
     if (timebase->heap) {
@@ -174,8 +168,7 @@ void timebase_free(timebase)
 *       computes the next_time field from the top of the heap
 ***************************************************************/
 
-void insert_base(timebase)
-  timebase_type timebase;
+void insert_base(timebase_type timebase)
 {
     register timebase_type *ptr = &timebase_queue;
     register time_type next_time = MAXTIME;
@@ -216,8 +209,7 @@ void insert_base(timebase)
 * Effect: if timebase is in the queue, remove it
 ***************************************************************/
 
-void remove_base(timebase)
-  timebase_type timebase;
+void remove_base(timebase_type timebase)
 {
     timebase_type *ptr = &timebase_queue;
     while (*ptr) {
@@ -272,9 +264,7 @@ call_type remove_call(timebase_type a_timebase)
 * Effect: makes the current rate of timebase be rate
 ***************************************************************/
 
-void set_rate(base, rate)
-  timebase_type base;
-  time_type rate;
+void set_rate(timebase_type base, time_type rate)
 {
     if (base == timebase) base->virt_base = virttime;
     else base->virt_base = real_to_virt(base, eventtime);
@@ -294,9 +284,7 @@ void set_rate(base, rate)
 * Effect: makes the current virtual time of timebase be vtime
 ***************************************************************/
 
-void set_virttime(base, vtime)
-  timebase_type base;
-  time_type vtime;
+void set_virttime(timebase_type base, time_type vtime)
 {
     base->real_base = eventtime;
     base->virt_base = vtime;
@@ -312,8 +300,7 @@ void set_virttime(base, vtime)
 * Effect: sets up globals: timebase, virttime
 ***************************************************************/
 
-void timebase_use(base)
-  register timebase_type base;
+void timebase_use(timebase_type base)
 {
     if (timebase != base) {
         timebase = base;
