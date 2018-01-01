@@ -31,10 +31,10 @@
 #include "midifile.h"
 #include "tempomap.h"
 
-int filegetc();
-void initfuncs();
-void prtime();
-void snding_free();
+int filegetc(void);
+void initfuncs(void);
+void prtime(void);
+//void snding_free();
 
 typedef struct snding_struct {
     struct snding_struct *next;
@@ -54,43 +54,41 @@ long prev_ticksize;             /* remember the previous ticksize */
 int sysex_id = 0;
 
 
-void smf_noteoff();
-void smf_error();
-void smf_header();
-void smf_trackstart();
-void smf_trackend();
-void smf_noteon();
-void smf_pressure();
-void smf_parameter();
-void smf_pitchbend();
-void smf_program();
-void smf_chanpressure();
-void smf_sysex();
-void smf_metamisc();
-void smf_metaseq();
-void smf_metaeot();
-void smf_timesig();
-void smf_smpte();
-void smf_tempo();
-void smf_keysig();
-void smf_metaspecial();
-void smf_metatext();
-void smf_arbitrary();
+void smf_noteoff(int chan, int pitch, int vol);
+void smf_error(const char* msg);
+void smf_header(int format, int ntrks, int division);
+void smf_trackstart(void);
+void smf_trackend(void);
+void smf_noteon(int chan, int pitch, int vol);
+void smf_pressure(int chan, int pitch, int press);
+void smf_parameter(int chan, int control, int value);
+void smf_pitchbend(int chan, int msb, int lsb);
+void smf_program(int chan, int program);
+void smf_chanpressure(int chan, int press);
+void smf_sysex(int leng, const char* mess);
+void smf_metamisc(int type, int leng, const char* mess);
+void smf_metaseq(int num);
+void smf_metaeot(void);
+void smf_timesig(int nn, int dd, int cc, int bb);
+void smf_smpte(int hr, int mn, int se, int fr, int ff);
+void smf_tempo(long tempo);
+void smf_keysig(int sf, int mi);
+void smf_metaspecial(int type, int leng, const char * mess);
+void smf_metatext(int type, int leng, const char* mess);
+void smf_arbitrary(int leng, const char* mess);
 
 private seq_type the_score;
 
 static FILE *F;
 
-int filegetc()
+int filegetc(void)
 {
 /*      int temp = getc(F);
         printf(" %x ", temp);*/
         return(int)(getc(F));
 }
 
-void seq_read_smf(seq, fp)
-  seq_type seq;
-  FILE *fp;
+void seq_read_smf(seq_type seq, FILE* fp)
 {
     F = fp;
     initfuncs();
@@ -140,13 +138,13 @@ void seq_read_smf(seq, fp)
  */
 unsigned long divisions = 24L;
 
-time_type gio_time()
+time_type gio_time(void)
 {
     return (tempomap_lookup(the_tempomap, Mf_currtime) + 125L) / 250L;
 }
 
 
-void smf_header(format,ntrks,division)
+void smf_header(int format, int ntrks, int division)
 {
 /*      gprintf(TRANS, "Header format=%d ntrks=%d division=%d\n",
                 format,ntrks,division); */
@@ -159,17 +157,17 @@ void smf_header(format,ntrks,division)
 }
 
 
-void smf_trackstart()
+void smf_trackstart(void)
 {
 /*      gprintf(TRANS, "Track start\n"); */
 }
 
-void smf_trackend()
+void smf_trackend(void)
 {
 /*      gprintf(TRANS, "Track end\n"); */
 }
 
-void smf_noteon(chan,pitch,vol)
+void smf_noteon(int chan, int pitch, int vol)
 {
         snding_type snding;
         if (vol == 0) {  /* convert to a noteoff */
@@ -190,7 +188,7 @@ void smf_noteon(chan,pitch,vol)
         snding->channel = chan;
 }
 
-void smf_noteoff(chan,pitch,vol)
+void smf_noteoff(int chan, int pitch, int vol)
 {
         snding_type *snding_ptr;
         register snding_type snding;
@@ -214,14 +212,14 @@ void smf_noteoff(chan,pitch,vol)
 }
 
 
-void smf_pressure(chan,pitch,press)
+void smf_pressure(int chan, int pitch, int press)
 {
         prtime();
         gprintf(TRANS, "Pressure, chan=%d pitch=%d press=%d (IGNORED)\n",
                 chan + 1, pitch, press);
 }
 
-void smf_parameter(chan,control,value)
+void smf_parameter(int chan, int control, int value)
 {
         int ctrl = 0;
 /*      prtime();
@@ -245,7 +243,7 @@ void smf_parameter(chan,control,value)
  * NOTE: the midifile code from Tim Thompson has the msb and lsb bytes swapped.
  *   Thus the parameter msb is really the low order byte and lsb is high order.
  */
-void smf_pitchbend(chan,msb,lsb)
+void smf_pitchbend(int chan, int msb, int lsb)
 {
 /*      prtime();
         gprintf(TRANS, "Pitchbend, chan=%d msb=%d lsb=%d\n",chan+1,msb,lsb); */
@@ -253,14 +251,14 @@ void smf_pitchbend(chan,msb,lsb)
                     ((lsb << 7) + msb) >> 6);
 }
 
-void smf_program(chan,program)
+void smf_program(int chan, int program)
 {
 /*      prtime();
         gprintf(TRANS, "Program, chan=%d program=%d\n",chan+1,program); */
         insert_ctrl(the_score, gio_time(), 0, PROGRAM_CTRL, chan + 1, program);
 }
 
-void smf_chanpressure(chan,press)
+void smf_chanpressure(int chan, int press)
 {
 /*      prtime();
         gprintf(TRANS, "Channel pressure, chan=%d pressure=%d\n",chan+1,press);
@@ -268,9 +266,7 @@ void smf_chanpressure(chan,press)
         insert_ctrl(the_score, gio_time(), 0, TOUCH_CTRL, chan + 1, press);
 }
 
-void smf_sysex(leng,mess)
-int leng;
-char *mess;
+void smf_sysex(int leng, const char* mess)
 {
         char symb[10];
         def_type defn;
@@ -295,8 +291,7 @@ char *mess;
         gprintf(TRANS, "Sysex, leng=%d (IGNORED)\n",leng); */
 }
 
-void smf_metamisc(type,leng,mess)
-char *mess;
+void smf_metamisc(int type,int leng, const char* mess)
 {
         prtime();
         gprintf(TRANS,
@@ -304,8 +299,7 @@ char *mess;
                 type, leng);
 }
 
-void smf_metaspecial(type,leng,mess)
-char *mess;
+void smf_metaspecial(int type, int leng, const char * mess)
 {
         prtime();
         gprintf(TRANS, 
@@ -313,10 +307,9 @@ char *mess;
                 type, leng);
 }
 
-void smf_metatext(type,leng,mess)
-char *mess;
+void smf_metatext(int type, int leng, const char* mess)
 {
-        static char *ttype[] = {
+        static const char * const ttype[] = {
                 NULL,
                 "Text Event",           /* type=0x01 */
                 "Copyright Notice",     /* type=0x02 */
@@ -333,19 +326,19 @@ char *mess;
                 type = unrecognized;
 }
 
-void smf_metaseq(num)
+void smf_metaseq(int num)
 {
         prtime();
         gprintf(TRANS, "Meta event, sequence number = %d (IGNORED)\n",num);
 }
 
-void smf_metaeot()
+void smf_metaeot(void)
 {
 /*      prtime();
         gprintf(TRANS, "Meta event, end of track\n"); */
 }
 
-void smf_keysig(sf,mi)
+void smf_keysig(int sf, int mi)
 {
 /*      prtime();
         gprintf(TRANS, "Key signature, sharp/flats=%d  minor=%d\n",sf,mi); */
@@ -359,8 +352,7 @@ void smf_keysig(sf,mi)
  * to get units of millisec and 24ths of quarter notes.  insert_clock
  * expects this to have a 16 bit fractional part.
  */
-void smf_tempo(tempo)
-long tempo;
+void smf_tempo(long tempo)
 {
         time_type ctime = gio_time();
         long ticksize = scale(tempo, 1024L, 375L);
@@ -383,7 +375,7 @@ long tempo;
         }
 }
 
-void smf_timesig(nn,dd,cc,bb)
+void smf_timesig(int nn, int dd, int cc, int bb)
 {
 /*      int denom = 1;
         while ( dd-- > 0 )
@@ -394,7 +386,7 @@ void smf_timesig(nn,dd,cc,bb)
                 nn,denom,cc,bb); */
 }
 
-void smf_smpte(hr,mn,se,fr,ff)
+void smf_smpte(int hr, int mn, int se, int fr, int ff)
 {
         prtime();
         gprintf(TRANS,
@@ -402,21 +394,19 @@ void smf_smpte(hr,mn,se,fr,ff)
                 hr, mn, se, fr, ff);
 }
 
-void smf_arbitrary(leng,mess)
-char *mess;
+void smf_arbitrary(int leng, const char* mess)
 {
         prtime();
         gprintf(TRANS, "Arbitrary bytes, leng=%d (IGNORED)\n",leng);
 }
 
-void smf_error(msg)
-  char *msg;
+void smf_error(const char* msg)
 {
     gprintf(ERROR, msg);
 }
 
 
-void prtime()
+void prtime(void)
 {
         gprintf(TRANS, "Time=%ld/%ld ",Mf_currtime, gio_time());
 }

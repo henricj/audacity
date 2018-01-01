@@ -97,9 +97,9 @@
 int ok_to_open(const char *filename, const char *mode);
 
 #define syntax_max 10           /* allow for 10 syntax strings */
-private char *syntax[syntax_max];
+private const char *syntax[syntax_max];
 private int n_syntax = 0;       /* number of strings so far */
-private char **argv;            /* command line argument vector */
+private const char **argv;            /* command line argument vector */
 private int argc;               /* length of argv */
 
 private boolean cl_rdy = FALSE;    /* set to TRUE when initialized */
@@ -112,10 +112,10 @@ private boolean cl_rdy = FALSE;    /* set to TRUE when initialized */
 /*****************************************************************************
 *    Routines local to this module
 *****************************************************************************/
-private char *cl_search();
-private int find_string();
-private void indirect_command(char *filename, char *oldarg0);
-private void ready_check();
+private const char *cl_search(const char* name, int opt_sw, int n);
+private int find_string(const char* s, boolean* abbr);
+private void indirect_command(const char *filename, const char *oldarg0);
+private void ready_check(void);
 
 /****************************************************************
 *           cl_arg
@@ -126,8 +126,7 @@ private void ready_check();
 *    arg 0 is the command name
 *****************************************************************/
 
-char *cl_arg(n)
-  int n;
+const char *cl_arg(int n)
 {
     return (n <= 0 ? argv[0] :
                      cl_search((char *)NULL, cl_ARG, n));
@@ -137,12 +136,12 @@ char *cl_arg(n)
 /**/
 void cl_help()
 {
-    register int i, j;
+    int i, j;
     int count = 0;	/* see if there are any switches or flags */
 
     for (i = 0; i < n_syntax; i++) {
-        register char *ptr = syntax[i];
-        register char c = *ptr++;
+        const char *ptr = syntax[i];
+        char c = *ptr++;
         while (c != EOS) {
             while (c != EOS && !(isalnum(c))) c = *ptr++;
             if (c != EOS) {
@@ -194,9 +193,7 @@ void cl_help()
 *    TRUE if syntax checks OK, otherwise false
 *****************************************************************************/
 
-boolean cl_init(av, ac)
-  char *av[];
-  int ac;
+boolean cl_init(const char* av[], int ac)
 {
     argv = av;      
     argc = ac;
@@ -228,11 +225,9 @@ boolean cl_init(av, ac)
 *    call cl_option and sscanf result
 *****************************************************************/
 
-long cl_int_option(name, deflt)
-  char *name;
-  long deflt;
+long cl_int_option(const char* name, long deflt)
 {
-    char *opt = cl_option(name);
+    const char *opt = cl_option(name);
     if (opt) {
         if (sscanf(opt, "%ld", &deflt) != 1) {
             gprintf(TRANS, "Warning: option %s %s not an integer, ignored\n",
@@ -257,12 +252,10 @@ long cl_int_option(name, deflt)
 *    not start with "-"
 *****************************************************************/
 
-private char *cl_search(name, opt_sw, n)
-  char *name;
-  int opt_sw;
-  int n;        /* if opt_sw is cl_ARG, n > 0 tells which one */
+private const char *cl_search(const char* name, int opt_sw, int n)
+//  int n;        /* if opt_sw is cl_ARG, n > 0 tells which one */
 {
-    register int i = 1;    /* index into command line */
+    int i = 1;    /* index into command line */
     boolean abbr;
     boolean result = TRUE;
 
@@ -270,7 +263,7 @@ private char *cl_search(name, opt_sw, n)
 
     /* parse command line: */
     while (i < argc) {
-        register char *arg = argv[i];
+        const char *arg = argv[i];
         /* arguments that start with '-' should be quoted and quotes must
            be removed by the application
          */
@@ -321,8 +314,7 @@ private char *cl_search(name, opt_sw, n)
 *    returns char *: the option string if found, otherwise null
 ****************************************************************/
 
-char *cl_option(name)
-char *name;
+const char *cl_option(const char* name)
 {
     return cl_search(name, cl_OPT, 0);
 }
@@ -335,15 +327,14 @@ char *name;
 *    boolean:    TRUE if switch found
 ****************************************************************/
 
-boolean cl_switch(name)
-char *name;
+boolean cl_switch(const char* name)
 {
     return (boolean)(cl_search(name, cl_SW, 0) != NULL);
 }
 
 /* cl_syntax -- install a string specifying options and switches */
 /**/
-boolean cl_syntax(char *s)
+boolean cl_syntax(const char *s)
 {
     if (n_syntax < syntax_max) {
         syntax[n_syntax++] = s;
@@ -365,17 +356,15 @@ boolean cl_syntax(char *s)
 *    0 = FALSE = not found, 1 = cl_OPT = option, 2 = cl_SW = switch
 *****************************************************************/
 
-private int find_string(s, abbr)
-  char *s;
-  boolean *abbr;
+private int find_string(const char* s, boolean* abbr)
 {
     int found_it = FALSE;
     int i;
     *abbr = FALSE;
     for (i = 0; i < n_syntax; i++) {    /* loop through strings */
-        register char *syntax_ptr = syntax[i];
+        const char *syntax_ptr = syntax[i];
         while (*syntax_ptr != EOS) {
-            register char *s_ptr = s;
+            const char *s_ptr = s;
             while (*syntax_ptr != EOS &&
                    !(isalnum(*syntax_ptr))) syntax_ptr++;
             while (*s_ptr != EOS && (*s_ptr++ == *syntax_ptr))
@@ -399,7 +388,7 @@ private int find_string(s, abbr)
     if (s[0] == EOS || s[1] != EOS) return FALSE;
 
     for (i = 0; i < n_syntax; i++) {    /* loop through strings */
-        char *syntax_ptr = syntax[i];
+        const char *syntax_ptr = syntax[i];
         while (*syntax_ptr != EOS) {
             while (*syntax_ptr != EOS &&
                    !(isalnum(*syntax_ptr))) syntax_ptr++;
@@ -425,9 +414,7 @@ private int find_string(s, abbr)
 
 /* get_arg -- get an argument from a file */
 /**/
-boolean get_arg(file, arg)
-  FILE *file;
-  char *arg;
+boolean get_arg(FILE* file, char* arg)
 {
     int c;
     while ((c = getc(file)) != EOF && isspace(c)) ;
@@ -443,15 +430,13 @@ boolean get_arg(file, arg)
 
 /* indirect_command -- get argv, argc from a file */
 /**/
-private void indirect_command(filename, oldarg0)
-  char *filename;
-  char *oldarg0;
+private void indirect_command(const char* filename, const char *oldarg0)
 {
     FILE *argfile = NULL;
     if (ok_to_open(filename, "r"))
         argfile = fopen(filename, "r");
     if (!argfile) {
-        argv = (char **) malloc(sizeof(char *));
+        argv = (const char **) malloc(sizeof(char *));
         argv[0] = oldarg0;
         argc = 1;
     } else {
@@ -460,13 +445,12 @@ private void indirect_command(filename, oldarg0)
         while (get_arg(argfile, arg)) i++;
         fclose(argfile);
         argfile = fopen(filename, "r");
-        argv = (char **) malloc(sizeof(char *) * i);
+        argv = (const char **) malloc(sizeof(char *) * i);
         argv[0] = oldarg0;
         argc = i;
         i = 1;
         while (get_arg(argfile, arg)) {
-            argv[i] = (char *) malloc(strlen(arg) + 1);
-            strcpy(argv[i], arg);
+            argv[i] = strdup(arg);
             i++;
         }
         fclose(argfile);
