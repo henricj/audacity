@@ -34,7 +34,7 @@ typedef long sgnd_time_type;
 
 #include "midierr.h"
 
-extern char *midifns_syntax;
+extern const char * const midifns_syntax;
 
 /* support for allocating sysex buffer - examples in mm.c & exget.c */
 #ifdef DOS
@@ -106,7 +106,7 @@ void midi_clock(void);
 void midi_cont(boolean onflag);
 void midi_ctrl(int channel, int control, int value);
 void midi_exclusive(unsigned char *msg);
-void midi_flush();
+void midi_flush(void);
 void midi_note(int channel, int pitch, int velocity);
 void midi_program(int channel, int program);
 void midi_real(boolean onflag);
@@ -114,7 +114,7 @@ void midi_start(void);
 void midi_stop(void);
 void midi_thru(boolean onflag);
 void midi_touch(int channel, int value);
-void read_tuning(char *filename);
+void read_tuning(const char *filename);
 void midi_write(int n, int port, unsigned char c1, unsigned char c2, unsigned char c3);
 void midi_write_trace(int n, int port,
               unsigned char c1, unsigned char c2, unsigned char c3);

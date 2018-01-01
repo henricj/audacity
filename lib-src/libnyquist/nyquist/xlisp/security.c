@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #ifndef WIN32
 #include <unistd.h>
+#else
+#include <direct.h>
 #endif
+
 #include <string.h>
 #include <xlisp.h>
 

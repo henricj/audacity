@@ -21,7 +21,7 @@ void	causepri();
 void    m_rest(time_type time);
 void    m_restuntil(time_type time);
 void    quit(void);
-boolean moxcinit(int argc, char * argv[]);
+boolean moxcinit(int argc, const char * argv[]);
 void    moxcrun(void);
 void    moxcwait(time_type dateoftimeout);
 
@@ -31,7 +31,7 @@ void coda(void);
 void ctrlchange(int chan, int ctrl, int value);
 void keydown(int chan, int key, int vel);
 void keyup(int chan, int key);
-void mainscore(void);
+//void mainscore(void);
 void midievent(byte midi_data[4]);
 void peddown(int chan);
 void pedup(int chan);

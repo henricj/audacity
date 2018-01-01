@@ -285,7 +285,7 @@ typedef struct snd_susp_struct {
     snd_free_fn free;
     snd_mark_fn mark;
     snd_print_tree_fn print_tree; /* debugging */
-    char *name;        /* string name for debugging */
+    const char *name;        /* string name for debugging */
     long  toss_cnt;    /* return this many zeros, then compute */
     long  current;     /* current sample number */
     double sr;         /* sample rate */
@@ -422,9 +422,9 @@ void sound_prepend_zeros(sound_type snd, time_type t0);
 extern long blocks_to_watch_len;
 extern sample_block_type blocks_to_watch[blocks_to_watch_max];
 
-void block_watch(long sample_block);
+void block_watch(FIXTYPE sample_block);
     /* LISP: (BLOCK-WATCH FIXNUM) */
-long sound_nth_block(sound_type snd, long n);
+FIXTYPE sound_nth_block(sound_type snd, long n);
     /* LISP: (SOUND-NTH-BLOCK SOUND FIXNUM) */
 #endif
 
@@ -580,7 +580,7 @@ double step_to_hz(double);
  */
 #define logical_stop_cnt_cvt(sound) \
     (sound->logical_stop_cnt == UNKNOWN ? UNKNOWN : \
-     ROUND((sound->logical_stop_cnt / sound->sr) * susp->susp.sr))
+     lround((sound->logical_stop_cnt / sound->sr) * susp->susp.sr))
 
 
 /* logical_stop_test tests to see if sound has logically stopped; if so,
