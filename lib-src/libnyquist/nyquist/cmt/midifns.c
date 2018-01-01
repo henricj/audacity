@@ -76,6 +76,7 @@
 #include "midifns.h"
 #include "userio.h"
 #include "string.h"
+#include <ctype.h>
 #ifdef MACINTOSH_OR_DOS
 #ifndef WINDOWS
 #include "midibuff.h"
@@ -220,7 +221,7 @@ public short midi_error_flags = 0;
    I made a separate declaration of midifns_syntax for Unix
  */
 #ifdef UNIX
-public char *midifns_syntax = "block<s>Turn off midi THRU;\
+public const char * const midifns_syntax = "block<s>Turn off midi THRU;\
     miditrace<s>Trace low-level midi functions;\
     noalloff<s>Do not send alloff message when done;\
     trace<s>Trace music operations;\
@@ -228,14 +229,14 @@ public char *midifns_syntax = "block<s>Turn off midi THRU;\
 #else
 #ifdef MACINTOSH
 #ifdef MIDIMGR
-public char *midifns_syntax = "miditrace<s>Trace low-level midi functions;\
+public const char * const midifns_syntax = "miditrace<s>Trace low-level midi functions;\
     noalloff<s>Do not send alloff message when done;\
     patch<s>Remember/reuse Midi Mgr patches;\
     trace<s>Trace music operations;\
     keep<s>Keep other processes running;\
     tune<o>Load a tuning file";
 #else /* no MIDIMGR */
-public char *midifns_syntax = "miditrace<s>Trace low-level midi functions;\
+public const char * const midifns_syntax = "miditrace<s>Trace low-level midi functions;\
     noalloff<s>Do not send alloff message when done;\
     patch<s>Remember/reuse Midi Mgr patches;\
     trace<s>Trace music operations;\
@@ -243,7 +244,7 @@ public char *midifns_syntax = "miditrace<s>Trace low-level midi functions;\
 #endif /* MIDIMGR */
 #else 
 #ifdef AMIGA
-public char *midifns_syntax = "block<s>Turn off midi THRU;\
+public const char * const midifns_syntax = "block<s>Turn off midi THRU;\
     inport<o>Inpur port number;\
     miditrace<s>Trace low-level midi functions;\
     noalloff<s>Do not send alloff message when done;\
@@ -252,7 +253,7 @@ public char *midifns_syntax = "block<s>Turn off midi THRU;\
     tune<o>Load a tuning file";
 #else /* not UNIX or MACINTOSH or MIDIMGR or AMIGA */
 #ifdef DOS
-public char *midifns_syntax = "miditrace<s>Trace low-level midi functions;\
+public const char * const midifns_syntax = "miditrace<s>Trace low-level midi functions;\
     noalloff<s>Do not send alloff message when done;\
     trace<s>Trace music operations;\
     tune<o>Load a tuning file";
@@ -473,8 +474,7 @@ void eventwait(timeout)
 #else
 #ifndef UNIX /* since I couldn't use an else above, have to check UNIX here */
 #ifdef WINDOWS
-void eventwait(timeout)
-  long timeout;
+void eventwait(long timeout)
 {
     if (timeout >= 0) {
     gprintf(TRANS, "eventwait: not implemented\n");
@@ -1499,8 +1499,7 @@ private void set_pitch_default()
 *           read_tuning
 *****************************************************************/
 
-void read_tuning(filename)
-char *filename;
+void read_tuning(const char* filename)
 {
     int index, pit, lineno = 0;
     float bend;
@@ -1529,7 +1528,7 @@ char *filename;
 void musicinit()
 {
     int i;
-    char *filename;
+    const char *filename;
 
     if (!tune_flag) {    /* do this code only once */
     miditrace = cl_switch("miditrace");
@@ -1604,7 +1603,7 @@ private void musicterm()
     initialized = FALSE;
 }
 
-
+#if 0
 /****************************************************************************
 *                   cmtrand
 * Inputs:
@@ -1622,7 +1621,7 @@ short cmtrand(short lo, short hi)
     randseed += 1874351L;
     return((short)(lo + (((hi + 1 - lo) * ((0x00ffff00 & randseed) >> 8)) >> 16)));
 }
-
+#endif // 0
 
 #ifdef AMIGA
 /* remove_sysex_buffer -- a cleanup procedure for the Amiga */

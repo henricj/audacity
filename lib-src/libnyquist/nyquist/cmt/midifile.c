@@ -23,6 +23,7 @@
 #include "string.h"
 
 #define MIDIFILE_ERROR -1
+#define PROTOTYPES 1
 
 #ifdef PROTOTYPES
 #define NOARGS void
@@ -39,7 +40,7 @@ void (*Mf_endtrack)(NOARGS) = 0;
 int (*Mf_getc)(NOARGS) = 0;
 void (*Mf_eot)(NOARGS) = 0;
 #ifdef PROTOTYPES
-void (*Mf_error)(char *) = 0;
+void (*Mf_error)(const char *) = 0;
 void (*Mf_header)(int,int,int) = 0;
 void (*Mf_on)(int,int,int) = 0;
 void (*Mf_off)(int,int,int) = 0;
@@ -48,16 +49,16 @@ void (*Mf_controller)(int,int,int) = 0;
 void (*Mf_pitchbend)(int,int,int) = 0;
 void (*Mf_program)(int,int) = 0;
 void (*Mf_chanpressure)(int,int) = 0;
-void (*Mf_sysex)(int,char*) = 0;
-void (*Mf_arbitrary)(int,char*) = 0;
-void (*Mf_metamisc)(int,int,char*) = 0;
+void (*Mf_sysex)(int,const char*) = 0;
+void (*Mf_arbitrary)(int,const char*) = 0;
+void (*Mf_metamisc)(int,int,const char*) = 0;
 void (*Mf_seqnum)(int) = 0;
 void (*Mf_smpte)(int,int,int,int,int) = 0;
 void (*Mf_timesig)(int,int,int,int) = 0;
-void (*Mf_tempo)(int) = 0;
+void (*Mf_tempo)(long) = 0;
 void (*Mf_keysig)(int,int) = 0;
-void (*Mf_sqspecific)(int,char*) = 0;
-void (*Mf_text)(int,int,char*) = 0;
+void (*Mf_sqspecific)(int,int,const char*) = 0;
+void (*Mf_text)(int,int,const char*) = 0;
 #else
 void (*Mf_error)() = 0;
 void (*Mf_header)() = 0;
@@ -101,10 +102,10 @@ static int egetc(NOARGS);
 static int msgleng(NOARGS);
 
 #ifdef PROTOTYPES
-static int readmt(char*,int);
+static int readmt(const char*,int);
 static long to32bit(int,int,int,int);
 static int to16bit(int,int);
-static void mferror(char *);
+static void mferror(const char *);
 static void badbyte(int);
 static void metaevent(int);
 static void msgadd(int);
@@ -122,7 +123,7 @@ static void chanmessage();
 static int midifile_error;
 
 void
-midifile()              /* The only non-static function in this file. */
+midifile(void)              /* The only non-static function in this file. */
 {
         int ntrks;
         midifile_error = 0;
@@ -147,15 +148,14 @@ midifile()              /* The only non-static function in this file. */
 }
 
 static int
-readmt(s,skip)          /* read through the "MThd" or "MTrk" header string */
-char *s;
-int skip;               /* if 1, we attempt to skip initial garbage. */
+readmt(const char* s, int skip)          /* read through the "MThd" or "MTrk" header string */
+//int skip;               /* if 1, we attempt to skip initial garbage. */
 {
         int nread = 0;
         char b[4];
         char buff[32];
         int c;
-        char *errmsg = "expecting ";
+        const char *errmsg = "expecting ";
 
     retry:
         while ( nread<4 ) {
@@ -186,7 +186,7 @@ int skip;               /* if 1, we attempt to skip initial garbage. */
 }
 
 static int
-egetc()                 /* read a single character and abort on EOF */
+egetc(void)                 /* read a single character and abort on EOF */
 {
         int c = (*Mf_getc)();
 
@@ -199,7 +199,7 @@ egetc()                 /* read a single character and abort on EOF */
 }
 
 static int
-readheader()            /* read a header chunk */
+readheader(void)            /* read a header chunk */
 {
         int format, ntrks, division;
 
@@ -225,7 +225,7 @@ readheader()            /* read a header chunk */
 }
 
 static void
-readtrack()              /* read a track chunk */
+readtrack(void)              /* read a track chunk */
 {
         /* This array is indexed by the high half of a status byte.  It's */
         /* value is either the number of bytes needed (1 or 2) for a channel */
@@ -369,8 +369,7 @@ readtrack()              /* read a track chunk */
 }
 
 static void
-badbyte(c)
-int c;
+badbyte(int c)
 {
         char buff[32];
 
@@ -379,7 +378,7 @@ int c;
 }
 
 static void
-metaevent(type)
+metaevent(int type)
 {
         int leng = msgleng();
         char *m = msg();
@@ -430,7 +429,7 @@ metaevent(type)
                 break;
         case 0x7f:
                 if ( Mf_sqspecific )
-                        (*Mf_sqspecific)(leng,m);
+                        (*Mf_sqspecific)(type,leng,m);
                 break;
         default:
                 if ( Mf_metamisc )
@@ -446,9 +445,7 @@ sysex()
 }
 
 static void
-chanmessage(status,c1,c2)
-int status;
-int c1, c2;
+chanmessage(int status, int c1, int c2)
 {
         int chan = status & 0xf;
 
@@ -509,7 +506,7 @@ readvarinum()
 }
 
 static long
-to32bit(c1,c2,c3,c4)
+to32bit(int c1, int c2, int c3, int c4)
 {
         long value = 0L;
 
@@ -521,14 +518,13 @@ to32bit(c1,c2,c3,c4)
 }
 
 static int
-to16bit(c1,c2)
-int c1, c2;
+to16bit(int c1, int c2)
 {
         return ((c1 & 0xff ) << 8) + (c2 & 0xff);
 }
 
 static long
-read32bit()
+read32bit(void)
 {
         int c1, c2, c3, c4;
 
@@ -540,7 +536,7 @@ read32bit()
 }
 
 static int
-read16bit()
+read16bit(void)
 {
         int c1, c2;
         c1 = egetc(); if (midifile_error) return 0;
@@ -549,8 +545,7 @@ read16bit()
 }
 
 static void
-mferror(s)
-char *s;
+mferror(const char* s)
 {
         if ( Mf_error )
                 (*Mf_error)(s);
@@ -567,26 +562,25 @@ static int Msgsize = 0;         /* Size of currently allocated Msg */
 static int Msgindex = 0;        /* index of next available location in Msg */
 
 static void
-msginit()
+msginit(void)
 {
         Msgindex = 0;
 }
 
 static char *
-msg()
+msg(void)
 {
         return(Msgbuff);
 }
 
 static int
-msgleng()
+msgleng(void)
 {
         return(Msgindex);
 }
 
 static void
-msgadd(c)
-int c;
+msgadd(int c)
 {
         /* If necessary, allocate larger message buffer. */
         if ( Msgindex >= Msgsize )
@@ -595,7 +589,7 @@ int c;
 }
 
 static void
-msgenlarge()
+msgenlarge(void)
 {
         char *newmess;
         char *oldmess = Msgbuff;
