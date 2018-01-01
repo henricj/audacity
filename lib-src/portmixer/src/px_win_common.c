@@ -96,7 +96,7 @@ static BOOL is_vista_or_later()
       dwlConditionMask);
 }
 
-int open_mixers(px_mixer *Px, ULONG deviceIn, ULONG deviceOut)
+int open_mixers(px_mixer *Px, UINT deviceIn, UINT deviceOut)
 {
    PxInfo*info;
    MMRESULT res;
@@ -105,14 +105,14 @@ int open_mixers(px_mixer *Px, ULONG deviceIn, ULONG deviceOut)
       return open_ep_mixers(Px, deviceIn, deviceOut);
    }
 
-   res = mixerGetID((HMIXEROBJ) (deviceIn == WAVE_MAPPER ? 0 : deviceIn),
+   res = mixerGetID((HMIXEROBJ)(intptr_t)(deviceIn == WAVE_MAPPER ? 0 : deviceIn),
                     &deviceIn,
                     MIXER_OBJECTF_WAVEIN);
    if (res != MMSYSERR_NOERROR) {
       return FALSE;
    }
 
-   res = mixerGetID((HMIXEROBJ) (deviceOut == WAVE_MAPPER ? 0 : deviceOut),
+   res = mixerGetID((HMIXEROBJ)(intptr_t)(deviceOut == WAVE_MAPPER ? 0 : deviceOut),
                     &deviceOut,
                     MIXER_OBJECTF_WAVEOUT);
    if (res != MMSYSERR_NOERROR) {
