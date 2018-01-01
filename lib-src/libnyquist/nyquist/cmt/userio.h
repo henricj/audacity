@@ -52,7 +52,7 @@ extern int redirect_flag;		/* added by Ning Hu, Apr 2001 */
 boolean get_ascii(char *c);    /* polls for an ascii character */
 #ifdef DOTS_FOR_ARGS
 /* was (defined(ITC_MACH) && defined(__STDC__)) || defined(MACINTOSH) || defined(AZTEC) || (defined(AMIGA) && defined(LATTICE)) || defined(UNIX_ITC) */
-void    gprintf(long where, char *format, ...); /* general printf */
+void    gprintf(long where, const char *format, ...); /* general printf */
 #else
 void gprintf();
 #endif
@@ -65,8 +65,8 @@ void    abort_check(void);  /* exit if aborted */
 
 int check_aborted(void);        /* looks to see if user typed ctrl-C */
 
-int     askbool(char *prompt, int deflt);
-FILE    *fileopen(char *deflt, char *extension, char *mode, char *prompt);
+int     askbool(const char *prompt, int deflt);
+FILE    *fileopen(const char *deflt, const char *extension, const char *mode, const char *prompt);
 void    readln(FILE *fp);
 void gflush(void);
 int gputchar(int c);
