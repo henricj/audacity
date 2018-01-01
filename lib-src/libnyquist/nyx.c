@@ -538,8 +538,9 @@ void nyx_set_xlisp_path(const char *path)
    set_xlisp_path(path);
 }
 
-LOCAL void nyx_susp_fetch(nyx_susp_type susp, snd_list_type snd_list)
+LOCAL void nyx_susp_fetch(snd_susp_type p, snd_list_type snd_list)
 {
+   nyx_susp_type susp = (nyx_susp_type)p;
    sample_block_type         out;
    sample_block_values_type  out_ptr;
    long                      n;
@@ -579,12 +580,13 @@ LOCAL void nyx_susp_fetch(nyx_susp_type susp, snd_list_type snd_list)
    }
 }
 
-LOCAL void nyx_susp_free(nyx_susp_type susp)
+LOCAL void nyx_susp_free(snd_susp_type p)
 {
+   nyx_susp_type susp = (nyx_susp_type)p;
    ffree_generic(susp, sizeof(nyx_susp_node), "nyx_susp_free");
 }
 
-LOCAL void nyx_susp_print_tree(nyx_susp_type susp, int n)
+LOCAL void nyx_susp_print_tree(snd_susp_type susp, int n)
 {
 }
 
@@ -1420,7 +1422,7 @@ static int osdir_list_status = OSDIR_LIST_READY;
 static char osdir_path[OSDIR_MAX_PATH];
 
 // osdir_list_start -- prepare to list a directory
-int osdir_list_start(char *path)
+int osdir_list_start(const char *path)
 {
    if (strlen(path) >= OSDIR_MAX_PATH - 2) {
       xlcerror("LISTDIR path too big", "return nil", NULL);
