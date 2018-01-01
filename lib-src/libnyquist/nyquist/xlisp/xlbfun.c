@@ -604,6 +604,11 @@ LVAL xcleanup(void)
     xllastarg();
     xlcleanup();
     /* compiler might (wrongly) complain there is no return value */
+
+   // Compiler warnings get tedious.  Either return something or flag
+   // these functions with __declspec(noreturn) and the gcc/clang/whatever
+   // equivalents.
+    return NIL;
 }
 
 /* xtoplevel - special form 'top-level' */

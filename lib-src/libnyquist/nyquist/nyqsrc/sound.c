@@ -150,7 +150,7 @@ snd_list_type gcbug_snd_list = 0;
 long blocks_to_watch_len = 0;
 sample_block_type blocks_to_watch[blocks_to_watch_max];
 
-void block_watch(long sample_block)
+void block_watch(FIXTYPE sample_block)
 {
     if (blocks_to_watch_len >= blocks_to_watch_max) {
         stdputstr("block_watch - no more space to save pointers\n");
@@ -199,7 +199,7 @@ void fetch_zeros(snd_susp_type susp, snd_list_type snd_list)
  * NOTE: intended to be called from lisp.  Lisp can then call block_watch
  * to keep an eye on the block.
  */
-long sound_nth_block(sound_type snd, long n)
+FIXTYPE sound_nth_block(sound_type snd, long n)
 {
     long i;
     snd_list_type snd_list = snd->list;
@@ -211,7 +211,7 @@ long sound_nth_block(sound_type snd, long n)
         if (!snd_list->block) return 0;
         snd_list = snd_list->u.next;
     }
-    if (snd_list->block) return (long) snd_list->block;
+    if (snd_list->block) return (FIXTYPE) snd_list->block;
     else return 0;
 }
 
@@ -1235,8 +1235,8 @@ void sound_init(void)
       watch_sound((sound_type) s);
     }
 #endif
-   sound_desc = create_desc("SOUND", sound_xlfree, sound_xlprint,
-                            sound_xlsave, sound_xlrestore, sound_xlmark);
+   sound_desc = create_desc("SOUND", (void (*)(void*))sound_xlfree, (void(*)(void*, void*))sound_xlprint,
+                            (void(*)(FILE*, void*))sound_xlsave, sound_xlrestore, sound_xlmark);
 }
 
 
@@ -1292,8 +1292,7 @@ void set_logical_stop_time(sound_type sound, time_type when)
 sound_type printing_this_sound = NULL;
 void ((**watch_me)()) = NULL;
 
-void set_watch(where)
-  void ((**where)());
+void set_watch(void((**where)()))
 {
     if (watch_me == NULL) {
         watch_me = where;
@@ -1305,9 +1304,7 @@ void set_watch(where)
 /*
  * additional routines
  */
-void sound_print(snd_expr, n)
-  LVAL snd_expr;
-  long n;
+void sound_print(LVAL snd_expr, long n)
 {
     LVAL result;
 
@@ -1697,8 +1694,7 @@ void sound_symbols()
 /* The SOUND Type: */
 
 
-boolean soundp(s)
-LVAL s;
+boolean soundp(LVAL s)
 {
    return (exttypep(s, a_sound));
 }

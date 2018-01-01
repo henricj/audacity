@@ -31,10 +31,10 @@
 #include "midifile.h"
 #include "tempomap.h"
 
-int filegetc();
-void initfuncs();
-void prtime();
-void snding_free();
+int filegetc(void);
+void initfuncs(void);
+void prtime(void);
+//void snding_free();
 
 typedef struct snding_struct {
     struct snding_struct *next;
@@ -266,7 +266,7 @@ void smf_chanpressure(int chan, int press)
         insert_ctrl(the_score, gio_time(), 0, TOUCH_CTRL, chan + 1, press);
 }
 
-void smf_sysex(int leng, char* mess)
+void smf_sysex(int leng, const char* mess)
 {
         char symb[10];
         def_type defn;
@@ -291,7 +291,7 @@ void smf_sysex(int leng, char* mess)
         gprintf(TRANS, "Sysex, leng=%d (IGNORED)\n",leng); */
 }
 
-void smf_metamisc(int type, int leng, char *mess)
+void smf_metamisc(int type,int leng, const char* mess)
 {
         prtime();
         gprintf(TRANS,
@@ -299,7 +299,7 @@ void smf_metamisc(int type, int leng, char *mess)
                 type, leng);
 }
 
-void smf_metaspecial(int type, int leng, char *mess)
+void smf_metaspecial(int type, int leng, const char * mess)
 {
         prtime();
         gprintf(TRANS, 
@@ -307,9 +307,9 @@ void smf_metaspecial(int type, int leng, char *mess)
                 type, leng);
 }
 
-void smf_metatext(int type, int leng, char *mess)
+void smf_metatext(int type, int leng, const char* mess)
 {
-        static char *ttype[] = {
+        static const char * const ttype[] = {
                 NULL,
                 "Text Event",           /* type=0x01 */
                 "Copyright Notice",     /* type=0x02 */
@@ -400,13 +400,13 @@ void smf_smpte(int hr, int mn, int se, int fr, int ff)
                 hr, mn, se, fr, ff);
 }
 
-void smf_arbitrary(int leng, char *mess)
+void smf_arbitrary(int leng, const char* mess)
 {
         prtime();
         gprintf(TRANS, "Arbitrary bytes, leng=%d (IGNORED)\n",leng);
 }
 
-void smf_error(char *msg)
+void smf_error(const char* msg)
 {
     gprintf(ERROR, msg);
 }

@@ -31,12 +31,11 @@ LVAL s_seq;
 
 xtype_desc seq_desc;
 
-static void xlseq_print();
+static void xlseq_print(LVAL fptr, seq_type sequence);
 
 void nop() {}
 
-boolean seqp(s)
-  LVAL s;
+boolean seqp(LVAL s)
 {
     return exttypep(s, s_seq);
 }
@@ -76,7 +75,7 @@ void seqext_init(void)
 /*    printf("localinit called\n"); */
     seq_desc = create_desc("SEQ", xlseq_free, xlseq_print, xlseq_save, 
                            xlseq_restore, NULL);
-    moxcinit(0, (char **) NULL);
+    moxcinit(0, (const char **) NULL);
 }
 
 

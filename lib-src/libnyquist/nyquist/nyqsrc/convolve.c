@@ -83,8 +83,7 @@
 #include "fftext.h"
 #include "convolve.h"
 
-void convolve_free();
-
+void convolve_free(struct snd_susp_struct *);
 
 typedef struct convolve_susp_struct {
     snd_susp_node susp;
@@ -108,6 +107,8 @@ typedef struct convolve_susp_struct {
 } convolve_susp_node, *convolve_susp_type;
 
 /*
+
+
 void h_reverse(sample_type *h, long len)
 {
     sample_type temp;
@@ -129,9 +130,9 @@ void convolve_s_fetch(snd_susp_type a_susp, snd_list_type snd_list)
     int togo;
     int n;
     sample_block_type out;
-    register sample_block_values_type out_ptr;
+    sample_block_values_type out_ptr;
 
-    register sample_block_values_type out_ptr_reg;
+    sample_block_values_type out_ptr_reg;
 
     sample_type *R = susp->R;
     sample_type *R_current;
@@ -348,7 +349,7 @@ void fill_with_samples(sample_type *x, sound_type s, long n)
 
 sound_type snd_make_convolve(sound_type x_snd, sound_type h_snd)
 {
-    register convolve_susp_type susp;
+    convolve_susp_type susp;
     rate_type sr = x_snd->sr;
     time_type t0 = x_snd->t0;
     sample_type scale_factor = 1.0F;
