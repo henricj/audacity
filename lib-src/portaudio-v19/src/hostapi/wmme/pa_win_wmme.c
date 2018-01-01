@@ -142,6 +142,8 @@
 /*
  provided in newer platform sdks
  */
+// DWORD_PTR is "typedef ULONG_PTR DWORD_PTR;"
+#if 0
 #ifndef DWORD_PTR
     #if defined(_WIN64)
         #define DWORD_PTR unsigned __int64
@@ -149,6 +151,7 @@
         #define DWORD_PTR unsigned long
     #endif
 #endif
+#endif // 0
 
 /************************************************* Constants ********/
 
@@ -1017,11 +1020,11 @@ PaError PaWinMme_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInd
     /* the following calls assume that if wave*Message fails the preferred device parameter won't be modified */
     preferredDeviceStatusFlags = 0;
     waveInPreferredDevice = -1;
-    waveInMessage( (HWAVEIN)WAVE_MAPPER, DRVM_MAPPER_PREFERRED_GET, (DWORD_PTR)&waveInPreferredDevice, (DWORD_PTR)&preferredDeviceStatusFlags );
+    waveInMessage( (HWAVEIN) (intptr_t) WAVE_MAPPER, DRVM_MAPPER_PREFERRED_GET, (DWORD_PTR)&waveInPreferredDevice, (DWORD_PTR)&preferredDeviceStatusFlags );
 
     preferredDeviceStatusFlags = 0;
     waveOutPreferredDevice = -1;
-    waveOutMessage( (HWAVEOUT)WAVE_MAPPER, DRVM_MAPPER_PREFERRED_GET, (DWORD_PTR)&waveOutPreferredDevice, (DWORD_PTR)&preferredDeviceStatusFlags );
+    waveOutMessage( (HWAVEOUT) (intptr_t) WAVE_MAPPER, DRVM_MAPPER_PREFERRED_GET, (DWORD_PTR)&waveOutPreferredDevice, (DWORD_PTR)&preferredDeviceStatusFlags );
 
     maximumPossibleDeviceCount = 0;
 
