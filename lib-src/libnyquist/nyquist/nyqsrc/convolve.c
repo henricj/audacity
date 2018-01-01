@@ -17,8 +17,7 @@
 #include "cext.h"
 #include "convolve.h"
 
-void convolve_free();
-
+void convolve_free(struct snd_susp_struct *);
 
 typedef struct convolve_susp_struct {
     snd_susp_node susp;
@@ -38,6 +37,7 @@ typedef struct convolve_susp_struct {
 } convolve_susp_node, *convolve_susp_type;
 
 
+
 void h_reverse(sample_type *h, long len)
 {
     sample_type temp;
@@ -52,23 +52,25 @@ void h_reverse(sample_type *h, long len)
 }
 
 
-void convolve_s_fetch(register convolve_susp_type susp, snd_list_type snd_list)
+void convolve_s_fetch(struct snd_susp_struct * p, snd_list_type snd_list)
 {
+    convolve_susp_type susp = (convolve_susp_type)p;
+
     int cnt = 0; /* how many samples computed */
     int togo;
     int n;
     sample_block_type out;
-    register sample_block_values_type out_ptr;
+    sample_block_values_type out_ptr;
 
-    register sample_block_values_type out_ptr_reg;
+    sample_block_values_type out_ptr_reg;
 
-    register sample_type * h_buf_reg;
-    register long h_len_reg;
-    register long x_buf_len_reg;
-    register sample_type * x_buffer_pointer_reg;
-    register sample_type * x_buffer_current_reg;
-    register sample_type x_snd_scale_reg = susp->x_snd->scale;
-    register sample_block_values_type x_snd_ptr_reg;
+    sample_type * h_buf_reg;
+    long h_len_reg;
+    long x_buf_len_reg;
+    sample_type * x_buffer_pointer_reg;
+    sample_type * x_buffer_current_reg;
+    sample_type x_snd_scale_reg = susp->x_snd->scale;
+    sample_block_values_type x_snd_ptr_reg;
     falloc_sample_block(out, "convolve_s_fetch");
     out_ptr = out->samples;
     snd_list->block = out;
@@ -204,45 +206,48 @@ void convolve_s_fetch(register convolve_susp_type susp, snd_list_type snd_list)
 } /* convolve_s_fetch */
 
 
-void convolve_toss_fetch(susp, snd_list)
-  register convolve_susp_type susp;
-  snd_list_type snd_list;
+void convolve_toss_fetch(struct snd_susp_struct * p, snd_list_type snd_list)
 {
-    time_type final_time = susp->susp.t0;
+   convolve_susp_type susp = (convolve_susp_type)p;
+   time_type final_time = susp->susp.t0;
     long n;
 
     /* fetch samples from x_snd up to final_time for this block of zeros */
-    while ((round((final_time - susp->x_snd->t0) * susp->x_snd->sr)) >=
+    while ((lround((final_time - susp->x_snd->t0) * susp->x_snd->sr)) >=
 	   susp->x_snd->current)
 	susp_get_samples(x_snd, x_snd_ptr, x_snd_cnt);
     /* convert to normal processing when we hit final_count */
     /* we want each signal positioned at final_time */
-    n = round((final_time - susp->x_snd->t0) * susp->x_snd->sr -
+    n = lround((final_time - susp->x_snd->t0) * susp->x_snd->sr -
          (susp->x_snd->current - susp->x_snd_cnt));
     susp->x_snd_ptr += n;
     susp_took(x_snd_cnt, n);
     susp->susp.fetch = susp->susp.keep_fetch;
-    (*(susp->susp.fetch))((snd_susp_type)susp, snd_list);
+    (*(susp->susp.fetch))(&susp->susp, snd_list);
 }
 
 
-void convolve_mark(convolve_susp_type susp)
+void convolve_mark(struct snd_susp_struct * p)
 {
-    sound_xlmark(susp->x_snd);
+   convolve_susp_type susp = (convolve_susp_type)p;
+
+   sound_xlmark(susp->x_snd);
 }
 
 
-void convolve_free(convolve_susp_type susp)
+void convolve_free(struct snd_susp_struct * p)
 {
+    convolve_susp_type susp = (convolve_susp_type)p;
     table_unref(susp->table); 
     free(susp->x_buffer_pointer);    sound_unref(susp->x_snd);
     ffree_generic(susp, sizeof(convolve_susp_node), "convolve_free");
 }
 
 
-void convolve_print_tree(convolve_susp_type susp, int n)
+void convolve_print_tree(struct snd_susp_struct * p, int n)
 {
-    indent(n);
+   convolve_susp_type susp = (convolve_susp_type)p;
+   indent(n);
     stdputstr("x_snd:");
     sound_print_tree_1(susp->x_snd, n);
 }
@@ -250,7 +255,7 @@ void convolve_print_tree(convolve_susp_type susp, int n)
 
 sound_type snd_make_convolve(sound_type x_snd, sound_type h_snd)
 {
-    register convolve_susp_type susp;
+    convolve_susp_type susp;
     rate_type sr = x_snd->sr;
     time_type t0 = x_snd->t0;
     sample_type scale_factor = 1.0F;
