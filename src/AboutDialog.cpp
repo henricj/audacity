@@ -717,6 +717,14 @@ void AboutDialog::PopulateInformationPage( ShuttleGui & S )
    AddBuildinfoRow(&informationStr, XO("Compiler:"),
 	   wxString::Format(wxT("MSVC %02d.%02d.%05d.%02d"), _MSC_VER / 100, _MSC_VER % 100, _MSC_FULL_VER % 100000, _MSC_BUILD));
 
+#ifdef TARGET_PLATFORM_DISPLAY_NAME
+   AddBuildinfoRow(&informationStr, XO("SDK"), wxT(TARGET_PLATFORM_DISPLAY_NAME));
+#endif
+
+   #ifdef RUNTIME_LIBRARY_VERSION_NAME
+   AddBuildinfoRow(&informationStr, XO("Runtime"), wxT(RUNTIME_LIBRARY_VERSION_NAME));
+#endif
+
    AddBuildinfoRow(&informationStr, XO("Instruction set:"),
       wxString::Format(XO("%s/%s"),
 #if defined(_M_IX86)
