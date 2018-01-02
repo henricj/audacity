@@ -16,15 +16,12 @@ custom controls.
 
 #include "FileDialog.h"
 
-FileDialogBase::FileDialogBase()
-{
-   m_creator = NULL;
-   m_userdata = 0;
-}
+FileDialogBase::FileDialogBase() = default;
+FileDialogBase::~FileDialogBase() = default;
 
 bool FileDialogBase::HasUserPaneCreator() const
 {
-   return m_creator != NULL;
+   return m_creator != nullptr;
 }
 
 void FileDialogBase::SetUserPaneCreator(UserPaneCreatorFunction creator, wxUIntPtr userdata)
