@@ -27,7 +27,7 @@ class AUDACITY_DLL_API FileDialogBase : public wxFileDialogBase
 {
 public:
    FileDialogBase();
-   virtual ~FileDialogBase() {};
+   virtual ~FileDialogBase();
 
    // FileDialogBase
 
@@ -39,8 +39,8 @@ public:
 protected:
    void CreateUserPane(wxWindow *parent);
 
-   UserPaneCreatorFunction m_creator;
-   wxUIntPtr m_userdata;
+   UserPaneCreatorFunction m_creator = nullptr;
+   wxUIntPtr m_userdata = 0;
 };
 
 #if defined(__WXGTK__)
@@ -77,7 +77,7 @@ FileSelector(const wxString& message = wxFileSelectorPromptStr,
              const wxString& default_extension = wxEmptyString,
              const wxString& wildcard = wxFileSelectorDefaultWildcardStr,
              int flags = 0,
-             wxWindow *parent = NULL,
+             wxWindow *parent = nullptr,
              int x = wxDefaultCoord, int y = wxDefaultCoord);
 
 // An extended version of FileSelector
@@ -85,10 +85,10 @@ wxString
 FileSelectorEx(const wxString& message = wxFileSelectorPromptStr,
                const wxString& default_path = wxEmptyString,
                const wxString& default_filename = wxEmptyString,
-               int *indexDefaultExtension = NULL,
+               int *indexDefaultExtension = nullptr,
                const wxString& wildcard = wxFileSelectorDefaultWildcardStr,
                int flags = 0,
-               wxWindow *parent = NULL,
+               wxWindow *parent = nullptr,
                int x = wxDefaultCoord, int y = wxDefaultCoord);
 
 #endif
