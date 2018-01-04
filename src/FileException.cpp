@@ -11,9 +11,7 @@
 
 #include "Prefs.h"
 
-FileException::~FileException()
-{
-}
+FileException::~FileException() = default;
 
 TranslatableString FileException::ErrorMessage() const
 {
