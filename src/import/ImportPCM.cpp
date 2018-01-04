@@ -80,7 +80,7 @@ public:
    {
    }
 
-   ~PCMImportPlugin() { }
+   ~PCMImportPlugin() = default;
 
    wxString GetPluginStringID() override { return wxT("libsndfile"); }
    wxString GetPluginFormatDescription() override;
