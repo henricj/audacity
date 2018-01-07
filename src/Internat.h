@@ -51,7 +51,7 @@ extern AUDACITY_DLL_API const wxString& GetCustomSubstitution(const wxString& st
 
    #include <signal.h>
    // Raise a signal because it's even too early to use wxASSERT for this.
-   #define _(s) ((wxTranslations::Get() || raise(SIGTRAP)), \
+   #define _(s) ((wxTranslations::Get() || raise(SIGABRT)), \
                 GetCustomTranslation(wxT(s)))
 
    #endif
