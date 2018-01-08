@@ -200,6 +200,7 @@ It handles initialization and termination by subclassing wxApp.
 #     pragma comment(lib, "libvamp")
 #  endif
 
+#if AUDACITY_NEED_WX_LIBS
 #  if defined(_DEBUG)
 #     define D "d"
 #  else
@@ -232,7 +233,7 @@ It handles initialization and termination by subclassing wxApp.
 
 #  undef V
 #  undef D
-
+#endif // AUDACITY_NO_DLLEXPORT
 #endif //(__WXMSW__)
 
 // DA: Logo for Splash Screen
