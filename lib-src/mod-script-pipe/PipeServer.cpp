@@ -1,3 +1,4 @@
+#include <memory>
 #if defined(WIN32)
 
 #define WIN32_LEAN_AND_MEAN  // Exclude rarely-used stuff from Windows headers
@@ -7,17 +8,31 @@
 
 const int nBuff = 1024;
 
-extern "C" int DoSrv( char * pIn );
-extern "C" int DoSrvMore( char * pOut, int nMax );
+extern "C" int DoSrv(char * pIn);
+extern "C" int DoSrvMore(char * pOut, int nMax);
+
+namespace {
+   struct handle_delete
+   {
+      typedef HANDLE pointer;
+
+      void operator()(pointer p) const
+      {
+         if (INVALID_HANDLE_VALUE == p)
+            return;
+
+         ::CloseHandle(p);
+      }
+   };
+}
+
+typedef std::unique_ptr<HANDLE, handle_delete> unique_handle;
 
 void PipeServer()
 {
-   HANDLE hPipeToSrv;
-   HANDLE hPipeFromSrv;
+   const LPCTSTR pipeNameToSrv = L"\\\\.\\pipe\\ToSrvPipe";
 
-   LPTSTR pipeNameToSrv= _T("\\\\.\\pipe\\ToSrvPipe");
-
-   hPipeToSrv = CreateNamedPipe( 
+   unique_handle hPipeToSrv{ CreateNamedPipeW(
       pipeNameToSrv ,
       PIPE_ACCESS_DUPLEX,
       PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT | PIPE_REJECT_REMOTE_CLIENTS,
@@ -25,13 +40,14 @@ void PipeServer()
       nBuff,
       nBuff,
       50,//Timeout - always send straight away.
-      NULL);
-   if( hPipeToSrv == INVALID_HANDLE_VALUE)
+      nullptr) };
+
+   if (hPipeToSrv.get() == INVALID_HANDLE_VALUE)
       return;
 
-   LPTSTR pipeNameFromSrv= __T("\\\\.\\pipe\\FromSrvPipe");
+   const LPCTSTR pipeNameFromSrv = L"\\\\.\\pipe\\FromSrvPipe";
 
-   hPipeFromSrv = CreateNamedPipe( 
+   unique_handle hPipeFromSrv{ CreateNamedPipeW(
       pipeNameFromSrv ,
       PIPE_ACCESS_DUPLEX,
       PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT | PIPE_REJECT_REMOTE_CLIENTS,
@@ -39,71 +55,59 @@ void PipeServer()
       nBuff,
       nBuff,
       50,//Timeout - always send straight away.
-      NULL);
-   if( hPipeFromSrv == INVALID_HANDLE_VALUE)
+      nullptr) };
+   if (hPipeFromSrv.get() == INVALID_HANDLE_VALUE)
       return;
 
-   BOOL bConnected;
-   BOOL bSuccess;
    DWORD cbBytesRead;
    DWORD cbBytesWritten;
-   CHAR chRequest[ nBuff ];
-   CHAR chResponse[ nBuff ];
+   CHAR chRequest[nBuff];
+   CHAR chResponse[nBuff];
 
-   int jj=0;
+   int jj = 0;
 
-   for(;;)
+   for (;;)
    {
       // open to (incoming) pipe first.  
       printf( "Obtaining pipe\n" );
-      bConnected = ConnectNamedPipe(hPipeToSrv, NULL) ? 
+      auto bConnected = ConnectNamedPipe(hPipeToSrv.get(), NULL) ? 
          TRUE : (GetLastError()==ERROR_PIPE_CONNECTED );
       printf( "Obtained to-srv %i\n", bConnected );
 
       // open from (outgoing) pipe second.  This could block if there is no reader.
-      bConnected = ConnectNamedPipe(hPipeFromSrv, NULL) ? 
+      bConnected = ConnectNamedPipe(hPipeFromSrv.get(), NULL) ? 
          TRUE : (GetLastError()==ERROR_PIPE_CONNECTED );
       printf( "Obtained from-srv %i\n", bConnected );
 
       if( bConnected )
       {
-         for(;;)
+         printf("About to read\n");
+         const BOOL bSuccess = ReadFile(hPipeToSrv.get(), chRequest, nBuff, &cbBytesRead, nullptr);
+
+         chRequest[cbBytesRead] = '\0';
+
+         if (!bSuccess || cbBytesRead == 0)
+            break;
+
+         printf("Rxd %s\n", chRequest);
+
+         DoSrv(chRequest);
+         jj++;
+         while (true)
          {
-            printf( "About to read\n" );
-            bSuccess = ReadFile( hPipeToSrv, chRequest, nBuff, &cbBytesRead, NULL);
-
-            chRequest[ cbBytesRead] = '\0'; 
-
-            if( !bSuccess || cbBytesRead==0 )
+            const int nWritten = DoSrvMore(chResponse, nBuff);
+            if (nWritten <= 1)
                break;
-
-            printf( "Rxd %s\n", chRequest );
-
-            DoSrv( chRequest );
-            jj++;
-            while( true )
-            {
-               int nWritten = DoSrvMore( chResponse, nBuff );
-               if( nWritten <= 1 )
-                  break;
-               WriteFile( hPipeFromSrv, chResponse, nWritten-1, &cbBytesWritten, NULL);
-            }
-            //FlushFileBuffers( hPipeFromSrv );
+            WriteFile(hPipeFromSrv.get(), chResponse, nWritten - 1, &cbBytesWritten, nullptr);
          }
-         FlushFileBuffers( hPipeToSrv );
-         DisconnectNamedPipe( hPipeToSrv );
-         FlushFileBuffers( hPipeFromSrv );
-         DisconnectNamedPipe( hPipeFromSrv );
-         break;
+         //FlushFileBuffers( hPipeFromSrv );
       }
-      else
-      {
-         CloseHandle( hPipeToSrv );
-         CloseHandle( hPipeFromSrv );
-      }
+      FlushFileBuffers(hPipeToSrv.get());
+      DisconnectNamedPipe(hPipeToSrv.get());
+      FlushFileBuffers(hPipeFromSrv.get());
+      DisconnectNamedPipe(hPipeFromSrv.get());
+      break;
    }
-   CloseHandle( hPipeToSrv );
-   CloseHandle( hPipeFromSrv );
 }
 
 #else
@@ -118,8 +122,8 @@ const char fifotmpl[] = "/tmp/audacity_script_pipe.%s.%d";
 
 const int nBuff = 1024;
 
-extern "C" int DoSrv( char * pIn );
-extern "C" int DoSrvMore( char * pOut, int nMax );
+extern "C" int DoSrv(char * pIn);
+extern "C" int DoSrvMore(char * pOut, int nMax);
 
 void PipeServer()
 {
@@ -143,7 +147,7 @@ void PipeServer()
    {
       perror("Unable to create fifos");
       printf("Ignoring...");
-//      return;
+      //      return;
    }
 
    // open to (incoming) pipe first.  
@@ -184,7 +188,7 @@ void PipeServer()
          {
             break;
          }
-         printf("Server sending %s",buf);
+         printf("Server sending %s", buf);
 
          // len - 1 because we do not send the null character
          fwrite(buf, 1, len - 1, fromFifo);
