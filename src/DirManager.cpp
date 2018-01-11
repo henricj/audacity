@@ -388,7 +388,7 @@ DirManager::DirManager()
    // lower than RAND_MAX.
    do {
       mytemp = globaltemp + wxFILE_SEP_PATH +
-               wxString::Format(wxT("project%d"), rand());
+               wxString::Format(wxT("project%d"), distribution1M(generator));
    } while (wxDirExists(mytemp));
 
    numDirManagers++;
@@ -1140,9 +1140,9 @@ wxFileNameWrapper DirManager::MakeBlockFileName()
          // full to 256/256/256; keep working, but fall back to 'big
          // filenames' and randomized placement
 
-         filenum = rand();
-         midnum  = (int)(256.*rand()/(RAND_MAX+1.));
-         topnum  = (int)(256.*rand()/(RAND_MAX+1.));
+         filenum = distribution_rand_max(generator);
+         midnum  = distribution255(generator);
+         topnum  = distribution255(generator);
          midkey=(topnum<<8)+midnum;
 
 
@@ -1154,7 +1154,7 @@ wxFileNameWrapper DirManager::MakeBlockFileName()
          // split the retrieved 16 bit directory key into two 8 bit numbers
          topnum = midkey >> 8;
          midnum = midkey & 0xff;
-         filenum = (int)(4096.*rand()/(RAND_MAX+1.));
+         filenum = distribution4095(generator);
 
       }
 

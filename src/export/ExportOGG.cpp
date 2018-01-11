@@ -16,6 +16,7 @@
 **********************************************************************/
 
 #include "../Audacity.h" // for USE_* macros
+#include "RngSupport.h"
 
 #ifdef USE_LIBVORBIS
 #include "ExportOGG.h"
@@ -233,8 +234,7 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    // Set up packet->stream encoder.  According to encoder example,
    // a random serial number makes it more likely that you can make
    // chained streams with concatenation.
-   srand(time(NULL));
-   if (ogg_stream_init(&stream, rand())) {
+   if (ogg_stream_init(&stream, RandomUniformInt(0, std::numeric_limits<int>::max()))) {
       // TODO: more precise message
       AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;

@@ -42,9 +42,9 @@ and get deterministic behaviour.
 // (Note: this file should be included first)
 #include "float_cast.h"
 
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
+#include <cstdlib>
+#include <cmath>
+#include <cstring>
 //#include <sys/types.h>
 //#include <memory.h>
 //#include <assert.h>
@@ -59,9 +59,6 @@ const int Dither::BUF_SIZE = 8;
 
 // Lipshitz's minimally audible FIR
 const float Dither::SHAPED_BS[] = { 2.033f, -2.165f, 1.959f, -1.590f, 0.6149f };
-
-// This is supposed to produce white noise and no dc
-#define DITHER_NOISE (rand() / (float)RAND_MAX - 0.5f)
 
 // The following is a rather ugly, but fast implementation
 // of a dither loop. The macro "DITHER" is expanded to an implementation
@@ -345,6 +342,12 @@ void Dither::Apply(enum DitherType ditherType,
     }
 }
 
+// This is supposed to produce white noise and no dc
+inline float Dither::dither_noise()
+{
+   return mDistribution(mGenerator);
+}
+
 // Dither implementations
 
 // No dither, just return sample
@@ -356,14 +359,14 @@ inline float Dither::NoDither(float sample)
 // Rectangle dithering, apply one-step noise
 inline float Dither::RectangleDither(float sample)
 {
-    return sample - DITHER_NOISE;
+    return sample - dither_noise();
 }
 
 // Triangle dither - high pass filtered
 inline float Dither::TriangleDither(float sample)
 {
-    float r = DITHER_NOISE;
-    float result = sample + r - mTriangleState;
+    const auto r = dither_noise();
+    const auto result = sample + r - mTriangleState;
     mTriangleState = r;
 
     return result;
@@ -373,19 +376,19 @@ inline float Dither::TriangleDither(float sample)
 inline float Dither::ShapedDither(float sample)
 {
     // Generate triangular dither, +-1 LSB, flat psd
-    float r = DITHER_NOISE + DITHER_NOISE;
-    if(sample != sample)  // test for NaN
+    const auto r = dither_noise() + dither_noise();
+    if(std::isnan(sample))  // test for NaN
        sample = 0; // and do the best we can with it
 
     // Run FIR
-    float xe = sample + mBuffer[mPhase] * SHAPED_BS[0]
+    const auto xe = sample + mBuffer[mPhase] * SHAPED_BS[0]
         + mBuffer[(mPhase - 1) & BUF_MASK] * SHAPED_BS[1]
         + mBuffer[(mPhase - 2) & BUF_MASK] * SHAPED_BS[2]
         + mBuffer[(mPhase - 3) & BUF_MASK] * SHAPED_BS[3]
         + mBuffer[(mPhase - 4) & BUF_MASK] * SHAPED_BS[4];
 
     // Accumulate FIR and triangular noise
-    float result = xe + r;
+    const auto result = xe + r;
 
     // Roll buffer and store last error
     mPhase = (mPhase + 1) & BUF_MASK;
