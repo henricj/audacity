@@ -16,6 +16,8 @@
 #include "../widgets/NumericTextCtrl.h"
 
 #include "Effect.h"
+#include "RngSupport.h"
+#include <nyquist/xlisp/xlisp.h>
 
 class ShuttleGui;
 
@@ -58,10 +60,34 @@ private:
 private:
    int mType;
    double mAmp;
+   int mDist;
 
-   float y, z, buf0, buf1, buf2, buf3, buf4, buf5, buf6;
+   class Brownian final
+   {
+      float y{}, z{};
+      EffectNoise& noise;
+   public:
+      Brownian(EffectNoise& parent) : noise(parent) {}
+      template<typename Distribution>
+      void Process(size_t size, float* buffer, Distribution& dist);
+   };
 
-   NumericTextCtrl *mNoiseDurationT;
+   class Pink final
+   {
+      float buf0{}, buf1{}, buf2{}, buf3{}, buf4{}, buf5{}, buf6{};
+      EffectNoise& noise;
+   public:
+      Pink(EffectNoise& parent) : noise(parent) {}
+      template<typename Distribution>
+      void Process(size_t size, float* buffer, Distribution& dist);
+   };
+
+   Nyq::NyqEngine<> generator;
+
+   Brownian brownian;
+   Pink pink;
+
+   NumericTextCtrl *mNoiseDurationT{};
 };
 
 #endif
