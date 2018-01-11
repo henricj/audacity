@@ -16,6 +16,7 @@
 **********************************************************************/
 
 #include "../Audacity.h" // for USE_* macros
+#include "RngSupport.h"
 
 #ifdef USE_LIBVORBIS
 
@@ -197,11 +198,14 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    vorbis_dsp_state dsp;
    vorbis_block     block;
 
+   auto cleanup = finally( [&] {
+      ogg_stream_clear(&stream);
 
-   auto cleanup1 = finally( [&] {
+      vorbis_block_clear(&block);
+      vorbis_dsp_clear(&dsp);
       vorbis_info_clear(&info);
+      vorbis_comment_clear(&comment);
    } );
-
 
    // Many of the library functions called below return 0 for success and
    // various nonzero codes for failure.
@@ -213,14 +217,6 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
       AudacityMessageBox( XO("Unable to export - rate or quality problem") );
       return ProgressResult::Cancelled;
    }
-
-   auto cleanup2 = finally( [&] {
-      ogg_stream_clear(&stream);
-
-      vorbis_block_clear(&block);
-      vorbis_dsp_clear(&dsp);
-      vorbis_comment_clear(&comment);
-   } );
 
    // Retrieve tags
    if (!FillComment(project, &comment, metadata)) {
@@ -238,8 +234,7 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    // Set up packet->stream encoder.  According to encoder example,
    // a random serial number makes it more likely that you can make
    // chained streams with concatenation.
-   srand(time(NULL));
-   if (ogg_stream_init(&stream, rand())) {
+   if (ogg_stream_init(&stream, RandomUniformInt(0, std::numeric_limits<int>::max()))) {
       AudacityMessageBox( XO("Unable to export - problem creating stream") );
       return ProgressResult::Cancelled;
    }

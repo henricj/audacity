@@ -13,6 +13,7 @@
 #include "stdlib.h"	/* declares exit() */
 #include "cext.h"
 #include "xlisp.h"
+#include "RngSupport.h"
 #ifdef MACINTOSH
 #include "Memory.h"
 #endif
@@ -77,8 +78,9 @@ long random() {
 /* xlrand - return next random number in sequence */
 long xlrand (long range) {
     if (range == 0) return 0;
+    return RandomUniformLong(0, range - 1);
 #ifdef USE_RAND
-    return rand() % range;
+    //return rand() % range;
 #endif
 #ifdef USE_RANDOM
     return random() % range;
@@ -94,7 +96,7 @@ long xlsrand(long seed) {
 double xlrealrand() {
     /* always use the random generator from the C library,
        (do not use random() even if USE_RANDOM is defined */
-    return (double) rand() / RAND_MAX;
+   return RandomUniformDouble(0, 1);
 }
 
 /* xlisp_main_init - the main initialization routine */
