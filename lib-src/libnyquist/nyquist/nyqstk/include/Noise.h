@@ -14,6 +14,7 @@
 #define STK_NOISE_H
 
 #include "Generator.h"
+#include "RngSupport.h"
 
 namespace Nyq
 {
@@ -46,6 +47,8 @@ protected:
 
   virtual StkFloat computeSample( void );
 
+  NyqEngine<> generator_;
+  std::uniform_real_distribution<StkFloat> distribution_{StkFloat(-1.0), StkFloat(1.0)};
 };
 
 } // namespace Nyq
