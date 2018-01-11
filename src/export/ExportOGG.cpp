@@ -16,6 +16,7 @@
 **********************************************************************/
 
 #include "../Audacity.h" // for USE_* macros
+#include "RngSupport.h"
 
 #ifdef USE_LIBVORBIS
 #include "ExportOGG.h"
@@ -195,11 +196,14 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    vorbis_dsp_state dsp;
    vorbis_block     block;
 
+   auto cleanup = finally( [&] {
+      ogg_stream_clear(&stream);
 
-   auto cleanup1 = finally( [&] {
+      vorbis_block_clear(&block);
+      vorbis_dsp_clear(&dsp);
       vorbis_info_clear(&info);
+      vorbis_comment_clear(&comment);
    } );
-
 
    // Many of the library functions called below return 0 for success and
    // various nonzero codes for failure.
@@ -208,37 +212,31 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    vorbis_info_init(&info);
    if (vorbis_encode_init_vbr(&info, numChannels, (int)(rate + 0.5), quality)) {
       // TODO: more precise message
-      AudacityMessageBox(_("Unable to export - rate or quality problem"));
+      AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;
    }
 
-   auto cleanup2 = finally( [&] {
-      ogg_stream_clear(&stream);
-
-      vorbis_block_clear(&block);
-      vorbis_dsp_clear(&dsp);
-      vorbis_comment_clear(&comment);
-   } );
-
    // Retrieve tags
    if (!FillComment(project, &comment, metadata)) {
-      AudacityMessageBox(_("Unable to export - problem with metadata"));
+      // TODO: more precise message
+      AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;
    }
 
    // Set up analysis state and auxiliary encoding storage
    if (vorbis_analysis_init(&dsp, &info) ||
        vorbis_block_init(&dsp, &block)) {
-      AudacityMessageBox(_("Unable to export - problem initialising"));
+      // TODO: more precise message
+      AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;
    }
 
    // Set up packet->stream encoder.  According to encoder example,
    // a random serial number makes it more likely that you can make
    // chained streams with concatenation.
-   srand(time(NULL));
-   if (ogg_stream_init(&stream, rand())) {
-      AudacityMessageBox(_("Unable to export - problem creating stream"));
+   if (ogg_stream_init(&stream, RandomUniformInt(0, std::numeric_limits<int>::max()))) {
+      // TODO: more precise message
+      AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;
    }
 
@@ -260,7 +258,8 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
       ogg_stream_packetin(&stream, &bitstream_header) ||
       ogg_stream_packetin(&stream, &comment_header) ||
       ogg_stream_packetin(&stream, &codebook_header)) {
-      AudacityMessageBox(_("Unable to export - problem with packets"));
+      // TODO: more precise message
+      AudacityMessageBox(_("Unable to export"));
       return ProgressResult::Cancelled;
    }
 
@@ -269,7 +268,8 @@ ProgressResult ExportOGG::Export(AudacityProject *project,
    while (ogg_stream_flush(&stream, &page)) {
       if ( outFile.Write(page.header, page.header_len).GetLastError() ||
            outFile.Write(page.body, page.body_len).GetLastError()) {
-         AudacityMessageBox(_("Unable to export - problem with file"));
+         // TODO: more precise message
+         AudacityMessageBox(_("Unable to export"));
          return ProgressResult::Cancelled;
       }
    }
