@@ -8,6 +8,7 @@
 #include "falloc.h"
 #include "cext.h"
 #include "white.h"
+#include "RngSupport.h"
 
 void white_free(snd_susp_type a_susp);
 
@@ -48,9 +49,9 @@ void white__fetch(snd_susp_type a_susp, snd_list_type snd_list)
 
 	n = togo;
 	out_ptr_reg = out_ptr;
-	if (n) do { /* the inner sample computation loop */
-            *out_ptr_reg++ = (sample_type) (rand() * rand_scale - 1.0);
-	} while (--n); /* inner loop */
+   if (n)
+      RandomFillUniformFloat(out_ptr_reg, n, -1.0f, 1.0f);
+
 
 	out_ptr += togo;
 	cnt += togo;

@@ -11,41 +11,34 @@
 /***************************************************/
 
 #include "Noise.h"
-#include <stdlib.h>
-#include <time.h>
 
 using namespace Nyq;
 
-Noise :: Noise() : Generator()
+Noise :: Noise()
 {
-  // Seed the random number generator with system time.
-  this->setSeed( 0 );
-  lastOutput_ = (StkFloat) 0.0;
+  lastOutput_ = static_cast<StkFloat>(0.0);
 }
 
-Noise :: Noise( unsigned int seed ) : Generator()
+Noise :: Noise( unsigned int seed )
 {
   // Seed the random number generator
   this->setSeed( seed );
-  lastOutput_ = (StkFloat) 0.0;
+  lastOutput_ = static_cast<StkFloat>(0.0);
 }
 
-Noise :: ~Noise()
-{
-}
+Noise :: ~Noise() = default;
 
 void Noise :: setSeed( unsigned int seed )
 {
-  if ( seed == 0 )
-    srand( (unsigned int) time(NULL) );
+  if (seed == 0)
+    ReseedGenerator(generator_);
   else
-    srand( seed );
+    generator_.seed(seed);
 }
 
 StkFloat Noise :: computeSample()
 {
-  lastOutput_ = (StkFloat) (2.0 * rand() / (RAND_MAX + 1.0) );
-  lastOutput_ -= 1.0;
+  lastOutput_ = distribution_(generator_);
   return lastOutput_;
 }
 
