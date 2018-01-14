@@ -152,9 +152,7 @@ void SplashDialog::Populate( ShuttleGui & S )
    S.EndVerticalLay();
 }
 
-SplashDialog::~SplashDialog()
-{
-}
+SplashDialog::~SplashDialog() = default;
 
 void SplashDialog::OnDontShow( wxCommandEvent & Evt )
 {
