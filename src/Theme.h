@@ -166,7 +166,7 @@ public:
    void EnsureInitialised() override;
    void RegisterImages();
    void RegisterColours();
-   bool mbInitialised;
+   bool mbInitialised = false;
 };
 
 // A bit cheeky - putting a themable wxStaticText control into
