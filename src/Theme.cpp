@@ -210,14 +210,9 @@ static const unsigned char HiContrastImageCacheAsData[] = {
 // theTheme is a global variable.
 AUDACITY_DLL_API Theme theTheme;
 
-Theme::Theme(void)
-{
-   mbInitialised=false;
-}
+Theme::Theme() = default;
 
-Theme::~Theme(void)
-{
-}
+Theme::~Theme() = default;
 
 
 void Theme::EnsureInitialised()
