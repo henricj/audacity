@@ -163,6 +163,4 @@ const wxArrayStringEx &WaveformSettings::GetScaleNames()
    return theArray.Get();
 }
 
-WaveformSettings::~WaveformSettings()
-{
-}
+WaveformSettings::~WaveformSettings() = default;
