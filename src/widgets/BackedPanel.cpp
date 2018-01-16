@@ -59,7 +59,19 @@ void BackedPanel::ResizeBacking()
 
 void BackedPanel::RepairBitmap(wxDC &dc, wxCoord x, wxCoord y, wxCoord width, wxCoord height)
 {
+   // We can't resolve locale redering issues here or letters will
+   // get mirrored.  We have to assume that whatever is updating
+   // the bitmap is doing the right thing.
+   const auto direction = dc.GetLayoutDirection();
+   const auto force_ltr = direction != wxLayout_LeftToRight;
+
+   if (force_ltr)
+      dc.SetLayoutDirection(wxLayout_LeftToRight);
+
    dc.Blit(x, y, width, height, &mBackingDC, x, y);
+
+   if (force_ltr)
+      dc.SetLayoutDirection(direction);
 }
 
 void BackedPanel::DisplayBitmap(wxDC &dc)
