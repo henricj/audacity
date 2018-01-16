@@ -1565,6 +1565,8 @@ wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
    // We can use the screen device context since we're not drawing to it
    wxScreenDC dc;
 
+   dc.SetLayoutDirection(wxLayout_LeftToRight);
+
    const auto scale = dc.GetContentScaleFactor();
 
    boxH *= scale;
@@ -1745,6 +1747,9 @@ void NumericTextCtrl::OnErase(wxEraseEvent & WXUNUSED(event))
 void NumericTextCtrl::OnPaint(wxPaintEvent & WXUNUSED(event))
 {
    wxBufferedPaintDC dc(this);
+
+   dc.SetLayoutDirection(wxLayout_LeftToRight);
+
    bool focused = (FindFocus() == this);
 
    dc.DrawBitmap(*mBackgroundBitmap, 0, 0);
