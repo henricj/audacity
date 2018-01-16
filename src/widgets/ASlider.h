@@ -106,19 +106,19 @@ class LWSlider
 
    virtual ~LWSlider();
 
-   wxWindowID GetId();
+   wxWindowID GetId() const;
    void SetId(wxWindowID id);
 
    void SetDefaultValue(float value);
    void SetDefaultShortcut(bool value);
 
-   void GetScroll(float & line, float & page);
+   void GetScroll(float & line, float & page) const;
    void SetScroll(float line, float page);
 
    void ShowTip(bool show);
    void SetToolTipTemplate(const wxString & tip);
 
-   float Get(bool convert = true);
+   float Get(bool convert = true) const;
    void Set(float value);
 
    void Increase(float steps);
@@ -142,7 +142,7 @@ class LWSlider
    bool ShowDialog(wxPoint pos);
 
    void SetEnabled(bool enabled);
-   bool GetEnabled();
+   bool GetEnabled() const;
 
    static void DeleteSharedTipPanel();
 
@@ -270,12 +270,12 @@ class ASlider /* not final */ : public wxPanel
 
    void SetFocusFromKbd() override;
 
-   void GetScroll(float & line, float & page);
+   void GetScroll(float & line, float & page) const;
    void SetScroll(float line, float page);
 
    void SetToolTipTemplate(const wxString & tip);
 
-   float Get( bool convert = true );
+   float Get( bool convert = true ) const;
    void Set(float value);
 
    void Increase(float steps);
