@@ -157,6 +157,4 @@ const TranslatableStrings &WaveformSettings::GetScaleNames()
    return result;
 }
 
-WaveformSettings::~WaveformSettings()
-{
-}
+WaveformSettings::~WaveformSettings() = default;

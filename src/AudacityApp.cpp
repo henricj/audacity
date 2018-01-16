@@ -733,12 +733,10 @@ public:
    {
    };
 
-   ~IPCConn()
-   {
-   };
+   ~IPCConn() = default;
 
-   bool OnExec(const wxString & WXUNUSED(topic),
-               const wxString & data)
+    bool OnExec(const wxString & WXUNUSED(topic),
+               const wxString & data) override
    {
       // Add the filename to the queue.  It will be opened by
       // the OnTimer() event when it is safe to do so.
@@ -757,9 +755,7 @@ public:
       Create(appl);
    };
 
-   ~IPCServ()
-   {
-   };
+   ~IPCServ() = default;
 
    wxConnectionBase *OnAcceptConnection(const wxString & topic) override
    {
@@ -1224,9 +1220,7 @@ AudacityApp::AudacityApp()
 #endif
 }
 
-AudacityApp::~AudacityApp()
-{
-}
+AudacityApp::~AudacityApp() = default;
 
 // The `main program' equivalent, creating the windows and returning the
 // main frame
@@ -1512,7 +1506,7 @@ bool AudacityApp::OnInit()
          logo,
          wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_NO_TIMEOUT,
          0,
-         NULL,
+         nullptr,
          wxID_ANY,
          wndRect.GetTopLeft(),
          wxDefaultSize,
