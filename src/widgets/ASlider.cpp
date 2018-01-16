@@ -672,6 +672,12 @@ void LWSlider::OnPaint(wxDC &dc, bool highlight)
       dc.Clear();
    }
 
+   const auto direction = dc.GetLayoutDirection();
+   const auto is_rtl = direction == wxLayout_RightToLeft;
+
+   if (is_rtl)
+      dc.SetLayoutDirection(wxLayout_LeftToRight);
+
    dc.DrawBitmap(*mBitmap, mLeft, mTop, true);
    const auto &thumbBitmap =
       highlight ? *mThumbBitmapHilited : *mThumbBitmap;
@@ -684,6 +690,9 @@ void LWSlider::OnPaint(wxDC &dc, bool highlight)
       // TODO: Don't use pixel-count hack in positioning.  
       dc.DrawBitmap(thumbBitmap, mLeft+thumbOrtho-5, mTop+thumbPos, true);
    }
+
+   if (is_rtl)
+      dc.SetLayoutDirection(direction);
 
    if (mTipPanel)
    {
@@ -1126,7 +1135,10 @@ void LWSlider::OnMouseEvent(wxMouseEvent & event)
    wxRect r;
    if (mOrientation == wxHORIZONTAL)
    {
-      r.x = mLeft + ValueToPosition(mCurrentValue);
+      if (mParent->GetLayoutDirection() == wxLayout_RightToLeft)
+         r.x = mRightX - ValueToPosition(mCurrentValue);
+      else
+         r.x = mLeft + ValueToPosition(mCurrentValue);
       r.y = mTop + (mCenterY - (mThumbHeight / 2));
    }
    else
@@ -1349,7 +1361,11 @@ float LWSlider::ClickPositionToValue(int fromPos, bool shiftDown)
    int pos;
    if (mOrientation == wxHORIZONTAL)
    {
-      pos = (fromPos - mLeft - (mThumbWidth / 2));
+      if (mParent->GetLayoutDirection() == wxLayout_RightToLeft)
+         pos = (mRightX - fromPos);
+      else
+         pos = (fromPos - mLeft - (mThumbWidth / 2));
+
       nSpan = mWidthX;
    }
    else
@@ -1390,6 +1406,9 @@ float LWSlider::ClickPositionToValue(int fromPos, bool shiftDown)
 float LWSlider::DragPositionToValue(int fromPos, bool shiftDown)
 {
    int delta = (fromPos - mClickPos);
+
+   if (mOrientation == wxHORIZONTAL && mParent->GetLayoutDirection() == wxLayout_RightToLeft)
+      delta = (mClickPos - fromPos);
 
    float speed = mSpeed;
    // Precision enhancement for Shift drags
