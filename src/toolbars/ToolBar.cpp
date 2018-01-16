@@ -345,9 +345,7 @@ ToolBar::ToolBar( AudacityProject &project,
 //
 // Destructor
 //
-ToolBar::~ToolBar()
-{
-}
+ToolBar::~ToolBar() = default;
 
 //
 // Returns the toolbar title
