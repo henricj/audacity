@@ -1449,11 +1449,11 @@ bool AudacityApp::OnInit()
    }
 
    // BG: Create a temporary window to set as the top window
-   wxImage logoimage((const char **)AudacityLogoWithName_xpm);
+   wxImage logoimage(AudacityLogoWithName_xpm);
    logoimage.Rescale(logoimage.GetWidth() / 2, logoimage.GetHeight() / 2);
    if( GetLayoutDirection() == wxLayout_RightToLeft)
       logoimage = logoimage.Mirror();
-   wxBitmap logo(logoimage);
+   const wxBitmap logo(logoimage);
 
    AudacityProject *project;
    {
