@@ -62,9 +62,7 @@ MixerToolBar::MixerToolBar( AudacityProject &project )
    mOutputSliderVolume = 0.0;
 }
 
-MixerToolBar::~MixerToolBar()
-{
-}
+MixerToolBar::~MixerToolBar() = default;
 
 MixerToolBar &MixerToolBar::Get( AudacityProject &project )
 {
