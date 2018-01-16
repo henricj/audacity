@@ -52,9 +52,7 @@ namespace
    }
 }
 
-WaveTrackControls::~WaveTrackControls()
-{
-}
+WaveTrackControls::~WaveTrackControls() = default;
 
 
 std::vector<UIHandlePtr> WaveTrackControls::HitTest
@@ -414,7 +412,7 @@ const int nRates = 12;
 
 ///  gRates MUST CORRESPOND DIRECTLY TO THE RATES AS LISTED IN THE MENU!!
 ///  IN THE SAME ORDER!!
-static int gRates[nRates] = { 8000, 11025, 16000, 22050, 44100, 48000, 88200, 96000,
+static const int gRates[nRates] = { 8000, 11025, 16000, 22050, 44100, 48000, 88200, 96000,
 176400, 192000, 352800, 384000 };
 
 /// Converts a sampling rate to a wxWidgets menu item id

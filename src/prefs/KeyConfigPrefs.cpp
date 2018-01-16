@@ -676,7 +676,7 @@ wxString KeyConfigPrefs::HelpPageName()
    return "Keyboard_Preferences";
 }
 
-PrefsPanel *KeyConfigPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *KeyConfigPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    auto result = safenew KeyConfigPrefs{ parent, winid, mName };

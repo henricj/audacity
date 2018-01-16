@@ -60,6 +60,6 @@ class QualityPrefs final : public PrefsPanel
 class QualityPrefsFactory final : public PrefsPanelFactory
 {
 public:
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 };
 #endif

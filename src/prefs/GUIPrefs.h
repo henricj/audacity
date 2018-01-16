@@ -52,6 +52,6 @@ class GUIPrefs final : public PrefsPanel
 class GUIPrefsFactory final : public PrefsPanelFactory
 {
 public:
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 };
 #endif

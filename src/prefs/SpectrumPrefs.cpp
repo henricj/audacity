@@ -570,7 +570,7 @@ SpectrumPrefsFactory::SpectrumPrefsFactory(WaveTrack *wt)
 {
 }
 
-PrefsPanel *SpectrumPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *SpectrumPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const 
 {
    wxASSERT(parent); // to justify safenew
    return safenew SpectrumPrefs(parent, winid, mWt);

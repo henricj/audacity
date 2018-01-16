@@ -177,7 +177,7 @@ wxString EffectsPrefs::HelpPageName()
    return "Effects_Preferences";
 }
 
-PrefsPanel *EffectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *EffectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew EffectsPrefs(parent, winid);

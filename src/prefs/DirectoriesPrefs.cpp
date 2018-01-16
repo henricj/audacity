@@ -276,7 +276,7 @@ wxString DirectoriesPrefs::HelpPageName()
    return "Directories_Preferences";
 }
 
-PrefsPanel *DirectoriesPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *DirectoriesPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew DirectoriesPrefs(parent, winid);

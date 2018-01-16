@@ -23,9 +23,7 @@ Paul Licameli split from TrackPanel.cpp
 #include "../../../../WaveTrack.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-WaveTrackVRulerControls::~WaveTrackVRulerControls()
-{
-}
+WaveTrackVRulerControls::~WaveTrackVRulerControls() = default;
 
 std::vector<UIHandlePtr> WaveTrackVRulerControls::HitTest
 (const TrackPanelMouseState &st,
@@ -51,7 +49,6 @@ std::vector<UIHandlePtr> WaveTrackVRulerControls::HitTest
 
 void WaveTrackVRulerControls::DoZoomPreset( int i)
 {
-
    const auto pTrack = FindTrack();
    if (!pTrack)
       return;

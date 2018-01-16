@@ -204,7 +204,7 @@ wxString MousePrefs::HelpPageName()
    return "Mouse_Preferences";
 }
 
-PrefsPanel *MousePrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *MousePrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew MousePrefs(parent, winid);

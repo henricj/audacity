@@ -96,7 +96,7 @@ wxString WarningsPrefs::HelpPageName()
    return "Warnings_Preferences";
 }
 
-PrefsPanel *WarningsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *WarningsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const 
 {
    wxASSERT(parent); // to justify safenew
    return safenew WarningsPrefs(parent, winid);

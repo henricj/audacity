@@ -257,7 +257,7 @@ wxString LibraryPrefs::HelpPageName()
    return "Libraries_Preferences";
 }
 
-PrefsPanel *LibraryPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *LibraryPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew LibraryPrefs(parent, winid);

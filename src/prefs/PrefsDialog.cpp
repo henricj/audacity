@@ -158,38 +158,38 @@ PrefsDialog::Factories
 {
    // To do, perhaps:  create this table by registration, without including each PrefsPanel
    // class... and thus allowing a plug-in protocol
-   static DevicePrefsFactory devicePrefsFactory;
-   static PlaybackPrefsFactory playbackPrefsFactory;
-   static RecordingPrefsFactory recordingPrefsFactory;
+   static const DevicePrefsFactory devicePrefsFactory;
+   static const PlaybackPrefsFactory playbackPrefsFactory;
+   static const RecordingPrefsFactory recordingPrefsFactory;
 #ifdef EXPERIMENTAL_MIDI_OUT
-   static MidiIOPrefsFactory midiIOPrefsFactory;
+   static const MidiIOPrefsFactory midiIOPrefsFactory;
 #endif
-   static QualityPrefsFactory qualityPrefsFactory;
-   static GUIPrefsFactory guiPrefsFactory;
-   static TracksPrefsFactory tracksPrefsFactory;
-   static ImportExportPrefsFactory importExportPrefsFactory;
-   static ExtImportPrefsFactory extImportPrefsFactory;
-   static ProjectsPrefsFactory projectsPrefsFactory;
+   static const QualityPrefsFactory qualityPrefsFactory;
+   static const GUIPrefsFactory guiPrefsFactory;
+   static const TracksPrefsFactory tracksPrefsFactory;
+   static const ImportExportPrefsFactory importExportPrefsFactory;
+   static const ExtImportPrefsFactory extImportPrefsFactory;
+   static const ProjectsPrefsFactory projectsPrefsFactory;
 #if !defined(DISABLE_DYNAMIC_LOADING_FFMPEG) || !defined(DISABLE_DYNAMIC_LOADING_LAME)
-   static LibraryPrefsFactory libraryPrefsFactory;
+   static const LibraryPrefsFactory libraryPrefsFactory;
 #endif
    // static WaveformPrefsFactory waveformPrefsFactory;
-   static TracksBehaviorsPrefsFactory tracksBehaviorsPrefsFactory;
-   static SpectrumPrefsFactory spectrumPrefsFactory;
-   static DirectoriesPrefsFactory directoriesPrefsFactory;
-   static WarningsPrefsFactory warningsPrefsFactory;
-   static EffectsPrefsFactory effectsPrefsFactory;
+   static const TracksBehaviorsPrefsFactory tracksBehaviorsPrefsFactory;
+   static const SpectrumPrefsFactory spectrumPrefsFactory;
+   static const DirectoriesPrefsFactory directoriesPrefsFactory;
+   static const WarningsPrefsFactory warningsPrefsFactory;
+   static const EffectsPrefsFactory effectsPrefsFactory;
 #ifdef EXPERIMENTAL_THEME_PREFS
-   static ThemePrefsFactory themePrefsFactory;
+   static const ThemePrefsFactory themePrefsFactory;
 #endif
-   // static BatchPrefsFactory batchPrefsFactory;
-   static KeyConfigPrefsFactory keyConfigPrefsFactory;
-   static MousePrefsFactory mousePrefsFactory;
+   // static const BatchPrefsFactory batchPrefsFactory;
+   static const KeyConfigPrefsFactory keyConfigPrefsFactory;
+   static const MousePrefsFactory mousePrefsFactory;
 #ifdef EXPERIMENTAL_MODULE_PREFS
-   static ModulePrefsFactory modulePrefsFactory;
+   static const ModulePrefsFactory modulePrefsFactory;
 #endif
 
-   static PrefsNode nodes[] = {
+   static const PrefsNode nodes[] = {
       &devicePrefsFactory,
       &playbackPrefsFactory,
       &recordingPrefsFactory,
@@ -271,7 +271,7 @@ PrefsDialog::PrefsDialog
                   it != end; ++it, ++iPage)
                {
                   const PrefsNode &node = *it;
-                  PrefsPanelFactory &factory = *node.pFactory;
+                  const PrefsPanelFactory &factory = *node.pFactory;
                   wxWindow *const w = factory(mCategories, wxID_ANY);
                   if (stack.empty())
                      // Parameters are: AddPage(page, name, IsSelected, imageId).
@@ -299,7 +299,7 @@ PrefsDialog::PrefsDialog
 
          // Unique page, don't show the factory
          const PrefsNode &node = factories[0];
-         PrefsPanelFactory &factory = *node.pFactory;
+         const PrefsPanelFactory &factory = *node.pFactory;
          mUniquePage = factory(this, wxID_ANY);
          wxWindow * uniquePageWindow = S.Prop(1).AddWindow(mUniquePage, wxEXPAND);
          // We're not in the wxTreebook, so add the accelerator here
@@ -373,9 +373,7 @@ PrefsDialog::PrefsDialog
    CentreOnParent();
 }
 
-PrefsDialog::~PrefsDialog()
-{
-}
+PrefsDialog::~PrefsDialog() = default;
 
 int PrefsDialog::ShowModal()
 {
@@ -589,9 +587,7 @@ GlobalPrefsDialog::GlobalPrefsDialog(wxWindow * parent, Factories &factories)
 {
 }
 
-GlobalPrefsDialog::~GlobalPrefsDialog()
-{
-}
+GlobalPrefsDialog::~GlobalPrefsDialog() = default;
 
 long GlobalPrefsDialog::GetPreferredPage()
 {
@@ -619,9 +615,7 @@ void PrefsDialog::RecordExpansionState()
       mFactories[0].expanded = true;
 }
 
-PrefsPanel::~PrefsPanel()
-{
-}
+PrefsPanel::~PrefsPanel() = default;
 
 void PrefsPanel::Cancel()
 {
@@ -636,3 +630,5 @@ wxString PrefsPanel::HelpPageName()
 {
    return wxEmptyString;
 }
+
+PrefsPanelFactory::~PrefsPanelFactory() = default;

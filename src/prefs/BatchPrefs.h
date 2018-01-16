@@ -37,6 +37,6 @@ private:
 class BatchPrefsFactory final : public PrefsPanelFactory
 {
 public:
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 };
 #endif

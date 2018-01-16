@@ -62,7 +62,7 @@ class WaveformPrefsFactory final : public PrefsPanelFactory
 {
 public:
    explicit WaveformPrefsFactory(WaveTrack *wt = 0);
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 
 private:
    WaveTrack *const mWt;

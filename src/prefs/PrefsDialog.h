@@ -34,11 +34,11 @@ class PrefsDialog /* not final */ : public wxDialogWrapper
  public:
     // An array of PrefsNode specifies the tree of pages in pre-order traversal.
     struct PrefsNode {
-       PrefsPanelFactory * CONST pFactory;
+       const PrefsPanelFactory * CONST pFactory;
        CONST int nChildren;
        bool expanded;
 
-       PrefsNode(PrefsPanelFactory *pFactory_,
+       PrefsNode(const PrefsPanelFactory * pFactory_,
           int nChildren_ = 0,
           bool expanded_ = true)
           : pFactory(pFactory_), nChildren(nChildren_), expanded(expanded_)

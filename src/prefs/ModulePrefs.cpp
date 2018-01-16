@@ -170,7 +170,7 @@ wxString ModulePrefs::HelpPageName()
    return "Modules_Preferences";
 }
 
-PrefsPanel *ModulePrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *ModulePrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew ModulePrefs(parent, winid);

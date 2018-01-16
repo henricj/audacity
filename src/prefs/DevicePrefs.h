@@ -57,7 +57,7 @@ class DevicePrefs final : public PrefsPanel
 class DevicePrefsFactory final : public PrefsPanelFactory
 {
 public:
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 };
 
 #endif

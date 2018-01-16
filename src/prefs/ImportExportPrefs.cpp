@@ -118,7 +118,7 @@ wxString ImportExportPrefs::HelpPageName()
    return "Import_-_Export_Preferences";
 }
 
-PrefsPanel *ImportExportPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *ImportExportPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew ImportExportPrefs(parent, winid);
