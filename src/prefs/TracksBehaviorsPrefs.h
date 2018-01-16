@@ -48,7 +48,7 @@ class TracksBehaviorsPrefsFactory final : public PrefsPanelFactory
 {
 public:
    explicit TracksBehaviorsPrefsFactory();
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 
 };
 #endif

@@ -37,9 +37,7 @@ ProjectsPrefs::ProjectsPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-ProjectsPrefs::~ProjectsPrefs()
-{
-}
+ProjectsPrefs::~ProjectsPrefs() = default;
 
 ComponentInterfaceSymbol ProjectsPrefs::GetSymbol()
 {
@@ -99,7 +97,7 @@ bool ProjectsPrefs::Commit()
    return true;
 }
 
-PrefsPanel *ProjectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *ProjectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew ProjectsPrefs(parent, winid);

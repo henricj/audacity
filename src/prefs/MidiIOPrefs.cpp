@@ -63,9 +63,7 @@ MidiIOPrefs::MidiIOPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-MidiIOPrefs::~MidiIOPrefs()
-{
-}
+MidiIOPrefs::~MidiIOPrefs() = default;
 
 ComponentInterfaceSymbol MidiIOPrefs::GetSymbol()
 {
@@ -299,7 +297,7 @@ bool MidiIOPrefs::Validate()
    return true;
 }
 
-PrefsPanel *MidiIOPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *MidiIOPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew MidiIOPrefs(parent, winid);

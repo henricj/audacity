@@ -54,9 +54,7 @@ LibraryPrefs::LibraryPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-LibraryPrefs::~LibraryPrefs()
-{
-}
+LibraryPrefs::~LibraryPrefs() = default;
 
 ComponentInterfaceSymbol LibraryPrefs::GetSymbol()
 {
@@ -267,7 +265,7 @@ bool LibraryPrefs::Commit()
    return true;
 }
 
-PrefsPanel *LibraryPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *LibraryPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew LibraryPrefs(parent, winid);

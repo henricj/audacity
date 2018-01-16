@@ -34,9 +34,7 @@ WarningsPrefs::WarningsPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-WarningsPrefs::~WarningsPrefs()
-{
-}
+WarningsPrefs::~WarningsPrefs() = default;
 
 ComponentInterfaceSymbol WarningsPrefs::GetSymbol()
 {
@@ -106,7 +104,7 @@ bool WarningsPrefs::Commit()
    return true;
 }
 
-PrefsPanel *WarningsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *WarningsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const 
 {
    wxASSERT(parent); // to justify safenew
    return safenew WarningsPrefs(parent, winid);

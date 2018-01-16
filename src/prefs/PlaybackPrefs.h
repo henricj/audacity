@@ -43,7 +43,7 @@ class PlaybackPrefs final : public PrefsPanel
 class PlaybackPrefsFactory final : public PrefsPanelFactory
 {
 public:
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 };
 
 #endif

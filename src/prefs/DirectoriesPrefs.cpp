@@ -57,9 +57,7 @@ DirectoriesPrefs::DirectoriesPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-DirectoriesPrefs::~DirectoriesPrefs()
-{
-}
+DirectoriesPrefs::~DirectoriesPrefs() = default;
 
 
 ComponentInterfaceSymbol DirectoriesPrefs::GetSymbol()
@@ -287,7 +285,7 @@ bool DirectoriesPrefs::Commit()
    return true;
 }
 
-PrefsPanel *DirectoriesPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *DirectoriesPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew DirectoriesPrefs(parent, winid);

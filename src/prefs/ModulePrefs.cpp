@@ -35,9 +35,7 @@ ModulePrefs::ModulePrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-ModulePrefs::~ModulePrefs()
-{
-}
+ModulePrefs::~ModulePrefs() = default;
 
 ComponentInterfaceSymbol ModulePrefs::GetSymbol()
 {
@@ -180,7 +178,7 @@ void ModulePrefs::SetModuleStatus(const FilePath &fname, int iStatus){
    gPrefs->Flush();
 }
 
-PrefsPanel *ModulePrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *ModulePrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew ModulePrefs(parent, winid);

@@ -48,9 +48,7 @@ WaveformPrefs::WaveformPrefs(wxWindow * parent, wxWindowID winid, WaveTrack *wt)
    Populate();
 }
 
-WaveformPrefs::~WaveformPrefs()
-{
-}
+WaveformPrefs::~WaveformPrefs() = default;
 
 ComponentInterfaceSymbol WaveformPrefs::GetSymbol()
 {
@@ -252,7 +250,7 @@ WaveformPrefsFactory::WaveformPrefsFactory(WaveTrack *wt)
 {
 }
 
-PrefsPanel *WaveformPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *WaveformPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew WaveformPrefs(parent, winid, mWt);

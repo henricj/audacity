@@ -99,7 +99,7 @@ class KeyConfigPrefsFactory final : public PrefsPanelFactory
 public:
    KeyConfigPrefsFactory(const CommandID &name = {})
       : mName{ name } {}
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 
 private:
    CommandID mName;

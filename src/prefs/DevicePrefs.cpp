@@ -58,9 +58,7 @@ DevicePrefs::DevicePrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-DevicePrefs::~DevicePrefs()
-{
-}
+DevicePrefs::~DevicePrefs() = default;
 
 
 ComponentInterfaceSymbol DevicePrefs::GetSymbol()
@@ -420,7 +418,7 @@ bool DevicePrefs::Commit()
    return true;
 }
 
-PrefsPanel *DevicePrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *DevicePrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew DevicePrefs(parent, winid);

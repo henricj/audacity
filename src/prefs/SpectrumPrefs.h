@@ -110,7 +110,7 @@ class SpectrumPrefsFactory final : public PrefsPanelFactory
 {
 public:
    explicit SpectrumPrefsFactory(WaveTrack *wt = 0);
-   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) override;
+   PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const override;
 
 private:
    WaveTrack *const mWt;

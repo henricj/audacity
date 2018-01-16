@@ -54,9 +54,7 @@ RecordingPrefs::RecordingPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-RecordingPrefs::~RecordingPrefs()
-{
-}
+RecordingPrefs::~RecordingPrefs() = default;
 
 ComponentInterfaceSymbol RecordingPrefs::GetSymbol()
 {
@@ -305,7 +303,7 @@ void RecordingPrefs::OnToggleCustomName(wxCommandEvent & /* Evt */)
    mToggleCustomName->Enable(mUseCustomTrackName);
 }
 
-PrefsPanel *RecordingPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *RecordingPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew RecordingPrefs(parent, winid);

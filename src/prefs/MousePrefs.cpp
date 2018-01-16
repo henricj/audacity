@@ -67,9 +67,7 @@ MousePrefs::MousePrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-MousePrefs::~MousePrefs()
-{
-}
+MousePrefs::~MousePrefs() = default;
 
 ComponentInterfaceSymbol MousePrefs::GetSymbol()
 {
@@ -218,7 +216,7 @@ bool MousePrefs::Commit()
    return true;
 }
 
-PrefsPanel *MousePrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *MousePrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew MousePrefs(parent, winid);

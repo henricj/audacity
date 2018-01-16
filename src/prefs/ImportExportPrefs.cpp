@@ -31,9 +31,7 @@ ImportExportPrefs::ImportExportPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-ImportExportPrefs::~ImportExportPrefs()
-{
-}
+ImportExportPrefs::~ImportExportPrefs() = default;
 
 ComponentInterfaceSymbol ImportExportPrefs::GetSymbol()
 {
@@ -128,7 +126,7 @@ bool ImportExportPrefs::Commit()
    return true;
 }
 
-PrefsPanel *ImportExportPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *ImportExportPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew ImportExportPrefs(parent, winid);

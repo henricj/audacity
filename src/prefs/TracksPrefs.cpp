@@ -235,9 +235,7 @@ TracksPrefs::TracksPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-TracksPrefs::~TracksPrefs()
-{
-}
+TracksPrefs::~TracksPrefs() = default;
 
 ComponentInterfaceSymbol TracksPrefs::GetSymbol()
 {
@@ -407,7 +405,7 @@ bool TracksPrefs::Commit()
    return true;
 }
 
-PrefsPanel *TracksPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *TracksPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew TracksPrefs(parent, winid);

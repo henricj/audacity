@@ -24,9 +24,7 @@ MinimizeButtonHandle::MinimizeButtonHandle
    : ButtonHandle{ pTrack, rect }
 {}
 
-MinimizeButtonHandle::~MinimizeButtonHandle()
-{
-}
+MinimizeButtonHandle::~MinimizeButtonHandle() = default;
 
 UIHandle::Result MinimizeButtonHandle::CommitChanges
 (const wxMouseEvent &, AudacityProject *pProject, wxWindow*)
@@ -134,9 +132,7 @@ CloseButtonHandle::CloseButtonHandle
    : ButtonHandle{ pTrack, rect }
 {}
 
-CloseButtonHandle::~CloseButtonHandle()
-{
-}
+CloseButtonHandle::~CloseButtonHandle() = default;
 
 UIHandle::Result CloseButtonHandle::CommitChanges
 (const wxMouseEvent &, AudacityProject *pProject, wxWindow*)
@@ -201,9 +197,7 @@ MenuButtonHandle::MenuButtonHandle
    , mpCell{ pCell }
 {}
 
-MenuButtonHandle::~MenuButtonHandle()
-{
-}
+MenuButtonHandle::~MenuButtonHandle() = default;
 
 UIHandle::Result MenuButtonHandle::CommitChanges
 (const wxMouseEvent &, AudacityProject *pProject, wxWindow *WXUNUSED(pParent))

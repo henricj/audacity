@@ -30,9 +30,7 @@ TracksBehaviorsPrefs::TracksBehaviorsPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-TracksBehaviorsPrefs::~TracksBehaviorsPrefs()
-{
-}
+TracksBehaviorsPrefs::~TracksBehaviorsPrefs() = default;
 
 ComponentInterfaceSymbol TracksBehaviorsPrefs::GetSymbol()
 {
@@ -138,7 +136,7 @@ TracksBehaviorsPrefsFactory::TracksBehaviorsPrefsFactory()
 {
 }
 
-PrefsPanel *TracksBehaviorsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *TracksBehaviorsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew TracksBehaviorsPrefs(parent, winid);

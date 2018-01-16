@@ -107,9 +107,7 @@ QualityPrefs::QualityPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-QualityPrefs::~QualityPrefs()
-{
-}
+QualityPrefs::~QualityPrefs() = default;
 
 ComponentInterfaceSymbol QualityPrefs::GetSymbol()
 {
@@ -277,7 +275,7 @@ bool QualityPrefs::Commit()
    return true;
 }
 
-PrefsPanel *QualityPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *QualityPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew QualityPrefs(parent, winid);

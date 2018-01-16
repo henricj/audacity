@@ -201,7 +201,7 @@ bool EffectsPrefs::Commit()
    return true;
 }
 
-PrefsPanel *EffectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *EffectsPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew EffectsPrefs(parent, winid);

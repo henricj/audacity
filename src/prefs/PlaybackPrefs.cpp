@@ -34,9 +34,7 @@ PlaybackPrefs::PlaybackPrefs(wxWindow * parent, wxWindowID winid)
    Populate();
 }
 
-PlaybackPrefs::~PlaybackPrefs()
-{
-}
+PlaybackPrefs::~PlaybackPrefs() = default;
 
 ComponentInterfaceSymbol PlaybackPrefs::GetSymbol()
 {
@@ -183,7 +181,7 @@ bool PlaybackPrefs::Commit()
    return true;
 }
 
-PrefsPanel *PlaybackPrefsFactory::operator () (wxWindow *parent, wxWindowID winid)
+PrefsPanel *PlaybackPrefsFactory::operator () (wxWindow *parent, wxWindowID winid) const
 {
    wxASSERT(parent); // to justify safenew
    return safenew PlaybackPrefs(parent, winid);

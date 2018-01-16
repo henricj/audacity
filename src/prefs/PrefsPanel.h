@@ -59,6 +59,11 @@ class PrefsPanel /* not final */ : public wxPanelWrapper, ComponentInterface
       SetName(title);      // Provide audible label
    }
 
+   PrefsPanel(const PrefsPanel&) = delete;
+   PrefsPanel& operator=(const PrefsPanel&) = delete;
+   PrefsPanel(PrefsPanel&&) = delete;
+   PrefsPanel& operator=(PrefsPanel&&) = delete;
+
    virtual ~PrefsPanel();
 
    // NEW virtuals
@@ -89,8 +94,16 @@ class PrefsPanel /* not final */ : public wxPanelWrapper, ComponentInterface
 class PrefsPanelFactory /* not final */
 {
 public:
+   PrefsPanelFactory() = default;
+   PrefsPanelFactory(const PrefsPanelFactory&) = delete;
+   PrefsPanelFactory& operator=(const PrefsPanelFactory&) = delete;
+   PrefsPanelFactory(PrefsPanelFactory&&) = delete;
+   PrefsPanelFactory& operator=(PrefsPanelFactory&&) = delete;
+
+   virtual ~PrefsPanelFactory();
+
    // Precondition: parent != NULL
-   virtual PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) = 0;
+   virtual PrefsPanel *operator () (wxWindow *parent, wxWindowID winid) const = 0;
 };
 
 #endif
