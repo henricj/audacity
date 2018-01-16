@@ -883,9 +883,7 @@ void NumericConverter::PrintDebugInfo()
    wxPrintf("\n");
 }
 
-NumericConverter::~NumericConverter()
-{
-}
+NumericConverter::~NumericConverter() = default;
 
 void NumericConverter::ValueToControls()
 {
@@ -968,7 +966,7 @@ void NumericConverter::ValueToControls(double rawValue, bool nearest /* = true *
 
       if (mFields[i].frac) {
          // JKC: This old code looks bogus to me.
-         // The rounding is not propogating to earlier fields in the frac case.
+         // The rounding is not propagating to earlier fields in the frac case.
          //value = (int)(t_frac * mFields[i].base + 0.5);  // +0.5 as rounding required
          // I did the rounding earlier.
          if (t_frac >= 0)
@@ -1136,12 +1134,12 @@ int NumericConverter::GetFormatIndex()
    return ndx;
 }
 
-int NumericConverter::GetNumBuiltins()
+int NumericConverter::GetNumBuiltins() const
 {
    return mNBuiltins;
 }
 
-NumericFormatSymbol NumericConverter::GetBuiltinName(const int index)
+NumericFormatSymbol NumericConverter::GetBuiltinName(const int index) const
 {
    if (index >= 0 && index < GetNumBuiltins())
       return mBuiltinFormatStrings[index].name;
@@ -1149,7 +1147,7 @@ NumericFormatSymbol NumericConverter::GetBuiltinName(const int index)
    return {};
 }
 
-wxString NumericConverter::GetBuiltinFormat(const int index)
+wxString NumericConverter::GetBuiltinFormat(const int index) const
 {
    if (index >= 0 && index < GetNumBuiltins())
       return mBuiltinFormatStrings[index].formatStr;
@@ -1157,7 +1155,7 @@ wxString NumericConverter::GetBuiltinFormat(const int index)
    return {};
 }
 
-wxString NumericConverter::GetBuiltinFormat(const NumericFormatSymbol &name)
+wxString NumericConverter::GetBuiltinFormat(const NumericFormatSymbol &name) const
 {
    int ndx =
       std::find( mBuiltinFormatStrings, mBuiltinFormatStrings + mNBuiltins,
@@ -1350,9 +1348,7 @@ NumericTextCtrl::NumericTextCtrl(wxWindow *parent, wxWindowID id,
       SetValue( options.value );
 }
 
-NumericTextCtrl::~NumericTextCtrl()
-{
-}
+NumericTextCtrl::~NumericTextCtrl() = default;
 
 // Set the focus to the first (left-most) non-zero digit
 // If all digits are zero, the right-most position is focused
