@@ -655,7 +655,7 @@ public:
       wxString path = FileNames::SelectFile(FileNames::Operation::_None,
                                    question,
                                    mLibPath.GetPath(),
-                                   mLibPath.GetName(),
+                                   mLibPath.GetFullName(),
                                    wxT(""),
                                    mType,
                                    wxFD_OPEN | wxRESIZE_BORDER,
