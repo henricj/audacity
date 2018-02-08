@@ -826,6 +826,9 @@ public:
    /* get library info */
    wxString GetLibraryVersion();
    wxString GetLibraryName();
+#if defined(__WXMSW__)
+   wxString GetLibraryNameAlternate();
+#endif
    wxString GetLibraryPath();
    wxString GetLibraryTypeString();
 
@@ -1018,6 +1021,15 @@ bool MP3Exporter::LoadLibrary(wxWindow *parent, AskUser askuser)
       mLibraryLoaded = InitLibrary(mLibPath);
    }
 
+#if defined(__WXMSW__)
+   // If not successful, try loading using system search paths and alternate name
+   if (!ValidLibraryLoaded()) {
+      wxLogMessage(wxT("Attempting to load alternate LAME from system search paths"));
+      mLibPath = GetLibraryNameAlternate();
+      mLibraryLoaded = InitLibrary(mLibPath);
+   }
+#endif
+
    // If not successful, try loading using compiled in path
    if (!ValidLibraryLoaded()) {
       wxLogMessage(wxT("Attempting to load LAME from builtin path"));
@@ -1025,6 +1037,16 @@ bool MP3Exporter::LoadLibrary(wxWindow *parent, AskUser askuser)
       mLibPath = fn.GetFullPath();
       mLibraryLoaded = InitLibrary(mLibPath);
    }
+
+#if defined(__WXMSW__)
+   // If not successful, try loading using compiled in path
+   if (!ValidLibraryLoaded()) {
+      wxLogMessage(wxT("Attempting to load alternate LAME from builtin path"));
+      wxFileName fn(GetLibraryPath(), GetLibraryNameAlternate());
+      mLibPath = fn.GetFullPath();
+      mLibraryLoaded = InitLibrary(mLibPath);
+   }
+#endif
 
    // If not successful, must ask the user
    if (!ValidLibraryLoaded()) {
@@ -1518,9 +1540,16 @@ wxString MP3Exporter::GetLibraryName()
    return wxT("lame_enc.dll");
 }
 
+#if defined(__WXMSW__)
+wxString MP3Exporter::GetLibraryNameAlternate()
+{
+   return wxT("libmp3lame.dll");
+}
+#endif
+
 wxString MP3Exporter::GetLibraryTypeString()
 {
-   return _("Only lame_enc.dll|lame_enc.dll|Dynamically Linked Libraries (*.dll)|*.dll|All Files|*");
+   return _("Only lame_enc.dll and libmp3lame.dll|lame_enc.dll;libmp3lame.dll|Dynamically Linked Libraries (*.dll)|*.dll|All Files|*");
 }
 
 #elif defined(__WXMAC__)
