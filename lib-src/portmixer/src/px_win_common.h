@@ -69,6 +69,7 @@ typedef struct PxInfo
 
 int open_mixers(px_mixer *Px, ULONG deviceIn, ULONG deviceOut);
 int open_ep_mixers(px_mixer *Px, ULONG deviceIn, ULONG deviceOut);
+int open_ep_mixers_byid(px_mixer *Px, const wchar_t *deviceIn, const wchar_t *deviceOut);
 
 #ifdef __cplusplus
 }
