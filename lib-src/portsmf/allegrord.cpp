@@ -37,18 +37,18 @@ public:
     bool parse();
     long parse_chan(string &field);
     long parse_int(string &field);
-    int find_real_in(string &field, int n);
+    size_t find_real_in(const string &field, size_t n) const;
     double parse_real(string &field);
-    void parse_error(string &field, long offset, const char *message);
+    void parse_error(const string &field, ptrdiff_t offset, const char *message);
     double parse_dur(string &field, double base);
-    double parse_after_dur(double dur, string &field, int n, double base);
+    double parse_after_dur(double dur, const string &field, size_t n, double base);
     double parse_loud(string &field);
     long parse_key(string &field);
     double parse_pitch(string &field);
-    long parse_after_key(int key, string &field, int n);
-    long find_int_in(string &field, int n);
+    long parse_after_key(int key, const string &field, size_t n);
+    size_t find_int_in(const string &field, size_t n) const;
     bool parse_attribute(string &field, Alg_parameter_ptr parm);
-    bool parse_val(Alg_parameter_ptr param, string &s, int i);
+    bool parse_val(Alg_parameter_ptr param, const string &s, size_t i);
     bool check_type(char type_char, Alg_parameter_ptr param);
 };
 
@@ -56,7 +56,7 @@ public:
 double Alg_reader::parse_pitch(string &field)
 {
     if (isdigit(field[1])) {
-        int last = find_real_in(field, 1);
+        size_t last = find_real_in(field, 1);
         string real_string = field.substr(1, last - 1);
         return atof(real_string.c_str());
     } else {
@@ -469,13 +469,13 @@ long Alg_reader::parse_int(string &field)
 }
 
 
-int Alg_reader::find_real_in(string &field, int n)
+size_t Alg_reader::find_real_in(const string &field, size_t n) const
 {
     // scans from offset n to the end of a real constant
     bool decimal = false;
-    int len = field.length();
+    size_t len = field.length();
     if (n < len && field[n] == '-') n += 1; // parse one minus sign
-    for (int i = n; i < len; i++) {
+    for (size_t i = n; i < len; i++) {
         char c = field[i];
         if (!isdigit(c)) {
             if (c == '.' && !decimal) {
@@ -492,9 +492,9 @@ int Alg_reader::find_real_in(string &field, int n)
 double Alg_reader::parse_real(string &field)
 {
     const char *msg = "Real expected";
-    int last = find_real_in(field, 1);
+    size_t last = find_real_in(field, 1);
     string real_string = field.substr(1, last - 1);
-    if (last <= 1 || last < (int) field.length()) {
+    if (last <= 1 || last < field.length()) {
        parse_error(field, 1, msg);
        return 0;
     }
@@ -502,9 +502,9 @@ double Alg_reader::parse_real(string &field)
 }
 
 
-void Alg_reader::parse_error(string &field, long offset, const char *message)
+void Alg_reader::parse_error(const string &field, ptrdiff_t offset, const char *message)
 {
-    int position = line_parser.pos - field.length() + offset;
+    size_t position = line_parser.pos - field.length() + offset;
     error_flag = true;
     puts(line_parser.str->c_str());
     for (int i = 0; i < position; i++) {
@@ -523,7 +523,7 @@ double Alg_reader::parse_dur(string &field, double base)
     const char *msg = "Duration expected";
     const char *durs = "SIQHW";
     const char *p;
-    int last;
+    size_t last;
     double dur;
     if (field.length() < 2) {
         // fall through to error message
@@ -549,10 +549,10 @@ double Alg_reader::parse_dur(string &field, double base)
 }
 
 
-double Alg_reader::parse_after_dur(double dur, string &field, 
-                                   int n, double base)
+double Alg_reader::parse_after_dur(double dur, const string &field,
+                                   size_t n, double base)
 {
-    if ((int) field.length() == n) {
+    if (field.length() == n) {
         return dur;
     }
     if (toupper(field[n]) == 'T') {
@@ -562,7 +562,7 @@ double Alg_reader::parse_after_dur(double dur, string &field,
         return parse_after_dur(dur * 1.5, field, n + 1, base);
     }
     if (isdigit(field[n])) {
-        int last = find_real_in(field, n);
+        size_t last = find_real_in(field, n);
         string a_string = field.substr(n, last - n);
         double f = atof(a_string.c_str());
         return parse_after_dur(dur * f, field, last, base);
@@ -630,9 +630,9 @@ long Alg_reader::parse_key(string &field)
 }
 
 
-long Alg_reader::parse_after_key(int key, string &field, int n)
+long Alg_reader::parse_after_key(int key, const string &field, size_t n)
 {
-    if ((int) field.length() == n) {
+    if (field.length() == n) {
         return key;
     }
     char c = toupper(field[n]);
@@ -643,7 +643,7 @@ long Alg_reader::parse_after_key(int key, string &field, int n)
         return parse_after_key(key - 1, field, n + 1);
     }
     if (isdigit(field[n])) {
-        int last = find_int_in(field, n);
+        size_t last = find_int_in(field, n);
         string octave = field.substr(n, last - n);
         int oct = atoi(octave.c_str());
         return parse_after_key(key + oct * 12, field, last);
@@ -653,9 +653,9 @@ long Alg_reader::parse_after_key(int key, string &field, int n)
 }
 
 
-long Alg_reader::find_int_in(string &field, int n)
+size_t Alg_reader::find_int_in(const string &field, size_t n) const
 {
-    while ((int) field.length() > n && isdigit(field[n])) {
+    while (field.length() > n && isdigit(field[n])) {
         n = n + 1;
     }
     return n;
@@ -664,8 +664,8 @@ long Alg_reader::find_int_in(string &field, int n)
 
 bool Alg_reader::parse_attribute(string &field, Alg_parameter_ptr param)
 {
-    int i = 1;
-    while (i < (int) field.length()) {
+    size_t i = 1;
+    while (i < field.length()) {
         if (field[i] == ':') {
             string attr = field.substr(1, i - 1);
             char type_char = field[i - 1];
@@ -683,9 +683,9 @@ bool Alg_reader::parse_attribute(string &field, Alg_parameter_ptr param)
 }
 
 
-bool Alg_reader::parse_val(Alg_parameter_ptr param, string &s, int i)
+bool Alg_reader::parse_val(Alg_parameter_ptr param, const string &s, size_t i)
 {
-    int len = (int) s.length();
+    size_t len = s.length();
     if (i >= len) {
         return false;
     }
@@ -714,7 +714,7 @@ bool Alg_reader::parse_val(Alg_parameter_ptr param, string &s, int i)
             param->l = false;
         } else return false;
     } else if (isdigit(s[i]) || s[i] == '-' || s[i] == '.') {
-        int pos = i;
+        size_t pos = i;
         bool period = false;
         int sign = 1;
         if (s[pos] == '-') {
