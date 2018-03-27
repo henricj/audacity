@@ -240,7 +240,7 @@ fail:
    return cleanup(Px);
 }
 
-int open_ep_mixers_byid(px_mixer *Px, wchar_t *deviceIn, wchar_t *deviceOut)
+int open_ep_mixers_byid(px_mixer *Px, const wchar_t *deviceIn, const wchar_t *deviceOut)
 {
    PxEPInfo *info;
    IMMDeviceEnumerator *denum = NULL;
