@@ -3,6 +3,7 @@
  * data for Nyquist memory allocation.
  */
 
+#include <stddef.h>
 #include <stdio.h>
 #include <assert.h>
 #include "xlisp.h"
@@ -189,7 +190,7 @@ void falloc_gc()
    for (cp = pools; cp; lp = cp, cp = np) {
       char *str = ((char *)cp) + POOL_HEAD_SIZE;
       char *end = str + MAXSPOOLSIZE;
-      intptr_t tsiz = end - str;
+      ptrdiff_t tsiz = end - str;
       long csiz = 0;
       CQUE *tsave = NULL;
       CQUE *ln = NULL;
