@@ -124,7 +124,7 @@ in the selection bar of Audacity.
   - Any non-numeric characters before the first field are treated
     as a prefix, and will be displayed to the left of the first field.
   - A delimiter ending in '.' is treated specially.  All fields after
-    this delimeter are fractional fields, after the decimal point.
+    this delimiter are fractional fields, after the decimal point.
   - The '|' character is treated as a special delimiter.  The number
     to the right of this character (which is allowed to contain a
     decimal point) is treated as a scaling factor.  The number is
