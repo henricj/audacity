@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="nyquist">
@@ -52,6 +52,9 @@
     </Filter>
     <Filter Include="include\ffts">
       <UniqueIdentifier>{cf385f60-abc7-4d79-888d-115d02b3e72e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="nyquist\nyqstk\pch">
+      <UniqueIdentifier>{5330c71d-3dc9-4596-835e-823c3af2dade}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -666,6 +669,9 @@
     <ClCompile Include="..\..\..\lib-src\libnyquist\nyquist\nyqsrc\pvshell.c">
       <Filter>nyquist\nyqsrc</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\libnyquist\nyquist\nyqstk\src\stdafx.cpp">
+      <Filter>nyquist\nyqstk\pch</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\lib-src\libnyquist\nyquist\ffts\src\fftext.h">
@@ -1052,6 +1058,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\lib-src\libnyquist\nyquist\ffts\src\fft2d.h">
       <Filter>include\ffts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib-src\libnyquist\nyquist\nyqstk\src\stdafx.h">
+      <Filter>nyquist\nyqstk\pch</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
