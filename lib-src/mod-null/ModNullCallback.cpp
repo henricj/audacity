@@ -33,7 +33,7 @@ click from the menu into the actaul function to be called.
 #include "Project.h"
 #include "commands/CommandManager.h"
 
-#if defined(__WXMSW__)
+#if AUDACITY_NEED_WX_LIBS
 #include <wx/init.h>
 #  if defined(__WXDEBUG__)
 #     define D "d"
@@ -61,7 +61,7 @@ click from the menu into the actaul function to be called.
 #  undef V
 #  undef D
 
-#endif //(__WXMSW__)
+#endif // AUDACITY_NEED_WX_LIBS
 
 /*
 There are several functions that can be used in a GUI module.
