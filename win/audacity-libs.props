@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="AudacityHeaders">
+    <AudacityHeader Include="..\.." />
+    <AudacityHeader Include="..\..\..\include" />
+    <AudacityHeader Include="..\..\..\lib-src\expat\lib" />
+    <AudacityHeader Include="..\..\..\lib-src\FileDialog" />
+    <AudacityHeader Include="..\..\..\lib-src\FileDialog\win" />
+    <AudacityHeader Include="..\..\..\lib-src\ffmpeg\win32" />
+    <AudacityHeader Include="..\..\..\lib-src\ffmpeg" />
+    <AudacityHeader Include="..\..\..\lib-src\lib-widget-extra" />
+    <AudacityHeader Include="..\..\..\lib-src\libflac\include" />
+    <AudacityHeader Include="..\..\..\lib-src\libid3tag" />
+    <AudacityHeader Include="..\..\..\lib-src\libmad\msvc++" />
+    <AudacityHeader Include="..\..\..\lib-src\libmad" />
+    <AudacityHeader Include="..\..\..\lib-src\libmpg123" />
+    <AudacityHeader Include="..\..\..\lib-src\libmp3lame" />
+    <AudacityHeader Include="..\..\..\lib-src\libnyquist" />
+    <AudacityHeader Include="..\..\..\lib-src\libogg\include" />
+    <AudacityHeader Include="..\..\..\lib-src\libscorealign" />
+    <AudacityHeader Include="..\libsndfile" />
+    <AudacityHeader Include="..\..\..\lib-src\libsoxr\src" />
+    <AudacityHeader Include="..\..\..\lib-src\libvamp" />
+    <AudacityHeader Include="..\..\..\lib-src\libvorbis\include" />
+    <AudacityHeader Include="..\..\..\lib-src\portaudio-v19\include" />
+    <AudacityHeader Include="..\..\..\lib-src\portmixer\include" />
+    <AudacityHeader Include="..\..\..\lib-src\portsmf" />
+    <AudacityHeader Include="..\..\..\lib-src\sbsms\include" />
+    <AudacityHeader Include="..\..\..\lib-src\soundtouch\include" />
+    <AudacityHeader Include="..\..\..\lib-src\twolame\libtwolame" />
+    <AudacityHeader Include="..\..\..\lib-src\portmidi\pm_common" />
+    <AudacityHeader Include="..\..\..\lib-src\portmidi\pm_win" />
+    <AudacityHeader Include="..\..\..\lib-src\portmidi\porttime" />
+    <AudacityHeader Include="..\..\..\lib-src\lv2\lilv" />
+    <AudacityHeader Include="..\..\..\lib-src\lv2\lv2" />
+    <AudacityHeader Include="..\..\..\lib-src\lv2\suil" />
+    <AudacityHeader Include="..\..\..\lib-src\lame" />
+    <AudacityHeader Include="..\..\..\src" />
+  </ItemGroup>
+  <ItemGroup>
+    <AudacityLib Include="expat.lib;filedialog.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib" />
+    <AudacityLib Include="libmpg123.lib;libmp3lame.lib" />
+    <AudacityLib Include="comctl32.lib;rpcrt4.lib;ws2_32.lib" />
+  </ItemGroup>
+  <PropertyGroup>
+    <AudacityHeaderDirs>@(AudacityHeader->'%(FullPath)')</AudacityHeaderDirs>
+    <AudacityLibs>@(AudacityLib)</AudacityLibs>
+  </PropertyGroup>
+</Project>

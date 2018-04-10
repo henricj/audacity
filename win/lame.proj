@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+    DefaultTargets="Build" ToolsVersion="15.0">
+  <Import Project="audacity.props" />
+  <PropertyGroup>
+    <LameConfiguration>$(Configuration)</LameConfiguration>
+    <LameConfiguration Condition="'$(StaticRuntime)'=='true'">Static $(LameConfiguration)</LameConfiguration>
+    <ProjectProperties>PreferredToolArchitecture=x64;Configuration=$(LameConfiguration);Platform=$(Platform);WholeProgramOptimization=true</ProjectProperties>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReferences Include="$(MsBuildThisFileDirectory)../external/lame/lame/vc_solution/lame.sln">
+      <Properties>$(ProjectProperties)</Properties>
+    </ProjectReferences>
+  </ItemGroup>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <Target Name="Clean">
+    <MSBuild Projects="@(ProjectReferences)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  <Target Name="Build">
+    <MSBuild Projects="@(ProjectReferences)" Targets="libmp3lame" BuildInParallel="true" />
+  </Target>
+</Project>

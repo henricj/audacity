@@ -1,0 +1,59 @@
+version: 1.0.{build}
+branches:
+  only:
+  - x64
+  - build
+image:
+- Visual Studio 2017
+configuration: Release
+platform:
+install:
+- git submodule update --init --recursive --jobs 4
+before_build:
+- cmd: nuget restore win\audacity.sln
+- 'echo #define REV_LONG "%APPVEYOR_REPO_COMMIT%" > src\RevisionIdent.h'
+- 'echo #define REV_TIME "%APPVEYOR_REPO_COMMIT_TIMESTAMP%" >> src\RevisionIdent.h'
+build:
+  project: win\top.proj
+  parallel: true
+  verbosity: minimal
+before_package:
+- cmd: >-
+    del /S win\build\*.lib &
+    del /S win\build\*.ipdb &
+    del /S win\build\*.iobj &
+    del /S win\build\*.pdb &
+    del /S win\build\*.exp
+artifacts:
+- path: win\build\bin
+  name: 'audacity-%APPVEYOR_REPO_BRANCH%-%PLATFORM%_%Architecture%-%APPVEYOR_BUILD_VERSION%-%APPVEYOR_REPO_COMMIT%-%APPVEYOR_BUILD_WORKER_IMAGE%'
+
+for:
+-
+  branches:
+    only:
+    - x64
+  platform:
+  - x64
+  - Win32
+  environment:
+    matrix:
+    - Architecture: default
+    - Architecture: avx
+    - Architecture: avx2
+    - Architecture: fpu
+  matrix:
+    fast_finish: true
+    exclude:
+      - image: Visual Studio 2017
+        Architecture: avx2
+        platform: Win32
+      - platform: x64
+        Architecture: fpu
+-
+  branches:
+    only:
+    - build
+  platform:
+    - Win32
+
