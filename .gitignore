@@ -187,6 +187,7 @@ win/.vs/
 win/packages
 win/.nuget
 win-alt-build
+win/build
 
 # All those help files
 help/manual*
