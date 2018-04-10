@@ -31,6 +31,25 @@ call :dobuild Win32
 @if %errorlevel% neq 0 goto errorexit
 
 @endlocal
+@setlocal
+
+call "%VS150COMNTOOLS%VsDevCmd.bat" -arch=x64 -host_arch=x64
+@if %errorlevel% neq 0 goto weberrorexit
+
+call :dobuild x64
+@if %errorlevel% neq 0 goto errorexit
+
+@endlocal
+@setlocal
+
+call "%VS150COMNTOOLS%VsDevCmd.bat" -arch=arm64 -host_arch=x64
+@if %errorlevel% neq 0 goto weberrorexit
+
+call :dobuild ARM64
+@if %errorlevel% neq 0 goto errorexit
+
+@endlocal
+
 @exit /b 0
 
 :dobuild
