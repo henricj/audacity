@@ -49,88 +49,20 @@
     <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PreBuildEvent>
-      <Command>setlocal EnableDelayedExpansion
-set CFG="$(ProjectDir)/$(IntDir)config.h"
-
-echo // Automatically generated file &gt;"!CFG!"
-echo #define PX_USE_WIN_DSOUND 1 &gt;&gt;"!CFG!"
-echo #define PX_USE_WIN_MME 1 &gt;&gt;"!CFG!"
-echo #define PX_USE_WIN_WASAPI 1 &gt;&gt;"!CFG!"
-</Command>
-    </PreBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portaudio-v19\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PX_USE_WIN_DSOUND=1;PX_USE_WIN_MME=1;PX_USE_WIN_WASAPI=1;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>$(ProjectDir)\$(Configuration)\config.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
-    <PostBuildEvent>
-      <Command>rem
-rem With the upgrade to VS2013, this not longer really needed,
-rem but leaving here for possible future use
-rem
-
-setlocal EnableDelayedExpansion
-set BASE="../../../lib-src/portmixer"
-set INTDIR=$(Configuration)
-set CFLAGS=/O2 /GL /I "!BASE!/../portaudio-v19/include" /I "!BASE!/include" /D "WIN32" /D "NDEBUG" /D "_LIB" /D "PX_USE_WIN_MME" /D "_MBCS" /GF /FD /EHsc /MD /Gy /Fo"!INTDIR!/" /Fd"!INTDIR!/" /W3 /nologo /c /wd4996 /FI "$(ProjectDir)/$(Configuration)/config.h" /errorReport:prompt
-set LIBS=
-
-rem if "!DXSDK_DIR!"=="" goto NoDX
-
-rem cl !CFLAGS! /I "!DXSDK_DIR!/include" "!BASE!/src/px_win_ds.c"
-
-rem set LIBS="!DXSDK_DIR!/lib/x86/dxguid.lib"
-
-rem :NoDX
-
-lib /OUT:"$(TargetPath)" "$(IntDir)*.obj" !LIBS!
-</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PreBuildEvent>
-      <Command>setlocal EnableDelayedExpansion
-set CFG="$(ProjectDir)/$(IntDir)config.h"
-
-echo // Automatically generated file &gt;"!CFG!"
-echo #define PX_USE_WIN_DSOUND 1 &gt;&gt;"!CFG!"
-echo #define PX_USE_WIN_MME 1 &gt;&gt;"!CFG!"
-echo #define PX_USE_WIN_WASAPI 1 &gt;&gt;"!CFG!"
-</Command>
-    </PreBuildEvent>
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portaudio-v19\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>PX_USE_WIN_DSOUND=1;PX_USE_WIN_MME=1;PX_USE_WIN_WASAPI=1;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>$(ProjectDir)\$(Configuration)\config.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
-    <PostBuildEvent>
-      <Command>rem
-rem With the upgrade to VS2013, this not longer really needed,
-rem but leaving here for possible future use
-rem
-
-setlocal EnableDelayedExpansion
-set BASE="../../../lib-src/portmixer"
-set INTDIR=$(Configuration)
-set CFLAGS=/Od /I "!BASE!/../portaudio-v19/include" /I "!BASE!/include" /D "WIN32" /D "_DEBUG" /D "_LIB" /D "PX_USE_WIN_MME" /D "_MBCS" /GF /FD /EHsc /RTC1 /MDd /Gy /Fo"!INTDIR!/" /Fd"!INTDIR!/" /W3 /nologo /c /ZI /wd4996 /FI "$(ProjectDir)/$(Configuration)/config.h" /errorReport:prompt
-set LIBS=
-
-rem if "!DXSDK_DIR!"=="" goto NoDX
-
-rem cl !CFLAGS! /I "!DXSDK_DIR!/include" "!BASE!/src/px_win_ds.c"
-
-rem set LIBS="!DXSDK_DIR!/lib/x86/dxguid.lib"
-
-rem :NoDX
-
-lib /OUT:"$(TargetPath)" "$(IntDir)*.obj" !LIBS!
-</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib-src\portmixer\src\px_mixer.c" />
