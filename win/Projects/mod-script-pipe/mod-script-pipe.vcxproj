@@ -65,6 +65,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\lib-src\mod-script-pipe\ScripterCallback.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Audacity\Audacity.vcxproj">
+      <Project>{1d64095c-f936-4fcf-b609-56e9ddf941fa}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
