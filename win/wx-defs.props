@@ -6,6 +6,7 @@
 
     <AudacityWxArchSuffix />
     <AudacityWxArchSuffix Condition=" '$(Platform)' == 'x64' ">_x64</AudacityWxArchSuffix>
+    <AudacityWxArchSuffix Condition=" '$(Platform)' == 'ARM64' ">_arm64</AudacityWxArchSuffix>
 
     <AudacityWxSuffix>u</AudacityWxSuffix>
     <AudacityWxSuffix Condition=" '$(Configuration)'=='Debug' ">ud</AudacityWxSuffix>

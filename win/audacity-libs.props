@@ -40,7 +40,8 @@
   <ItemGroup>
     <AudacityLib Include="expat.lib;filedialog.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib" />
     <AudacityLib Include="libmpg123.lib;libmp3lame.lib" />
-    <AudacityLib Include="comctl32.lib;rpcrt4.lib;ws2_32.lib" />
+    <AudacityLib Include="ComCtl32.lib;RpcRT4.lib;WS2_32.lib;Gdi32.lib;shell32.lib;AdvAPI32.lib" />
+    <AudacityLib Include="ComDlg32.lib;OleAut32.lib;WinSpool.lib" />
   </ItemGroup>
   <PropertyGroup>
     <AudacityHeaderDirs>@(AudacityHeader->'%(FullPath)')</AudacityHeaderDirs>
