@@ -7,9 +7,6 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{f124b025-046a-44c4-b859-cd4bc17e44f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include=".Has Custom Build.">
-      <UniqueIdentifier>{6536245e-8cbc-43d2-879e-96a931a103dc}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib-src\portmixer\src\px_mixer.c">
