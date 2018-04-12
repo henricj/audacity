@@ -492,7 +492,7 @@ using std::max;
 using std::min;
 
 std::unique_ptr<AudioIO> ugAudioIO;
-AudioIO *gAudioIO{};
+AUDACITY_DLL_API AudioIO *gAudioIO{};
 
 wxDEFINE_EVENT(EVT_AUDIOIO_PLAYBACK, wxCommandEvent);
 wxDEFINE_EVENT(EVT_AUDIOIO_CAPTURE, wxCommandEvent);

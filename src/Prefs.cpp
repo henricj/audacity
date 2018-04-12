@@ -69,7 +69,7 @@
 
 std::unique_ptr<AudacityPrefs> ugPrefs {};
 
-AudacityPrefs *gPrefs = NULL;
+AUDACITY_DLL_API AudacityPrefs *gPrefs = NULL;
 int gMenusDirty = 0;
 
 #if 0
