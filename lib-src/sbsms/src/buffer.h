@@ -4,7 +4,7 @@
 
 #include "sbsms.h"
 #include "grain.h"
-#include <stdlib.h>
+#include <algorithm>
 #include <list>
 using namespace std;
 
@@ -184,7 +184,7 @@ void ArrayRingBuffer<T> :: grow(long n)
 template<class T>
 void ArrayRingBuffer<T> :: read(T *outBuf, long n)
 {
-  n = max(0L,min(n,nReadable()));
+  n = std::max(0L,std::min(n,nReadable()));
   memmove(outBuf,buf+readPos,n*sizeof(T));
   advance(n);
 }
@@ -192,7 +192,7 @@ void ArrayRingBuffer<T> :: read(T *outBuf, long n)
 template<class T>
 long ArrayRingBuffer<T> :: nReadable()
 {
-  return max(0L,writePos-readPos);
+  return std::max(0L,writePos-readPos);
 }
 
 template<class T>
