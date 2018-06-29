@@ -3592,7 +3592,7 @@ void VSTEffect::SaveFXP(const wxFileName & fn)
 void VSTEffect::SaveFXProgram(wxMemoryBuffer & buf, int index)
 {
    wxInt32 subType;
-   void *chunkPtr;
+   void *chunkPtr = nullptr;
    int chunkSize;
    int dataSize = 48;
    char progName[28];
