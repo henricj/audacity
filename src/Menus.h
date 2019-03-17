@@ -170,9 +170,9 @@ namespace PluginActions {
       // Flag used to disable "Repeat Last Effect"
       kDontRepeatLast = 0x04,
    };
-bool DoEffect(
+AUDACITY_DLL_API bool DoEffect(
    const PluginID & ID, const CommandContext & context, unsigned flags );
-bool DoAudacityCommand(
+AUDACITY_DLL_API bool DoAudacityCommand(
    const PluginID & ID, const CommandContext & context, unsigned flags );
 }
 

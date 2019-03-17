@@ -386,7 +386,7 @@ namespace PluginActions {
 /// At the moment flags are used only to indicate whether to prompt for
 //  parameters, whether to save the state to history and whether to allow
 /// 'Repeat Last Effect'.
-bool DoEffect(
+AUDACITY_DLL_API bool DoEffect(
    const PluginID & ID, const CommandContext &context, unsigned flags )
 {
    AudacityProject &project = context.project;
@@ -509,7 +509,7 @@ bool DoEffect(
 ///
 /// At the moment flags are used only to indicate whether to prompt for
 /// parameters
-bool DoAudacityCommand(
+AUDACITY_DLL_API bool DoAudacityCommand(
    const PluginID & ID, const CommandContext & context, unsigned flags )
 {
    auto &project = context.project;
