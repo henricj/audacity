@@ -225,7 +225,6 @@ It handles initialization and termination by subclassing wxApp.
 #  endif
 #  pragma comment(lib, "wxbase" V "u" D)
 #  pragma comment(lib, "wxbase" V "u" D "_net")
-#  pragma comment(lib, "wxmsw"  V "u" D "_adv")
 #  pragma comment(lib, "wxmsw"  V "u" D "_core")
 #  pragma comment(lib, "wxmsw"  V "u" D "_html")
 #  pragma comment(lib, "wxpng"        D)
