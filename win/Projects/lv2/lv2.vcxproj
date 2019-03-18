@@ -17,12 +17,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -30,38 +28,34 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <AudacityConditionalSnprintf Condition="'$(VisualStudioVersion)' &lt; '14.0'">snprintf=_snprintf</AudacityConditionalSnprintf>
   </PropertyGroup>
-  <PropertyGroup>
-    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(AudacityLibOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
-    <CustomBuildAfterTargets>Clean</CustomBuildAfterTargets>
+    <OutDir>$(AudacityLibOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>..\..\..\lib-src\lv2\windows;..\..\..\lib-src\lv2\include;..\..\..\lib-src\lv2\sord\src;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lilv\src;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\serd;..\..\..\lib-src\lv2\sord;..\..\..\lib-src\lv2\sratom;..\..\..\lib-src\lv2\suil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;$(AudacityConditionalSnprintf);HAVE_FMAX;LILV_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>_LIB;$(AudacityConditionalSnprintf);HAVE_FMAX;LILV_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
-      <WarningLevel>Level3</WarningLevel>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
+    <!--
     <PreBuildEvent>
       <Command>echo "$(OutDir)\include\lv2"
 ECHO ON
@@ -78,19 +72,13 @@ XCOPY /IE "$(SolutionDir)\..\lib-src\lv2\lv2\lv2\core\*.h" "$(OutDir)\include\lv
 :done
 </Command>
     </PreBuildEvent>
+    -->
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(OutDir)\include;..\..\..\lib-src\lv2\windows;..\..\..\lib-src\lv2\sord\src;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lilv\src;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\serd;..\..\..\lib-src\lv2\sord;..\..\..\lib-src\lv2\sratom;..\..\..\lib-src\lv2\suil;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;$(AudacityConditionalSnprintf);HAVE_FMAX;LILV_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>_LIB;$(AudacityConditionalSnprintf);HAVE_FMAX;LILV_INTERNAL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
@@ -100,6 +88,7 @@ XCOPY /IE "$(SolutionDir)\..\lib-src\lv2\lv2\lv2\core\*.h" "$(OutDir)\include\lv
     <Lib>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
     </Lib>
+    <!--
     <PreBuildEvent>
       <Command>IF EXIST "$(OutDir)\include\lv2" GOTO done
 MKDIR "$(OutDir)\include\lv2\lv2plug.in\ns\ext"
@@ -115,23 +104,20 @@ XCOPY /I /E /Q "$(SolutionDir)\..\lib-src\lv2\lv2\lv2\core\*.h" "$(OutDir)\inclu
 </Command>
       <Message>Performing Custom Build Step</Message>
     </PreBuildEvent>
+    -->
+    <!--
     <CustomBuildStep>
       <Command>RD /S /Q "$(OutDir)/include"</Command>
       <Outputs>dummy</Outputs>
       <Message>Performing Custom Clean Step</Message>
     </CustomBuildStep>
+    -->
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\collections.c" />
-    <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\instance.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\lilv_instance.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\lilv_instance.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\instance.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\lib.c" />
-    <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\node.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\lilv_node.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\lilv_node.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\node.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\plugin.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\pluginclass.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\lilv\src\port.c" />
@@ -145,10 +131,7 @@ XCOPY /I /E /Q "$(SolutionDir)\..\lib-src\lv2\lv2\lv2\core\*.h" "$(OutDir)\inclu
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\byte_source.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\env.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\n3.c" />
-    <ClCompile Include="..\..\..\lib-src\lv2\serd\src\node.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\serd_node.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\serd_node.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\lv2\serd\src\node.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\reader.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\serdi.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\serd\src\string.c" />
@@ -163,10 +146,7 @@ XCOPY /I /E /Q "$(SolutionDir)\..\lib-src\lv2\lv2\lv2\core\*.h" "$(OutDir)\inclu
     <ClCompile Include="..\..\..\lib-src\lv2\sord\src\zix\hash.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\sratom\src\sratom.c" />
     <ClCompile Include="..\..\..\lib-src\lv2\suil\src\host.c" />
-    <ClCompile Include="..\..\..\lib-src\lv2\suil\src\instance.c">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)\suil_instance.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)\suil_instance.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\..\lib-src\lv2\suil\src\instance.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\lib-src\lv2\lilv\lilv\lilv.h" />
