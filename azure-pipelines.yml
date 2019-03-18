@@ -1,5 +1,6 @@
 trigger:
 - build
+- x64
 
 jobs:
 - template: 'azure/msvc2017-job.yml'
@@ -11,6 +12,22 @@ jobs:
   parameters:
     name: 'Win32_vs2019'
     platform: 'Win32'
+
+- template: 'azure/msvc2019-job.yml'
+  parameters:
+    name: 'x64'
+    platform: 'x64'
+
+- template: 'azure/msvc2019-job.yml'
+  parameters:
+    name: 'x64_avx2'
+    platform: 'x64'
+    architecture: 'avx2'
+
+- template: 'azure/msvc2019-job.yml'
+  parameters:
+    name: 'ARM64'
+    platform: 'ARM64'
 
 - template: 'azure/linux-job.yml'
   parameters:
