@@ -17,12 +17,10 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -30,36 +28,31 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\release.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(AudacityLibOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(AudacityLibOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Command />
     </PreBuildEvent>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>..\..\..\lib-src\libnyquist;..\..\..\lib-src\libnyquist\nyquist;..\..\..\lib-src\libnyquist\nyquist\cmt;..\..\..\lib-src\libnyquist\nyquist\ffts\src;..\..\..\lib-src\libnyquist\nyquist\nyqsrc;..\..\..\lib-src\libnyquist\nyquist\nyqstk;..\..\..\lib-src\libnyquist\nyquist\nyqstk\include;..\..\..\lib-src\libnyquist\nyquist\snd;..\..\..\lib-src\libnyquist\nyquist\tran;..\..\..\lib-src\libnyquist\nyquist\sys\win\msvc;..\..\..\lib-src\libnyquist\nyquist\xlisp;..\..\..\lib-src\libnyquist\nyquist\win;..\libsndfile;..\..\..\lib-src\portaudio-v19\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>_CRT_NONSTDC_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
-      <WarningLevel>Level3</WarningLevel>
-      <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -68,17 +61,9 @@
       <Command />
     </PreBuildEvent>
     <ClCompile>
-      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\..\..\lib-src\libnyquist;..\..\..\lib-src\libnyquist\nyquist;..\..\..\lib-src\libnyquist\nyquist\cmt;..\..\..\lib-src\libnyquist\nyquist\ffts\src;..\..\..\lib-src\libnyquist\nyquist\nyqsrc;..\..\..\lib-src\libnyquist\nyquist\nyqstk;..\..\..\lib-src\libnyquist\nyquist\nyqstk\include;..\..\..\lib-src\libnyquist\nyquist\snd;..\..\..\lib-src\libnyquist\nyquist\tran;..\..\..\lib-src\libnyquist\nyquist\sys\win\msvc;..\..\..\lib-src\libnyquist\nyquist\xlisp;..\..\..\lib-src\libnyquist\nyquist\win;..\libsndfile;..\..\..\lib-src\portaudio-v19\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;WIN32;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PreprocessorDefinitions>_CRT_NONSTDC_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <CompileAs>Default</CompileAs>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
   </ItemDefinitionGroup>
