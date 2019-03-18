@@ -15,15 +15,17 @@
     <RootNamespace>Audacity</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="..\..\audacity.props" />
+  <Import Project="..\..\wx.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>$(AudacityPlatformToolset)</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <LocalDebuggerEnvironment>PATH=$(WXWIN)\lib\vc_dll;%PATH%</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>$(AudacityPlatformToolset)</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <LocalDebuggerEnvironment>PATH=$(WXWIN)\lib\vc_dll;%PATH%</LocalDebuggerEnvironment>
   </PropertyGroup>
@@ -33,88 +35,55 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\debug.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\shared.props" />
+    <Import Project="..\..\release.props" />
   </ImportGroup>
+  <Import Condition=" '$(GSTREAMER_SDK)'!='' " Project="GStreamer.props" />
+  <Import Project="libraries.props" />
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(AudacityOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
-    <IntDir>$(Configuration)\</IntDir>
+    <OutDir>$(AudacityOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_dll\mswu;$(WXWIN)\include;..\..;..\..\..\include;..\..\..\lib-src\expat\lib;..\..\..\lib-src\FileDialog;..\..\..\lib-src\FileDialog\win;..\..\..\lib-src\ffmpeg\win32;..\..\..\lib-src\ffmpeg;..\..\..\lib-src\lib-widget-extra;..\..\..\lib-src\libflac\include;..\..\..\lib-src\libid3tag;..\..\..\lib-src\libmad\msvc++;..\..\..\lib-src\libmad;..\..\..\lib-src\libnyquist;..\..\..\lib-src\libogg\include;..\..\..\lib-src\libscorealign;..\libsndfile;..\..\..\lib-src\libsoxr\src;..\..\..\lib-src\libvamp;..\..\..\lib-src\libvorbis\include;..\..\..\lib-src\portaudio-v19\include;..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portsmf;..\..\..\lib-src\sbsms\include;..\..\..\lib-src\soundtouch\include;..\..\..\lib-src\twolame\libtwolame;..\..\..\lib-src\portmidi\pm_common;..\..\..\lib-src\portmidi\pm_win;..\..\..\lib-src\portmidi\porttime;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\suil;..\..\..\lib-src\lame;$(GSTREAMER_SDK)\include\gstreamer-1.0;$(GSTREAMER_SDK)\include\glib-2.0;$(GSTREAMER_SDK)\lib\glib-2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BUILDING_AUDACITY;FLAC__NO_DLL;XML_STATIC;__STDC_CONSTANT_MACROS;WXINTL_NO_GETTEXT_MACRO;WXUSINGDLL;__WXMSW__;wxDEBUG_LEVEL=0;NDEBUG;WIN32;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <WarningLevel>Level3</WarningLevel>
-      <CompileAs>Default</CompileAs>
-      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>AudacityHeaders.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>AudacityHeaders.h</PrecompiledHeaderFile>
+      <PreprocessorDefinitions>NDEBUG;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0809</Culture>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>expat.lib;filedialog.lib;libmp3lame.lib;libmpg123.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;winmm.lib;oleacc.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir)..\ReleaseSSE2\;$(OutDir);$(WXWIN)\lib\vc_dll;$(GSTREAMER_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem>Windows</SubSystem>
-      <StackReserveSize>8388608</StackReserveSize>
-      <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include;..\..;..\..\..\include;..\..\..\lib-src\expat\lib;..\..\..\lib-src\FileDialog;..\..\..\lib-src\FileDialog\win;..\..\..\lib-src\lib-widget-extra;..\..\..\lib-src\libflac\include;..\..\..\lib-src\libid3tag;..\..\..\lib-src\libmad\msvc++;..\..\..\lib-src\libmad;..\..\..\lib-src\libnyquist;..\..\..\lib-src\libogg\include;..\..\..\lib-src\libscorealign;..\libsndfile;..\..\..\lib-src\libsoxr\src;..\..\..\lib-src\libvamp;..\..\..\lib-src\libvorbis\include;..\..\..\lib-src\portaudio-v19\include;..\..\..\lib-src\portmixer\include;..\..\..\lib-src\portsmf;..\..\..\lib-src\sbsms\include;..\..\..\lib-src\soundtouch\include;..\..\..\lib-src\twolame\libtwolame;..\..\..\lib-src\portmidi\pm_common;..\..\..\lib-src\portmidi\pm_win;..\..\..\lib-src\portmidi\porttime;..\..\..\lib-src\ffmpeg\win32;..\..\..\lib-src\ffmpeg;..\..\..\lib-src\lv2\lilv;..\..\..\lib-src\lv2\lv2;..\..\..\lib-src\lv2\suil;..\..\..\lib-src\lame;$(GSTREAMER_SDK)\include\gstreamer-1.0;$(GSTREAMER_SDK)\include\glib-2.0;$(GSTREAMER_SDK)\lib\gstreamer-1.0\include;$(GSTREAMER_SDK)\lib\glib-2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BUILDING_AUDACITY;FLAC__NO_DLL;XML_STATIC;__STDC_CONSTANT_MACROS;WXINTL_NO_GETTEXT_MACRO;WXUSINGDLL;__WXMSW__;__WXDEBUG__;_DEBUG;WIN32;STRICT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>AudacityHeaders.h</PrecompiledHeaderFile>
-      <WarningLevel>Level4</WarningLevel>
+      <PreprocessorDefinitions>_DEBUG;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <CompileAs>Default</CompileAs>
-      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <ForcedIncludeFiles>AudacityHeaders.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0809</Culture>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;..\..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>expat.lib;filedialog.lib;libmp3lame.lib;libmpg123.lib;libsndfile.lib;libsoxr.lib;portaudio-v19.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;winmm.lib;oleacc.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(WXWIN)\lib\vc_dll;$(GSTREAMER_SDK)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <StackReserveSize>8388608</StackReserveSize>
-      <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -1168,7 +1137,7 @@
   <ItemGroup>
     <ProjectReference Include="..\filedialog\filedialog.vcxproj">
       <Project>{5284d863-3813-479f-bbf0-ac234e216bc6}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\libflac++\libflac++.vcxproj">
       <Project>{b28c9f3f-ff0e-4fec-844c-685390b8ac06}</Project>
