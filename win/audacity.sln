@@ -58,8 +58,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mod-nyq-bench", "Projects\m
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmp3lame", "Projects\libmp3lame\libmp3lame.vcxproj", "{20536101-3B0E-43EF-94F9-080D595DAC57}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpg123", "Projects\libmpg123\libmpg123.vcxproj", "{E2DAB91A-8248-4625-8A85-2C2C2A390DD8}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Globals", "Globals", "{732465EB-6445-4991-BB72-E08985214C62}"
 	ProjectSection(SolutionItems) = preProject
 		..\.editorconfig = ..\.editorconfig
@@ -75,6 +73,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{8F586EBC-6696-4B9A-917F-AA357E1C294F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{7EE38E35-BB4D-4BBF-9979-F3F989FD1B1F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpg123", "Projects\libmpg123\libmpg123.vcxproj", "{E2DAB91A-8248-4625-8A85-2C2C2A390DD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -182,13 +182,17 @@ Global
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|Win32.Build.0 = Release|Win32
 		{A939AAF8-44F1-4CE7-9DD0-7A6E99814856}.Release|Win32.Deploy.0 = Release|Win32
 		{5FF83E0C-1973-4559-94C3-311C9D0E051B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5FF83E0C-1973-4559-94C3-311C9D0E051B}.Debug|Win32.Build.0 = Debug|Win32
 		{5FF83E0C-1973-4559-94C3-311C9D0E051B}.Release|Win32.ActiveCfg = Release|Win32
+		{5FF83E0C-1973-4559-94C3-311C9D0E051B}.Release|Win32.Build.0 = Release|Win32
 		{D41CD691-F111-4D68-B0C1-C90E7DB07454}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D41CD691-F111-4D68-B0C1-C90E7DB07454}.Debug|Win32.Build.0 = Debug|Win32
 		{D41CD691-F111-4D68-B0C1-C90E7DB07454}.Release|Win32.ActiveCfg = Release|Win32
 		{D41CD691-F111-4D68-B0C1-C90E7DB07454}.Release|Win32.Build.0 = Release|Win32
 		{876BE9ED-1F80-47B6-A34A-1766A6639763}.Debug|Win32.ActiveCfg = Debug|Win32
+		{876BE9ED-1F80-47B6-A34A-1766A6639763}.Debug|Win32.Build.0 = Debug|Win32
 		{876BE9ED-1F80-47B6-A34A-1766A6639763}.Release|Win32.ActiveCfg = Release|Win32
+		{876BE9ED-1F80-47B6-A34A-1766A6639763}.Release|Win32.Build.0 = Release|Win32
 		{20536101-3B0E-43EF-94F9-080D595DAC57}.Debug|Win32.ActiveCfg = Debug|Win32
 		{20536101-3B0E-43EF-94F9-080D595DAC57}.Debug|Win32.Build.0 = Debug|Win32
 		{20536101-3B0E-43EF-94F9-080D595DAC57}.Release|Win32.ActiveCfg = Release|Win32
