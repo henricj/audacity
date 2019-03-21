@@ -24,7 +24,7 @@
 extern "C" {
 # endif
 
-# ifdef _M_X64
+# if defined(_M_X64) || defined(_M_ARM64)
 #  define FPM_64BIT
 # else
 #  define FPM_INTEL
