@@ -41,6 +41,16 @@ static void pffft_zconvolve(PFFFT_Setup *s, const float *a, const float *b, floa
   float ar, ai, br, bi;
 
 #ifdef __arm__
+  __prefetch(va);
+  __prefetch(vb);
+  __prefetch(va + 2);
+  __prefetch(vb + 2);
+  __prefetch(va + 4);
+  __prefetch(vb + 4);
+  __prefetch(va + 6);
+  __prefetch(vb + 6);
+#if defined(COMPILER_MSVC)
+#else
   __builtin_prefetch(va);
   __builtin_prefetch(vb);
   __builtin_prefetch(va+2);
@@ -49,6 +59,7 @@ static void pffft_zconvolve(PFFFT_Setup *s, const float *a, const float *b, floa
   __builtin_prefetch(vb+4);
   __builtin_prefetch(va+6);
   __builtin_prefetch(vb+6);
+#endif
 #endif
 
   assert(VALIGNED(a) && VALIGNED(b) && VALIGNED(ab));
