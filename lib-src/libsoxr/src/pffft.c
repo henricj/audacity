@@ -66,6 +66,13 @@
 #include <math.h>
 #include <assert.h>
 
+#include "soxr-config.h"
+
+
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
 /* detect compiler flavour */
 #if defined(_MSC_VER)
 #  define COMPILER_MSVC
@@ -126,7 +133,11 @@ inline v4sf ld_ps1(const float *p) { v4sf v=vec_lde(0,p); return vec_splat(vec_p
     x3 = vec_mergel(y1, y3);                    \
   }
 #  define VSWAPHL(a,b) vec_perm(a,b, (vector unsigned char)(16,17,18,19,20,21,22,23,8,9,10,11,12,13,14,15))
+#ifdef HAVE_STDINT_H
+#  define VALIGNED(ptr) ((((intptr_t)(ptr)) & 0xF) == 0)
+#else
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0xF) == 0)
+#endif
 
 /*
   SSE1 support macros
@@ -148,7 +159,11 @@ typedef __m128 v4sf;
 #  define UNINTERLEAVE2(in1, in2, out1, out2) { v4sf tmp__ = _mm_shuffle_ps(in1, in2, _MM_SHUFFLE(2,0,2,0)); out2 = _mm_shuffle_ps(in1, in2, _MM_SHUFFLE(3,1,3,1)); out1 = tmp__; }
 #  define VTRANSPOSE4(x0,x1,x2,x3) _MM_TRANSPOSE4_PS(x0,x1,x2,x3)
 #  define VSWAPHL(a,b) _mm_shuffle_ps(b, a, _MM_SHUFFLE(3,2,1,0))
+#ifdef HAVE_STDINT_H
 #  define VALIGNED(ptr) ((((intptr_t)(ptr)) & 0xF) == 0)
+#else
+#  define VALIGNED(ptr) ((((long)(ptr)) & 0xF) == 0)
+#endif
 
 #else
 #include "pffft-avx.h"
@@ -158,7 +173,11 @@ typedef __m128 v4sf;
   ARM NEON support macros
 */
 #elif !defined(PFFFT_SIMD_DISABLE) && defined(__arm__)
+#if defined(_M_ARM64)
+#  include <arm64_neon.h>
+#else
 #  include <arm_neon.h>
+#endif
 typedef float32x4_t v4sf;
 #  define SIMD_SZ 4
 #  define VZERO() vdupq_n_f32(0)
@@ -179,7 +198,11 @@ typedef float32x4_t v4sf;
 /* marginally faster version */
 /*#  define VTRANSPOSE4(x0,x1,x2,x3) { asm("vtrn.32 %q0, %q1;\n vtrn.32 %q2,%q3\n vswp %f0,%e2\n vswp %f1,%e3" : "+w"(x0), "+w"(x1), "+w"(x2), "+w"(x3)::); } */
 #  define VSWAPHL(a,b) vcombine_f32(vget_low_f32(b), vget_high_f32(a))
+#ifdef HAVE_STDINT_H
+#  define VALIGNED(ptr) ((((intptr_t)(ptr)) & 0x3) == 0)
+#else
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0x3) == 0)
+#endif
 #else
 #  if !defined(PFFFT_SIMD_DISABLE)
 #    pragma warning "building with simd disabled !\n";
@@ -201,7 +224,11 @@ typedef float v4sf;
 #  define VMADD(a,b,c) ((a)*(b)+(c))
 #  define VSUB(a,b) ((a)-(b))
 #  define LD_PS1(p) (p)
+#ifdef HAVE_STDINT_H
+#  define VALIGNED(ptr) ((((intptr_t)(ptr)) & 0x3) == 0)
+#else
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0x3) == 0)
+#endif
 #endif
 
 /* shortcuts for complex multiplcations */
