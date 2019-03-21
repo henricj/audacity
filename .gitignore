@@ -116,6 +116,7 @@ dox/
 *.vcxproj.user
 *.sbr
 *.bsc
+*.DotSettings.user
 
 # Precompiled Headers
 *.gch
