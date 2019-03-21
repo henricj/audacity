@@ -35,6 +35,6 @@ typedef __m256d v4sf;
   x2 = _mm256_permute2f128_pd(t0,t1, 0x31); \
   x3 = _mm256_permute2f128_pd(t2,t3, 0x31);}
 #define VSWAPHL(a,b) _mm256_permute2f128_pd(b, a, 0x30)
-#define VALIGNED(ptr) ((((long)(ptr)) & 0x1F) == 0)
+#define VALIGNED(ptr) ((((intptr_t)(ptr)) & 0x1F) == 0)
 
 #endif
