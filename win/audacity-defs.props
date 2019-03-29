@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Audacity">
+    <AudacityPlatformToolset>v141</AudacityPlatformToolset>
+  </PropertyGroup>
+  <Choose>
+    <When Condition="'$(VisualStudioVersion)' != ''">
+      <PropertyGroup Label="Audacity">
+        <AudacityPlatformToolset Condition="'$(VisualStudioVersion)' &gt; '15.0'">v142</AudacityPlatformToolset>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(APPVEYOR_BUILD_WORKER_IMAGE)' != ''">
+      <PropertyGroup Label="Audacity">
+        <AudacityPlatformToolset Condition="'$(APPVEYOR_BUILD_WORKER_IMAGE)' == 'Visual Studio 2019'">v142</AudacityPlatformToolset>
+      </PropertyGroup>
+    </When>
+  </Choose>
+  <PropertyGroup Label="Audacity" Condition="'$(Architecture)'!=''">
+    <AudacityEnhancedInstructionSet Condition="'$(Architecture)'=='fpu' And '$(Platform)'=='Win32'">NoExtensions</AudacityEnhancedInstructionSet>
+    <AudacityEnhancedInstructionSet Condition="'$(Architecture)'=='sse' And '$(Platform)'=='Win32'">StreamingSIMDExtensions</AudacityEnhancedInstructionSet>
+    <AudacityEnhancedInstructionSet Condition="'$(Architecture)'=='sse2' And '$(Platform)'=='Win32'">StreamingSIMDExtensions2</AudacityEnhancedInstructionSet>
+    <AudacityEnhancedInstructionSet Condition="'$(Architecture)'=='avx'">AdvancedVectorExtensions</AudacityEnhancedInstructionSet>
+    <AudacityEnhancedInstructionSet Condition="'$(Architecture)'=='avx2'">AdvancedVectorExtensions2</AudacityEnhancedInstructionSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Audacity">
+    <AudacityBuild>$(AudacityPlatformToolset)</AudacityBuild>
+    <AudacityBuild Condition="'$(AudacityEnhancedInstructionSet)'!=''">$(AudacityBuild)_$(Architecture)</AudacityBuild>
+    <AudacityBuild Condition="'$(StaticRuntime)'=='true'">$(AudacityBuild)_mt</AudacityBuild>
+    <AudacityBuild Condition="'$(DllExport)'=='false'">$(AudacityBuild)_noexport</AudacityBuild>
+
+    <AudacityBuildDir>$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory)build\))</AudacityBuildDir>
+    <AudacityOutDir>$(AudacityBuildDir)bin\$(AudacityBuild)\$(Platform)\$(Configuration)\</AudacityOutDir>
+    <AudacityModuleOutDir>$(AudacityOutDir)modules\</AudacityModuleOutDir>
+    <AudacityLibOutDir>$(AudacityBuildDir)lib\$(AudacityBuild)\$(Platform)\$(Configuration)\</AudacityLibOutDir>
+    <AudacityLibReleaseOutDir>$(AudacityBuildDir)lib\$(AudacityBuild)\$(Platform)\Release\</AudacityLibReleaseOutDir>
+    <AudacityLibDebugOutDir>$(AudacityBuildDir)lib\$(AudacityBuild)\$(Platform)\Debug\</AudacityLibDebugOutDir>
+    <AudacityBaseIntDir>$(AudacityBuildDir)obj\$(AudacityBuild)\$(Platform)\$(Configuration)\</AudacityBaseIntDir>
+
+    <AudacityPackages Condition="'$(AudacityPackages)' == ''">$(MSBuildThisFileDirectory)packages\</AudacityPackages>
+
+    <AudacityDllApi Condition="'$(DllExport)'=='false'">AUDACITY_DLL_API=;</AudacityDllApi>
+
+    <!--
+      Per Andrew Pardoe's comments, the Win 10 SDKs support targeting Vista SP2 and later:
+      https://blogs.msdn.microsoft.com/vcblog/2017/11/15/msvc-conformance-improvements-in-visual-studio-2017-version-15-5/
+      -->
+    <AudacityNtddiVersion>NTDDI_VISTASP2</AudacityNtddiVersion>
+    <AudacityWin32Winnt>_WIN32_WINNT_VISTA</AudacityWin32Winnt>
+  </PropertyGroup>
+</Project>
