@@ -1,0 +1,59 @@
+parameters:
+  platform: 'Win32'
+  architecture: ''
+  configuration: 'Release'
+  name: 'Win32'
+
+jobs:
+- job: '${{ parameters.name }}'
+  variables:
+    ${{ if eq(parameters.architecture, '') }}:
+      target: '${{ parameters.platform }}-${{ parameters.configuration }}'
+      sourceFolder: '$(Build.SourcesDirectory)/win/build/bin/v141/${{ parameters.platform }}/${{ parameters.configuration }}/'
+    ${{ if ne(parameters.architecture, '') }}:
+      target: '${{ parameters.platform }}-${{ parameters.configuration }}-${{ parameters.architecture }}'
+      sourceFolder: '$(Build.SourcesDirectory)/win/build/bin/v141_${{ parameters.architecture }}/${{ parameters.platform }}/${{ parameters.configuration }}/'
+
+  pool:
+    vmImage: 'VS2017-Win2016'
+
+  steps:
+  - task: NuGetToolInstaller@0
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: 'win/audacity.sln'
+
+  - bash: |
+      GIT_DESCRIBE=$(git describe --tags --dirty --always)
+      echo "##vso[task.setvariable variable=BUILD_NAME]${GIT_DESCRIBE}"
+      echo "##vso[task.setvariable variable=ZIP_FILE_NAME]$(Build.ArtifactStagingDirectory)/audacity-$(target)-${GIT_DESCRIBE}.zip"
+    displayName: git describe
+
+  - task: MSBuild@1
+    inputs:
+      platform: '${{ parameters.platform }}'
+      solution: 'win\top.proj'
+      configuration: '${{ parameters.configuration }}'
+      ${{ if ne(parameters.architecture, '') }}:
+        msbuildArguments: '/p:Architecture=${{ parameters.architecture }}'
+      maximumCpuCount: true
+    displayName: Build top.proj
+
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(sourceFolder)'
+      contents: '**/?(*.exe|*.dll|*.ny|*.lsp|*.raw|*.txt|*.mo)'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/$(BUILD_NAME)/$(target)'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/$(BUILD_NAME)/$(target)'
+      includeRootFolder: false
+      archiveFile: '$(ZIP_FILE_NAME)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(ZIP_FILE_NAME)'
+      artifactName: '${{ parameters.name }}'
+

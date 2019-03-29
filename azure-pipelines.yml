@@ -1,0 +1,13 @@
+trigger:
+- build
+
+jobs:
+- template: 'azure/msvc-job.yml'
+  parameters:
+    name: 'Win32'
+    platform: 'Win32'
+
+- template: 'azure/linux-job.yml'
+  parameters:
+    name: 'Linux'
+
