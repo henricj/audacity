@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <AudacityIntDir>$(AudacityBaseIntDir)$(ProjectName)\</AudacityIntDir>
+    <AudacitySetupDir>$(AudacityBuildDir)setup\$(AudacityBuild)\$(Platform)\$(Configuration)\$(ProjectName)</AudacitySetupDir>
+    <OutDir Condition="'$(AudacityBuildType)'=='library' OR '$(AudacityBuildType)'==''">$(AudacityLibOutDir)</OutDir>
+    <OutDir Condition="'$(AudacityBuildType)'=='binary'">$(AudacityOutDir)</OutDir>
+    <OutDir Condition="'$(AudacityBuildType)'=='module'">$(AudacityModuleOutDir)</OutDir>
+    <IntDir>$(AudacityIntDir)</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <DisableSpecificWarnings>4018;4244;4267;4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4101;4389;4456;4457;4458;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <TreatSpecificWarningsAsErrors>4047;4172;4311;4312%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
+      <PreprocessorDefinitions>STRICT;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_WARNINGS;NTDDI_VERSION=$(AudacityNtddiVersion);_WIN32_WINNT=$(AudacityWin32Winnt);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <EnableEnhancedInstructionSet Condition="'$(AudacityEnhancedInstructionSet)'!=''">$(AudacityEnhancedInstructionSet)</EnableEnhancedInstructionSet>
+      <ConformanceMode>$(AudacityConformanceMode)</ConformanceMode>
+      <LanguageStandard>$(AudacityLanguageStandard)</LanguageStandard>
+      <AdditionalOptions>/utf-8</AdditionalOptions>
+      <WarningLevel>Level3</WarningLevel>
+      <DiagnosticsFormat>Caret</DiagnosticsFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>/IGNORE:4221 %(AdditionalOptions)</AdditionalOptions>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
