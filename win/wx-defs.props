@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Audacity">
+    <AudacityWxDir Condition=" '$(AudacityWxDir)'=='' ">$([MSBuild]::NormalizeDirectory($(MSBuildThisFileDirectory)..\lib-src\wxWidgets\))</AudacityWxDir>
+    <WXWIN Condition=" '$(WXWIN)'=='' ">$(AudacityWxDir)</WXWIN>
+
+    <AudacityWxArchSuffix />
+    <AudacityWxArchSuffix Condition=" '$(Platform)' == 'x64' ">_x64</AudacityWxArchSuffix>
+
+    <AudacityWxSuffix>u</AudacityWxSuffix>
+    <AudacityWxSuffix Condition=" '$(Configuration)'=='Debug' ">ud</AudacityWxSuffix>
+
+    <AudacityWxLibTypeSuffix>lib</AudacityWxLibTypeSuffix>
+
+    <AudacityWxToolkitPrefix Condition=" '$(AudacityWxToolkitPrefix)'=='' ">msw</AudacityWxToolkitPrefix>
+    <!-- <AudacityWxCompilerPrefix Condition=" '$(AudacityWxCompilerPrefix)'=='' ">vc</AudacityWxCompilerPrefix> -->
+
+    <AudacityWxCompilerPrefix Condition=" '$(AudacityWxCompilerPrefix)'=='' ">$(PlatformToolset)</AudacityWxCompilerPrefix>
+    <AudacityWxCompilerPrefix Condition=" '$(AudacityWxCompilerPrefix)'=='' ">$(AudacityPlatformToolset)</AudacityWxCompilerPrefix>
+
+    <AudacityWxCfg Condition=" '$(AudacityWxConfig)'=='' "></AudacityWxCfg>
+
+    <AudacityWxLibDirName>$(AudacityWxCompilerPrefix)$(AudacityWxArchSuffix)_$(AudacityWxLibTypeSuffix)$(AudacityWxCfg)</AudacityWxLibDirName>
+    <AudacityWxLibDir>$([MSBuild]::NormalizeDirectory($(AudacityWxDir)lib\$(AudacityWxLibDirName)))</AudacityWxLibDir>
+    <AudacityWxIncludeDir Condition=" '$(AudacityWxIncludeDir)'=='' ">$([MSBuild]::NormalizeDirectory($(AudacityWxDir)include))</AudacityWxIncludeDir>
+    <AudacityWxToolkitIncludeDir Condition=" '$(AudacityWxToolkitIncludeDir)'=='' ">$([MSBuild]::NormalizeDirectory($(AudacityWxLibDir)$(AudacityWxToolkitPrefix)$(AudacityWxSuffix)))</AudacityWxToolkitIncludeDir>
+  </PropertyGroup>
+</Project>

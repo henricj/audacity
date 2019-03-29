@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+    DefaultTargets="Build" ToolsVersion="15.0">
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+  <PropertyGroup>
+    <BaseProperties>Configuration=$(Configuration);Platform=$(Platform);PlatformToolset=$(PlatformToolset);PreferredToolArchitecture=x64</BaseProperties>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ProjectPropertiesWx>wxCompilerPrefix=$(AudacityBuild);$(BaseProperties)</ProjectPropertiesWx>
+    <ProjectPropertiesWx Condition="'$(StaticRuntime)' == 'true'">ForceStaticRuntime=true;$(ProjectPropertiesWx)</ProjectPropertiesWx>
+    <ProjectPropertiesWx Condition="'$(DllExport)' == 'false'">ForceDllExport=false;$(ProjectPropertiesWx)</ProjectPropertiesWx>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReferencesWx Include="$(WXWIN)\build/msw/wx_vc15.sln">
+      <Properties>$(ProjectPropertiesWx)</Properties>
+    </ProjectReferencesWx>
+    <wxTargets Include="_custom_build" />
+    <wxTargets Include="base" />
+    <wxTargets Include="core" />
+    <wxTargets Include="html" />
+    <wxTargets Include="net" />
+    <wxTargets Include="qa" />
+    <wxTargets Include="xml" />
+    <wxTargets Include="wxexpat" />
+    <wxTargets Include="wxjpeg" />
+    <wxTargets Include="wxpng" />
+    <wxTargets Include="wxtiff" />
+    <wxTargets Include="wxzlib" />
+  </ItemGroup>
+  <PropertyGroup>
+    <ProjectProperties>AudacityWxCompilerPrefix=$(AudacityBuild);$(BaseProperties)</ProjectProperties>
+    <ProjectProperties Condition=" '$(StaticRuntime)' == 'true' ">$(ProjectProperties);StaticRuntime=true</ProjectProperties>
+    <ProjectProperties Condition=" '$(DllExport)' == 'false' ">$(ProjectProperties);DllExport=false</ProjectProperties>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReferences Include="$(MSBuildThisFileDirectory)audacity.sln">
+      <Properties>$(ProjectProperties)</Properties>
+    </ProjectReferences>
+  </ItemGroup>
+  <Target Name="BuildWx">
+    <Copy Condition="!Exists('$(WXWIN)\include\wx\msw\setup.h')"
+      SourceFiles="$(WXWIN)\include\wx\msw\setup0.h"
+      DestinationFiles="$(WXWIN)\include\wx\msw\setup.h" />
+    <MSBuild Projects="@(ProjectReferencesWx)" Targets="@(wxTargets)" BuildInParallel="true" />
+  </Target>
+  <Target Name="BuildAudacity" DependsOnTargets="BuildWx">
+    <MSBuild Projects="@(ProjectReferences)" Targets="Build" BuildInParallel="true" />
+  </Target>
+  <Target Name="CleanWx">
+    <MSBuild Projects="@(ProjectReferencesWx)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  <Target Name="CleanAudacity">
+    <MSBuild Projects="@(ProjectReferences)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  <Target Name="Clean">
+    <MSBuild Projects="@(ProjectReferencesWx);@(ProjectReferences)" Targets="Clean" BuildInParallel="true" />
+  </Target>
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+  <Target Name="Build" DependsOnTargets="BuildWx;BuildAudacity" />
+</Project>
