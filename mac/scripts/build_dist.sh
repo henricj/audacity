@@ -1,10 +1,10 @@
 set -x
 
 # Setup
-VERSION=`awk '/^#define+ AUDACITY_VERSION / {print $3}' build/Info.plist.h`
-RELEASE=`awk '/^#define+ AUDACITY_RELEASE / {print $3}' build/Info.plist.h`
-REVISION=`awk '/^#define+ AUDACITY_REVISION / {print $3}' build/Info.plist.h`
-VERSION=$VERSION.$RELEASE.$REVISION
+#VERSION=`awk '/^#define+ AUDACITY_VERSION / {print $3}' build/Info.plist.h`
+#RELEASE=`awk '/^#define+ AUDACITY_RELEASE / {print $3}' build/Info.plist.h`
+#REVISION=`awk '/^#define+ AUDACITY_REVISION / {print $3}' build/Info.plist.h`
+VERSION=${GIT_DESCRIBE:-$(git describe --tags --always --dirty)}
 
 cd "${DSTROOT}"
 chmod -RH "${INSTALL_MODE_FLAG}" "${TARGET_BUILD_DIR}"
@@ -13,6 +13,7 @@ chown -RH "${INSTALL_OWNER}:${INSTALL_GROUP}" "${TARGET_BUILD_DIR}"
 echo "Audacity has been installed to: ${DSTROOT}"
 
 cd ..
+echo "Currently working in: $(pwd)"
 
 VOL="Audacity $VERSION"
 DMG="audacity-macos-$VERSION"
@@ -89,12 +90,12 @@ echo '
 ' | osascript
 
 # Compress and prepare for Internet delivery
-hdiutil convert TMP.dmg -format UDZO -imagekey zlib-level=9 -o "$DMG.dmg"
+hdiutil convert TMP.dmg -format UDZO -imagekey zlib-level=9 -o "${DIST_OUTPUT_PATH}$DMG.dmg"
 
 # Create zip version
 rm -rf "${DMG}/.background"
 rm -rf "${DMG}/Audacity.app/help/"
-zip -r9 "${DMG}.zip" "${DMG}"
+zip -r9 "${DIST_OUTPUT_PATH}${DMG}.zip" "${DMG}"
 
 # Cleanup
 rm -rf ${DMG} TMP.dmg
