@@ -29,6 +29,7 @@
 #include <wx/intl.h>
 #include <wx/listbox.h>
 #include <wx/sizer.h>
+#include <wx/treectrl.h>
 
 #include <wx/listbook.h>
 
