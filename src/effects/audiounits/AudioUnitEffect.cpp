@@ -2043,13 +2043,14 @@ bool AudioUnitEffect::CopyParameters(AudioUnit srcUnit, AudioUnit dstUnit)
    // Get number of parameters by passing NULL in the data field and
    // getting back the size of the parameter list
 
+
    size = 0;
-   result = AudioUnitGetProperty(srcUnit,
+   result = AudioUnitGetPropertyInfo(srcUnit,
                                    kAudioUnitProperty_ParameterList,
                                    kAudioUnitScope_Global,
                                    0,
-                                   NULL,
-                                   &size);
+                                   &size,
+                                   NULL);
    if (result != 0)
    {
       wxPrintf("Couldn't get number of parameters\n");
@@ -2058,7 +2059,7 @@ bool AudioUnitEffect::CopyParameters(AudioUnit srcUnit, AudioUnit dstUnit)
 
    // Now get the list of all parameter IDs
 
-   auto numParameters = size / sizeof(AudioUnitParameterID);
+   auto numParameters = size;
    ArrayOf<AudioUnitParameterID> parameters{ numParameters };
    result = AudioUnitGetProperty(srcUnit,
                                    kAudioUnitProperty_ParameterList,
