@@ -7,3 +7,5 @@
 #pragma clang diagnostic ignored "-Wunderaligned-exception-object"
 #endif
 
+#define MAC_OS_X_VERSION_MAX_ALLOWED 1070
+#define MAC_OS_X_VERSION_MIN_REQUIRED 1070
