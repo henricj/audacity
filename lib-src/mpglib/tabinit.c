@@ -23,7 +23,7 @@
 /* $Id: tabinit.c,v 1.17 2017/09/06 15:07:30 robert Exp $ */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+# include "config.h"
 #endif
 
 #include <stdlib.h>
