@@ -45,7 +45,7 @@ jobs:
       outputDirectory: '$(Build.BinariesDirectory)/${{ parameters.name }}'
       xcodeVersion: '${{ parameters.xcode }}'
       useXcpretty: 'false'
-      args: 'MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET) USE_HEADERMAP=NO'
+      args: 'MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET) USE_HEADERMAP=NO LLVM_LTO=YES_THIN'
     displayName: 'Build Audacity'
 
   - task: PublishBuildArtifacts@1
