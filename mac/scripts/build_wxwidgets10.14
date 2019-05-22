@@ -66,9 +66,9 @@ for architecture in 'x86_64'; do {
 
    arch="-arch ${architecture}"
    export CPPFLAGS="${ver}"
-   export CFLAGS1="${arch} ${ver} -isysroot $sdk"
-   export CXXFLAGS1="${arch} ${ver} -isysroot $sdk ${std} ${stdlib}"
-   export LDFLAGS1="${arch} ${ver} -syslibroot,$sdk ${std} ${stdlib}"
+   export CFLAGS1="${arch} ${ver} -flto=thin -isysroot $sdk"
+   export CXXFLAGS1="${arch} ${ver} -flto=thin -isysroot $sdk ${std} ${stdlib}"
+   export LDFLAGS1="${arch} ${ver} -flto=thin -syslibroot,$sdk ${std} ${stdlib}"
 
    # Make sure our flags are included
    export CC="cc $CFLAGS1"
