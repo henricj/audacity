@@ -13,9 +13,8 @@ shallow_clone: true # reduce traffic
 install:
     - 'echo #define REV_LONG "%APPVEYOR_REPO_COMMIT%" > src\RevisionIdent.h'
     - 'echo #define REV_TIME "%APPVEYOR_REPO_COMMIT_TIMESTAMP%" >> src\RevisionIdent.h'
-    # install gettext tool (only used by target "locale", which is not built at
-    # the moment due to long duration
-    - nuget install Gettext.Tools -Version 0.19.8.1 -OutputDirectory %AUDACITY_ROOT%\win\packages
+    # install gettext tool (only used by target "locale")
+    - cmd: nuget restore win\audacity.sln
     # download wxWidgets
     - git clone --recurse-submodules --branch v3.1.1 --depth 1 --jobs 4 https://github.com/audacity/wxWidgets.git %WXWIN%
     # build wxWidgets
