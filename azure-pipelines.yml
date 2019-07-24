@@ -16,3 +16,10 @@ jobs:
   parameters:
     name: 'Linux'
 
+#- template: 'azure/macos-job.yml'
+
+- template: 'azure/macos-job.yml'
+  parameters:
+    name: 'macOS_x64'
+    configuration: 'Release64'
+
