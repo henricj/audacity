@@ -1,0 +1,54 @@
+parameters:
+  name: 'macOS'
+  configuration: 'Release64'
+  xcode: '10'
+  sdk: 'macosx10.14'
+
+jobs:
+- job: '${{ parameters.name }}'
+
+  pool:
+    vmImage: 'macOS-10.14'
+
+  variables:
+    SDK: '${{ parameters.sdk }}'
+    MACOSX_DEPLOYMENT_TARGET: 10.7
+    DIST_OUTPUT_PATH: '$(Build.ArtifactStagingDirectory)/'
+
+  steps:
+  - bash: |
+      GIT_DESCRIBE=$(git describe --tags --dirty --always)
+      echo "git describe: ${GIT_DESCRIBE}"
+      echo "##vso[task.setvariable variable=GIT_DESCRIBE]${GIT_DESCRIBE}"
+    displayName: 'git describe'
+
+  - bash: |
+      sudo xcode-select -s /Applications/Xcode_10.2.1.app/Contents/Developer
+      xcode-select -p
+      xcodebuild -showsdks
+      cd lib-src/wxWidgets
+      sudo ../../mac/scripts/build_wxwidgets10.14
+    displayName: 'Build wxWidgets'
+
+  - bash: |
+      brew install gettext
+      brew link gettext --force
+    displayName: 'Install gettext'
+
+  - task: Xcode@5
+    inputs:
+      actions: "build install"
+      configuration: '${{ parameters.configuration }}'
+      scheme: 'Audacity - ${{ parameters.configuration }}'
+      xcWorkspacePath: 'mac/Audacity.xcodeproj/project.xcworkspace'
+      workingDirectory: 'mac'
+      outputDirectory: '$(Build.BinariesDirectory)/${{ parameters.name }}'
+      xcodeVersion: '${{ parameters.xcode }}'
+      useXcpretty: 'false'
+      args: 'MACOSX_DEPLOYMENT_TARGET=$(MACOSX_DEPLOYMENT_TARGET)'
+    displayName: 'Build Audacity'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: '${{ parameters.name }}'
+
