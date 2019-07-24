@@ -76,10 +76,10 @@ function notarize
 }
 
 # Setup
-VERSION=`awk '/^#define+ AUDACITY_VERSION / {print $3}' build/Info.plist.h`
-RELEASE=`awk '/^#define+ AUDACITY_RELEASE / {print $3}' build/Info.plist.h`
-REVISION=`awk '/^#define+ AUDACITY_REVISION / {print $3}' build/Info.plist.h`
-VERSION=$VERSION.$RELEASE.$REVISION
+#VERSION=`awk '/^#define+ AUDACITY_VERSION / {print $3}' build/Info.plist.h`
+#RELEASE=`awk '/^#define+ AUDACITY_RELEASE / {print $3}' build/Info.plist.h`
+#REVISION=`awk '/^#define+ AUDACITY_REVISION / {print $3}' build/Info.plist.h`
+VERSION=${GIT_DESCRIBE:-$(git describe --tags --always --dirty)}
 IDENT=$(plist "${INSTALL_ROOT}/Audacity.app/Contents/Info.plist" "CFBundleIdentifier")
 
 #
@@ -215,8 +215,19 @@ echo '
    end tell
 ' | osascript
 
+sleep 5
+
+# Detach everything
+ATTACHED=$(hdiutil info | awk "/\/Volumes\/${VOL}/{print \$1}")
+if [ -n "${ATTACHED}" ]
+then
+   hdiutil unmount -force "${ATTACHED}"
+   hdiutil detach "${ATTACHED}"
+fi
+
+
 # Compress and prepare for Internet delivery
-hdiutil convert TMP.dmg -format UDZO -imagekey zlib-level=9 -o "$DMG.dmg"
+hdiutil convert TMP.dmg -format UDZO -imagekey zlib-level=9 -o "${DIST_OUTPUT_PATH}$DMG.dmg"
 
 # Sign, notarize and staple the DMG
 if [ -n "${SIGNING}" ]
@@ -233,7 +244,7 @@ fi
 # Create zip version
 rm -rf "${DMG}/.background"
 rm -rf "${DMG}/Audacity.app/Contents/help"
-zip -r9 "${DMG}.zip" "${DMG}"
+zip -r9 "${DIST_OUTPUT_PATH}${DMG}.zip" "${DMG}"
 
 # Cleanup
 rm -rf ${DMG} TMP.dmg
