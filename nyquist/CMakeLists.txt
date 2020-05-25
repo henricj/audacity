@@ -83,7 +83,13 @@ endforeach()
 add_custom_target( ${TARGET} ALL DEPENDS ${OUTPUTS} SOURCES ${SOURCES} )
 
 if( NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
-   install( DIRECTORY "${_DEST}/${TARGET}"
-            DESTINATION "${_PKGDATA}" )
+    if( WIN32 )
+       install( DIRECTORY "${_DEST}/${TARGET}"
+                DESTINATION bin
+                COMPONENT applications )
+    else()
+       install( DIRECTORY "${_DEST}/${TARGET}"
+                DESTINATION "${_PKGDATA}" )
+    endif()
 endif()
 

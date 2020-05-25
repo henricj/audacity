@@ -44,12 +44,12 @@ list( APPEND LIBRARIES
       $<$<PLATFORM_ID:Windows,CYGWIN>:wxWidgets>      
 )
 
-set_target_property_all( ${TARGET} LIBRARY_OUTPUT_DIRECTORY "${_DEST}/modules" )
-set_target_properties( ${TARGET}
-   PROPERTIES
-      PREFIX ""
-      FOLDER "lib-src"
-)
+#set_target_property_all( ${TARGET} LIBRARY_OUTPUT_DIRECTORY "${_DEST}/modules" )
+#set_target_properties( ${TARGET}
+#   PROPERTIES
+#      PREFIX ""
+#      FOLDER "lib-src"
+#)
 
 organize_source( "${TARGET_ROOT}" "" "${SOURCES}" )
 target_sources( ${TARGET} PRIVATE ${SOURCES} )
@@ -58,3 +58,6 @@ target_include_directories( ${TARGET} PRIVATE ${INCLUDES} )
 target_link_options( ${TARGET} PRIVATE ${LOPTS} )
 target_link_libraries( ${TARGET} PRIVATE ${LIBRARIES} )
 
+if( NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
+    install(TARGETS ${TARGET} DESTINATION bin/modules COMPONENT applications)
+endif()

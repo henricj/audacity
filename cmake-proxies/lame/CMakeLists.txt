@@ -42,11 +42,11 @@ list( APPEND DEFINES
       HAVE_CONFIG_H
 )
 
-list( APPEND OPTIONS
-   PRIVATE
-      ${MMX_FLAG}
-      ${SSE_FLAG}
-)
+#list( APPEND OPTIONS
+#   PRIVATE
+#      ${MMX_FLAG}
+#      ${SSE_FLAG}
+#)
 
 set( HAVE_INT8_T SIZEOF_INT8_T )
 set( HAVE_INT16_T SIZEOF_INT16_T )

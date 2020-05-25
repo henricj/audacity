@@ -273,7 +273,7 @@ ELSE()
 
   ELSEIF(UNIX)
 
-    FIND_PACKAGE(Jack)
+    FIND_PACKAGE(jack)
     IF(JACK_FOUND)
       OPTION(PA_USE_JACK "Enable support for Jack" ON)
     ELSE()

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+  xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+  xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <?define BundleCopyright="© 2020 Audacity" ?>
+  <?define BundleAboutUrl="https://www.audacityteam.org/" ?>
+
+
+  <?if $(sys.BUILDARCH)="x86"?>
+  <?define BundleUpgradeCode="CD6B2B7A-7D9A-4473-BA67-C9B70E667D23" ?>
+  <?elseif $(sys.BUILDARCH)="x64"?>
+  <?define BundleUpgradeCode="05E9A94F-1E1E-4485-BC85-6036C24493D5" ?>
+  <?elseif $(sys.BUILDARCH)="arm64"?>
+  <?define BundleUpgradeCode="8716E256-E3B4-46C5-94B7-E4A05A55D200" ?>
+  <?endif ?>
+
+  <Bundle
+    Name="!(bind.packageName.WixCMake)"
+    Version="!(bind.packageVersion.WixCMake)"
+    Manufacturer="!(bind.packageManufacturer.WixCMake)"
+    Copyright="$(var.BundleCopyright)"
+    AboutUrl="$(var.BundleAboutUrl)"
+    UpgradeCode="$(var.BundleUpgradeCode)"
+    Condition="VersionNT >= v5.1">
+
+    <BootstrapperApplicationRef
+      Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication
+        LicenseFile="license.rtf"
+        ShowVersion="yes"
+        SuppressOptionsUI="yes"
+        LogoFile="logo.png"
+        LogoSideFile="logo_side.png"/>
+    </BootstrapperApplicationRef>
+
+    <!-- v6.0 Service Pack 2 -->
+    <bal:Condition Message="This application requires Service Pack 2 for Windows Vista / Server 2008.">
+      <![CDATA[NOT (VersionNT = v6.0 AND ServicePackLevel < 2)]]>
+    </bal:Condition>
+
+    <?if $(sys.BUILDARCH)="x64"?>
+    <bal:Condition Message="This application requires the x64 version of Windows">
+      <![CDATA[VersionNT64 AND ProcessorArchitecture = 9]]>
+    </bal:Condition>
+    <?elseif $(sys.BUILDARCH)="arm64"?>
+    <!-- This does not work. Because burn.exe is running as an emulated 32-bit process?
+    <bal:Condition Message="This application requires the ARM64 version of Windows">
+      <![CDATA[VersionNT64 AND ProcessorArchitecture = 12]]>
+    </bal:Condition>-->
+    <?endif ?>
+
+    <Chain>
+
+      <?if $(sys.BUILDARCH)="x86"?>
+      <PackageGroupRef Id="VcRedist.x86" />
+      <?elseif $(sys.BUILDARCH)="x64"?>
+      <PackageGroupRef Id="VcRedist.x64" />
+      <?elseif $(sys.BUILDARCH)="arm64"?>
+      <PackageGroupRef Id="VcRedist.arm64" />
+      <?endif ?>
+
+      <RollbackBoundary />
+
+      <MsiPackage Id="WixCMake" SourceFile="$(var.TargetMsiPath)" />
+
+    </Chain>
+
+  </Bundle>
+
+</Wix>

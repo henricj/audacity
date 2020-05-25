@@ -10,6 +10,10 @@
 
 /* Version 1.1 */
 
+#pragma once
+#include <cmath>
+
+#if 0
 
 /*============================================================================
 **	On Intel Pentium processors (especially PIII and probably P4), converting
@@ -113,7 +117,6 @@
 	{
 		return _mm_cvt_ss2si(_mm_set_ss(flt));
 	}
-
 #elif (HAVE_LRINT && HAVE_LRINTF)
 
 	/*	These defines enable functionality introduced with the 1999 ISO C
@@ -146,3 +149,5 @@
 	#define	lrintf(flt)		((int)rint(flt))
 
 #endif
+
+#endif // 0

@@ -1,0 +1,210 @@
+name: Windows
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      #fail-fast: false
+      matrix:
+        config:
+          - {
+              name: Windows x64,
+              platform: x64
+            }
+          - {
+              name: Windows x64-avx2,
+              platform: x64,
+              extra: "-Daudacity_target_architecture_extension:STRING=\"avx2\"",
+              name_postfix: "-avx2"
+            }
+          - {
+              name: Windows x86,
+              platform: x86 
+            }
+          - {
+              name: Windows ARM64,
+              platform: arm64
+            }
+    env:
+      NINJA_URL: https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-win.zip
+      NINJA_HASH: 919FD158C16BF135E8A850BB4046EC1CE28A7439EE08B977CD0B7F6B3463D178
+      WIX314_URL: https://wixtoolset.org/downloads/v3.14.0.4118/wix314-binaries.zip
+      WIX314_HASH: 34DCBBA9952902BFB710161BD45EE2E721FFA878DB99F738285A21C9B09C6EDB
+    steps:
+      - name: Fetch repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          path: source
+
+      - name: Export Environment
+        run: |
+          function Export-WorkflowValue ([string]$name, [string]$value) {
+            Write-Host ( '::set-env name={0}::{1}' -f $name, $value )
+          }
+          function New-NormalizedDirectory ([string]$name, [string]$path) {
+            $value = (New-Item -Path $path -ItemType Directory -Force).FullName
+            Export-WorkflowValue $name $value
+            Return $value
+          }
+          $platform = '${{matrix.config.platform}}'
+          $root = (Resolve-Path -LiteralPath $Env:GITHUB_WORKSPACE).Path
+          $source = (Resolve-Path -LiteralPath (Join-Path $root -ChildPath 'source')).Path
+          cd $source
+          $git_origin_url = (git config --get remote.origin.url)
+          $git_master_ref = (git ls-remote "$git_origin_url" master) -split '\s+' | select -First 1
+          git merge-base --is-ancestor "$git_master_ref" HEAD
+          If($LASTEXITCODE -ne 0) {
+            git fetch --deepen 100 origin master:master
+            $git_master_ref = (git merge-base master $Env:GITHUB_SHA)
+          }
+          $git_describe = git describe --tags --dirty --always --exclude "latest-*"
+          $git_describe_master = git describe --always --tags $git_master_ref
+          Export-WorkflowValue 'PROJECT_GIT_ORIGIN_URL' $git_origin_url
+          Export-WorkflowValue 'PROJECT_GIT_MASTER_REF' $git_master_ref
+          Export-WorkflowValue 'PROJECT_GIT_DESCRIBE' $git_describe
+          Export-WorkflowValue 'PROJECT_GIT_DESCRIBE_MASTER' $git_describe_master
+          Export-WorkflowValue 'PROJECT_SOURCE' $source
+          $build = New-NormalizedDirectory 'PROJECT_BUILD' (Join-Path $root -ChildPath ( 'build\Release-{0}' -f $platform ))
+          Export-WorkflowValue 'PROJECT_TOOLS' (Join-Path $root -ChildPath 'tools')
+          Export-WorkflowValue 'PROJECT_TOOLS_TMP' (Join-Path $root -ChildPath 'tools.tmp')
+          $output_name = 'Audacity-{0}${{matrix.config.name_postfix}}-{1}' -f $platform, $git_describe
+          $msi_zip_name =   'MSI-' + $output_name + '.zip'
+          $exe_zip_name =   'Setup-' + $output_name + '.zip'
+          Export-WorkflowValue 'PROJECT_OUTPUT_NAME' $output_name
+          Export-WorkflowValue 'PROJECT_MSI' (Join-Path $build -ChildPath ($output_name + '.msi'))
+          Export-WorkflowValue 'PROJECT_MSI_ZIP' (Join-Path $build -ChildPath $msi_zip_name)
+          Export-WorkflowValue 'PROJECT_MSI_ZIP_NAME' $msi_zip_name
+          Export-WorkflowValue 'PROJECT_INSTALLER' (Join-Path $build -ChildPath ($output_name + '.exe'))
+          Export-WorkflowValue 'PROJECT_INSTALLER_ZIP' (Join-Path $build -ChildPath $exe_zip_name)
+          Export-WorkflowValue 'PROJECT_INSTALLER_ZIP_NAME' $exe_zip_name
+          Export-WorkflowValue 'PROJECT_LATEST_TAG' 'latest-${{matrix.config.platform}}${{matrix.config.name_postfix}}'
+
+      - name: Cache tools
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: tools
+          key: ${{ env.NINJA_HASH }}-${{ env.WIX314_HASH }}
+
+      - name: Setup tools
+        shell: powershell # pwsh doesn't like following an HTTPS -> HTTP redirect
+        run: |
+          function Export-ToolPath ([string]$name, [Uri]$url, [string]$hash) {
+            $path = Join-Path $Env:PROJECT_TOOLS -ChildPath $name
+            if (-Not (Test-Path -path $path)) {
+              Write-Host ( 'Fetching {0} from {1}' -f $name, $url )
+              $tmpPath = (New-Item -Path $Env:PROJECT_TOOLS_TMP -ItemType Directory -Force).FullName
+              $zipFile = Join-Path $tmpPath -ChildPath ($name + '.zip')
+              Invoke-WebRequest -Uri $url -OutFile $zipFile > $null
+              $actualHash = ((Get-FileHash $zipFile).Hash | Out-String).Trim()
+              if( $actualHash -eq $hash) {
+                $extractPath = Join-Path $tmpPath -ChildPath $name
+                Expand-Archive -LiteralPath $zipFile -DestinationPath $extractPath -Force
+                New-Item -Path $Env:PROJECT_TOOLS -ItemType Directory -Force > $null
+                mv $extractPath $path > $null
+                Write-Host ( 'Extracted {0} with hash {1} to {2}' -f $name, $actualHash, $path )
+              } else {
+                Write-Host ( '{0} file hash mismatch: {1}' -f $name, $actualHash )
+                exit 1
+              }
+              rm $zipFile > $null
+            }
+            $path = (Resolve-Path -LiteralPath $path).Path
+            Write-Host ( 'Adding path ' + $path )
+            Write-Host ( '::add-path::' + $path )
+          }
+          $ProgressPreference = 'SilentlyContinue'
+          Export-ToolPath 'ninja' $Env:NINJA_URL $Env:NINJA_HASH
+          Export-ToolPath 'wix' $Env:WIX314_URL $Env:WIX314_HASH
+
+      - name: Compile
+        shell: cmd
+        run: |
+          call "%PROJECT_SOURCE%\win\findmsvc.bat" -host_arch=x64 -arch=${{matrix.config.platform}} -startdir=none
+          set CC=cl.exe
+          set CXX=cl.exe
+          cmake -G Ninja -Daudacity_target_architecture=${{matrix.config.platform}} -DwxBUILD_MONOLITHIC:BOOL=ON -Daudacity_use_wxwidgets:STRING=local "${{matrix.config.extra}}" "-DTARGET_MSI_NAME=%PROJECT_OUTPUT_NAME%" -DCMAKE_BUILD_TYPE=Release -S "%PROJECT_SOURCE%" -B "%PROJECT_BUILD%"
+          cmake --build "%PROJECT_BUILD%"
+
+      - name: Build Installer
+        shell: cmd
+        run: |
+          call "%PROJECT_SOURCE%\win\findmsvc.bat" -host_arch=x64 -arch=${{matrix.config.platform}} -startdir=none
+          cd "%PROJECT_BUILD%"
+          cpack -G WIX -v
+          candle -arch ${{matrix.config.platform}} "%PROJECT_SOURCE%\win\wix\bundle.wxs" "%PROJECT_SOURCE%\win\wix\vcredist.wxs" "-dTargetMsiPath=%PROJECT_MSI%" -ext WixBalExtension -ext WixUtilExtension
+          light bundle.wixobj vcredist.wixobj -ext WixBalExtension -ext WixUtilExtension -b "%PROJECT_SOURCE%\win\wix" -o "%PROJECT_INSTALLER%"
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Setup ${{env.PROJECT_OUTPUT_NAME}}
+          path: ${{env.PROJECT_INSTALLER}}
+
+      - name: Upload MSI Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: MSI ${{env.PROJECT_OUTPUT_NAME}}
+          path: ${{env.PROJECT_MSI}}
+
+      - name: Upload WIX Logs Artifact
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: wix-logs-${{env.PROJECT_OUTPUT_NAME}}
+          path: ${{env.PROJECT_BUILD}}/**/*.log
+
+      - name: Prepare for release
+        if: contains(github.ref, 'x64')
+        shell: cmd
+        run: |
+          cd "%PROJECT_SOURCE%"
+          git tag -d "%PROJECT_LATEST_TAG%"
+          git push -d origin "%PROJECT_LATEST_TAG%"
+          echo This is not an official Audacity binary. > "%PROJECT_BUILD%\THIS IS NOT AN OFFICIAL BUILD.txt"
+          echo See https://github.com/henricj/audacity for more information >> "%PROJECT_BUILD%\THIS IS NOT AN OFFICIAL BUILD.txt"
+          echo or visit https://audacityteam.org/ for an official build. >> "%PROJECT_BUILD%\THIS IS NOT AN OFFICIAL BUILD.txt"
+          7z a -tzip "%PROJECT_MSI_ZIP%" ./LICENSE.txt "%PROJECT_MSI%" "%PROJECT_BUILD%\THIS IS NOT AN OFFICIAL BUILD.txt"
+          7z a -tzip "%PROJECT_INSTALLER_ZIP%" ./LICENSE.txt "%PROJECT_INSTALLER%" "%PROJECT_BUILD%\THIS IS NOT AN OFFICIAL BUILD.txt"
+
+      - name: Create Release
+        id: create_release
+        if: contains(github.ref, 'x64')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{env.PROJECT_LATEST_TAG}}
+          release_name: ${{env.PROJECT_OUTPUT_NAME}}
+          draft: false
+          prerelease: true
+
+      - name: Upload Release MSI
+        if: contains(github.ref, 'x64')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{env.PROJECT_MSI_ZIP}}
+          asset_name: ${{env.PROJECT_MSI_ZIP_NAME}}
+          asset_content_type: application/zip
+
+      - name: Upload Release EXE
+        if: contains(github.ref, 'x64')
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{env.PROJECT_INSTALLER_ZIP}}
+          asset_name: ${{env.PROJECT_INSTALLER_ZIP_NAME}}
+          asset_content_type: application/zip
+

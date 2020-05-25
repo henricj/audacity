@@ -65,13 +65,22 @@ if( wxWidgets_FOUND )
 else()
    message( STATUS "Using local '${name}' library" )
 
+   message( STATUS "Checking $ENV{WXWIN} and ${TARGET_ROOT}/CMakeLists.txt" )
+
    set( WXWIN $ENV{WXWIN} )
    if( "${WXWIN}" STREQUAL "" )
       # XXX: Look into importing instead of adding to this project
-      set( WXWIN "${_INTDIR}/wxwidgets" )
+      if( EXISTS "${TARGET_ROOT}/CMakeLists.txt" )
+         set( WXWIN "${TARGET_ROOT}" )
+      else()
+         set( WXWIN "${_INTDIR}/wxWidgets" )
+      endif()
    endif()
 
+   message( STATUS "Using WXWIN: '${WXWIN}'" )
+
    if( NOT EXISTS "${WXWIN}" )
+      message( STATUS "WXWIN does not exist: ${WXWIN}" )
       if( NOT GIT_FOUND )
          message( FATAL_ERROR "Git is needed to clone wxWidgets" )
       endif()
@@ -87,12 +96,22 @@ else()
       )
    endif()
 
+   # Override the default "custom"
+   set(wxBUILD_VENDOR "audacity" CACHE STRING "Short string identifying your company (used in DLL name)")
+
+   set( wxUSE_STC NO )  # stc (Scintilla/wxStyledTextCtrl causes build problems with cotire)
+
    if( CMAKE_SYSTEM_NAME MATCHES "Windows" )
       # Want accessibility
       set( wxUSE_ACCESSIBILITY YES )
 
       # Windows requires it due to missing "#include" directives
       set( wxBUILD_PRECOMP YES )
+
+      # There is no opengl32.lib on arm64 Windows
+      if( audacity_target_architecture STREQUAL arm64 )
+        set( wxUSE_OPENGL NO )
+      endif()
    elseif( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
       # Want accessibility
       set( wxUSE_ACCESSIBILITY YES )
@@ -111,7 +130,10 @@ else()
    set( wxBUILD_CXX_STANDARD "14" )
 
    # Pull in wxWidgets
-   add_subdirectory( ${WXWIN} ${WXWIN} )
+
+   file(TO_CMAKE_PATH "${CMAKE_BINARY_DIR}/lib-src/wxWidgets" wx_binary_path)
+   message(STATUS "Adding ${WXWIN} for ${wx_binary_path}")
+   add_subdirectory( ${WXWIN} ${wx_binary_path} EXCLUDE_FROM_ALL )
 
    # And rearrange the folder structure
    set_dir_folder( ${WXWIN} "wxWidgets" )
@@ -126,33 +148,45 @@ else()
       WXUSINGDLL
    )
 
+
+   message(STATUS "wxBUILD_MONOLITHIC is ${wxBUILD_MONOLITHIC}")
+
+   if( wxBUILD_MONOLITHIC )
+      set(wx_targets mono)
+   else()
+      set(wx_targets adv base core html net qa xml)
+   endif()
+
+   add_dependencies(wxWidgets ${wx_targets})
+
    # For all required libs, gather all of the interface target
    # properties and merge them into the wxWidgets target
-   foreach( lib adv base core html net qa xml )
+   foreach( lib ${wx_targets} )
       get_target_property( value ${lib} INTERFACE_INCLUDE_DIRECTORIES )
       if( value )
          list( APPEND INCLUDES ${value} )
-         list( REMOVE_DUPLICATES INCLUDES )
       endif()
 
       get_target_property( value ${lib} INTERFACE_COMPILE_DEFINITIONS )
       if( value )
          list( APPEND DEFINES ${value} )
-         list( REMOVE_DUPLICATES DEFINES )
       endif()
 
       get_target_property( value ${lib} INTERFACE_COMPILE_OPTIONS )
       if( value )
          list( APPEND COPTS ${value} )
-         list( REMOVE_DUPLICATES COPTS )
       endif()
 
       get_target_property( value ${lib} INTERFACE_LINK_LIBRARIES )
       if( value)
          list( APPEND LIBRARIES ${lib} ${value} )
-         list( REMOVE_DUPLICATES LIBRARIES )
       endif()
    endforeach()
+
+   list( REMOVE_DUPLICATES INCLUDES )
+   list( REMOVE_DUPLICATES DEFINES )
+   list( REMOVE_DUPLICATES COPTS )
+   list( REMOVE_DUPLICATES LIBRARIES )
 
    # Do NOT split the generator expressions across multiple lines here.
    # CMake appears to have a bug and doesn't seem to handle it correctly
@@ -165,6 +199,11 @@ else()
       $<$<STREQUAL:"${wxUSE_REGEX}","builtin">:wxregex>
       $<$<STREQUAL:"${wxUSE_ZLIB}","builtin">:wxzlib>
    )
+
+   message( "INCLUDES: ${INCLUDES}" )
+   message( "DEFINES: ${DEFINES}" )
+   message( "COPTS: ${COPTS}" )
+   message( "LIBRARIES: ${LIBRARIES}" )
 
    if( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
       # When accessibility is enabled, the build will fail in "wx/chkconf.h"
@@ -213,5 +252,29 @@ target_compile_options( ${TARGET} INTERFACE ${COPTS} )
 target_link_directories( ${TARGET} INTERFACE ${LINKDIRS} )
 target_link_libraries( ${TARGET} INTERFACE ${LIBRARIES} )
 
-install( TARGETS ${TARGET} DESTINATION ${_LIBDIR} )
+#install( TARGETS ${TARGET} DESTINATION ${_LIBDIR} )
+install(TARGETS ${wx_targets}
+            RUNTIME DESTINATION bin COMPONENT applications
+            ARCHIVE DESTINATION sdk/lib COMPONENT sdk
+            LIBRARY DESTINATION sdk/lib COMPONENT sdk
+            INCLUDES DESTINATION sdk/include COMPONENT sdk
+            PUBLIC_HEADER DESTINATION sdk/include COMPONENT sdk
+)
 
+# Copied from wxWidgets' install.cmake
+if(UNIX)
+    install(
+        DIRECTORY "${wxSOURCE_DIR}/include/wx"
+        DESTINATION "include/wx-${wxMAJOR_VERSION}.${wxMINOR_VERSION}")
+else()
+    install(
+        DIRECTORY "${WXWIN}/include/wx"
+        DESTINATION sdk/include
+        COMPONENT sdk)
+    if(MSVC)
+        wx_install(
+            DIRECTORY "${WXWIN}/include/msvc"
+            DESTINATION sdk/include
+            COMPONENT sdk)
+    endif()
+endif()

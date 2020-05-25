@@ -6,7 +6,13 @@ message( STATUS "========== Configuring ${TARGET} ==========" )
 
 def_vars()
 
-add_library( ${TARGET} MODULE EXCLUDE_FROM_ALL )
+option( BUILD_MODULE_NYQ_BENCH "Build the mod-nyq-bench module" )
+
+if( BUILD_MODULE_NYQ_BENCH )
+    add_library( ${TARGET} )
+else()
+    add_library( ${TARGET} MODULE EXCLUDE_FROM_ALL )
+endif()
 
 list( APPEND SOURCES
    PRIVATE
@@ -61,3 +67,8 @@ target_include_directories( ${TARGET} PRIVATE ${INCLUDES} )
 target_link_options( ${TARGET} PRIVATE ${LOPTS} )
 target_link_libraries( ${TARGET} PRIVATE ${LIBRARIES} )
 
+if( BUILD_MODULE_NYQ_BENCH AND NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
+    install(TARGETS ${TARGET}
+        RUNTIME DESTINATION bin/modules COMPONENT applications
+        LIBRARY DESTINATION sdk/lib COMPONENT sdk)
+endif()

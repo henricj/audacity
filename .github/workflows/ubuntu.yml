@@ -1,0 +1,30 @@
+name: Ubuntu
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "apt-get"
+        run: |
+          sudo apt-get dist-upgrade -y
+          sudo apt-get install -y libgtk2.0-dev libasound2-dev gettext ninja-build
+
+      - name: Fetch repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+      
+      - name: Build
+        uses: ashutoshvarma/action-cmake-build@master
+        with:
+          build-dir: ${{ runner.workspace }}/build
+          cc: gcc
+          cxx: g++
+          configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local
+          build-type: Release
+          parallel: 8

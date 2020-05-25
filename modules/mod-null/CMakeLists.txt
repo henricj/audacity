@@ -6,7 +6,13 @@ message( STATUS "========== Configuring ${TARGET} ==========" )
 
 def_vars()
 
-add_library( ${TARGET} MODULE EXCLUDE_FROM_ALL )
+option( BUILD_MODULE_NULL "Build the mod-null module" )
+
+if( BUILD_MODULE_NULL )
+    add_library( ${TARGET} MODULE )
+else()
+    add_library( ${TARGET} MODULE EXCLUDE_FROM_ALL )
+endif()
 
 list( APPEND SOURCES
    PRIVATE
@@ -42,12 +48,12 @@ list( APPEND LIBRARIES
       $<$<PLATFORM_ID:Windows>:wxWidgets>
 )
 
-set_target_property_all( ${TARGET} LIBRARY_OUTPUT_DIRECTORY "${_DEST}/modules" )
-set_target_properties( ${TARGET}
-   PROPERTIES
-      PREFIX ""
-      FOLDER "lib-src"
-)
+#set_target_property_all( ${TARGET} LIBRARY_OUTPUT_DIRECTORY "${_DEST}/modules" )
+#set_target_properties( ${TARGET}
+#   PROPERTIES
+#      PREFIX ""
+#      FOLDER "lib-src"
+#)
 
 organize_source( "${TARGET_ROOT}" "" "${SOURCES}" )
 target_sources( ${TARGET} PRIVATE ${SOURCES} )
@@ -56,3 +62,8 @@ target_include_directories( ${TARGET} PRIVATE ${INCLUDES} )
 target_link_options( ${TARGET} PRIVATE ${LOPTS} )
 target_link_libraries( ${TARGET} PRIVATE ${LIBRARIES} )
 
+if( BUILD_MODULE_NULL AND NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
+    install(TARGETS ${TARGET}
+        RUNTIME DESTINATION bin/modules COMPONENT applications
+        LIBRARY DESTINATION sdk/lib COMPONENT sdk)
+endif()

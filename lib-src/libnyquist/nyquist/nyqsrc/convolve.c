@@ -61,12 +61,6 @@
  * Length of output is length of x input + length of h
  */
 
-// You can turn on debugging output with: #define D if (1)
-#define D if (0) 
-
-#define MAX_IR_LEN 4000000 /* maximum impulse response length */
-#define MAX_LOG_FFT_SIZE 16 /* maximum fft size for convolution */
-//#define MAX_LOG_FFT_SIZE 4 /* maximum fft size for convolution */
 #define _USE_MATH_DEFINES 1 /* for Visual C++ to get M_LN2 */
 #include <math.h>
 #include "stdio.h"
@@ -82,6 +76,14 @@
 #include "fftlib.h"
 #include "fftext.h"
 #include "convolve.h"
+
+
+ // You can turn on debugging output with: #define D if (1)
+#define D if (0) 
+
+#define MAX_IR_LEN 4000000 /* maximum impulse response length */
+#define MAX_LOG_FFT_SIZE 16 /* maximum fft size for convolution */
+//#define MAX_LOG_FFT_SIZE 4 /* maximum fft size for convolution */
 
 void convolve_free();
 

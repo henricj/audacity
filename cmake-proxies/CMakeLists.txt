@@ -40,7 +40,7 @@ function( addlib dir name symbol required check )
    # If we're not checking for system or local here, then let the
    # target config handle the rest.
    if( NOT check )
-      add_subdirectory( ${dir} EXCLUDE_FROM_ALL )
+      add_subdirectory( ${dir} )
       return()
    endif()
 

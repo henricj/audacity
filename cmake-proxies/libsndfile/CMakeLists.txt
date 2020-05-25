@@ -175,21 +175,23 @@ try_compile( HAVE_FLEXIBLE_ARRAY
 )
 
 # Determine how the CPU clips when doing float to int conversions
-try_run( r_rc c_rc
-   ${CMAKE_CURRENT_BINARY_DIR}
-   ${_SRCDIR}/clipcheck.c
-   LINK_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES}
-   RUN_OUTPUT_VARIABLE r_out
-   COMPILE_OUTPUT_VARIABLE c_out
-)
+#try_run( r_rc c_rc
+#   ${CMAKE_CURRENT_BINARY_DIR}
+#   ${_SRCDIR}/clipcheck.c
+#   LINK_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES}
+#   RUN_OUTPUT_VARIABLE r_out
+#   COMPILE_OUTPUT_VARIABLE c_out
+#)
 
-if( NOT c_rc )
-   message( STATUS "${c_out}" )
-   message( FATAL_ERROR "${_SRCDIR}/clipcheck.c compile failed:" )
-endif()
+#if( NOT c_rc )
+#   message( STATUS "${c_out}" )
+#   message( FATAL_ERROR "${_SRCDIR}/clipcheck.c compile failed:" )
+#endif()
 
-list( GET r_out 0 CPU_CLIPS_POSITIVE )
-list( GET r_out 1 CPU_CLIPS_NEGATIVE )
+#message( STATUS "${_SRCDIR}/clipcheck.c for ${CMAKE_SYSTEM_PROCESSOR}: ${r_out}" )
+
+#list( GET r_out 0 CPU_CLIPS_POSITIVE )
+#list( GET r_out 1 CPU_CLIPS_NEGATIVE )
 
 configure_file( ${TARGET_ROOT}/src/config.h.cmake ${_PRVDIR}/config.h )
 

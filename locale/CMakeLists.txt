@@ -82,6 +82,6 @@ add_custom_target( "${TARGET}" ALL DEPENDS ${OUTPUTS} SOURCES "${SOURCES}" )
 
 if( NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
    install( DIRECTORY ${locale}/
-            TYPE LOCALE )
+            TYPE LOCALE
+            COMPONENT applications )
 endif()
-

@@ -2,6 +2,13 @@
 set( TARGET Audacity )
 set( TARGET_ROOT ${topdir}/src )
 
+option( audacity_enable_clang_tidy "Run clang-tidy during build")
+
+if( audacity_enable_clang_tidy )
+    message( STATUS "Enabling clang-tidy with ${CLANG_TIDY}")
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY})
+endif()
+
 message( STATUS "========== Configuring ${TARGET} ==========" )
 
 # Allow modules to link against the Audacity executable
@@ -1053,14 +1060,9 @@ list( APPEND DEFINES
 
 list( APPEND OPTIONS
    PRIVATE
-      $<$<CXX_COMPILER_ID:MSVC>:/permissive->
+      $<$<CXX_COMPILER_ID:MSVC>:/permissive- /W4 /sdl>
       $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-underaligned-exception-object>
 #      $<$<CXX_COMPILER_ID:GNU>:-Wl,-rpath -Wl,${_RPATH}>
-)
-
-list( APPEND LDFLAGS
-   PRIVATE
-      $<$<CXX_COMPILER_ID:MSVC>:/MANIFEST:NO>
 )
 
 #
@@ -1115,7 +1117,7 @@ if( NOT CMAKE_SYSTEM_NAME MATCHES "Windows|Darwin" )
    endif()
 endif()
 
-if( CMAKE_SYSTEM_NAME MATCHES "Windows" )
+if( WIN32 )
    set_target_properties(
       ${TARGET}
       PROPERTIES
@@ -1126,6 +1128,7 @@ if( CMAKE_SYSTEM_NAME MATCHES "Windows" )
    # Define the Windows specific resources
    list( APPEND WIN_RESOURCES
       ../win/audacity.rc
+      ../win/Audacity.exe.manifest
    )
 
    # Create the config file
@@ -1173,14 +1176,18 @@ if( CMAKE_SYSTEM_NAME MATCHES "Windows" )
       POST_BUILD
    )
 
+   if( audacity_target_architecture STREQUAL "x86" )
+      list( APPEND LDFLAGS PRIVATE /LARGEADDRESSAWARE )
+   endif()
+
    # Copy the VC runtime libraries as well
-   add_custom_command(
-      TARGET
-         ${TARGET}
-      COMMAND
-         ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} ${_DEST}
-      POST_BUILD
-   )
+   #add_custom_command(
+   #   TARGET
+   #      ${TARGET}
+   #   COMMAND
+   #      ${CMAKE_COMMAND} -E copy ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} ${_DEST}
+   #   POST_BUILD
+   #)
 elseif( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
    # Bug 2400 workaround
    #
@@ -1270,7 +1277,7 @@ elseif( CMAKE_SYSTEM_NAME MATCHES "Darwin" )
    set_target_property_all( "Wrapper" RUNTIME_OUTPUT_DIRECTORY "${_EXEDIR}" )
    organize_source( "${WRAPPER_ROOT}" "mac" "${WRAPPER_SOURCES}" )
 
-else()
+elseif(UNIX)
    set_target_property_all( ${TARGET} RUNTIME_OUTPUT_DIRECTORY "${_DESTDIR}" )
 
    # Create the config file
@@ -1340,6 +1347,8 @@ else()
          POST_BUILD
       )
    endif()
+else()
+    message( ERROR "Unknwon platform")
 endif()
 
 set_target_property_all( ${TARGET} RUNTIME_OUTPUT_NAME ${AUDACITY_NAME} )
@@ -1370,6 +1379,16 @@ target_include_directories( ${TARGET} PRIVATE ${INCLUDES} )
 target_link_options( ${TARGET} PRIVATE ${LDFLAGS} )
 target_link_libraries( ${TARGET} PRIVATE ${LIBRARIES} )
 
+if( NOT APPLE )
+    install(TARGETS ${TARGET}
+        RUNTIME DESTINATION bin COMPONENT applications
+        ARCHIVE DESTINATION sdk/lib COMPONENT sdk
+        LIBRARY DESTINATION sdk/lib COMPONENT sdk
+        INCLUDES DESTINATION sdk/include COMPONENT sdk
+        PUBLIC_HEADER DESTINATION sdk/include COMPONENT sdk
+        )
+endif()
+
 # If was have cmake 3.16 or higher, we can use precompiled headers, but
 # only use them if ccache is not available and the user hasn't disabled
 # it.
@@ -1394,7 +1413,7 @@ if( NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
                DESTINATION "${CMAKE_INSTALL_BINDIR}/Audacity.app/Contents" )
       install( PROGRAMS "${_EXEDIR}/${AUDACITY_NAME}" "${_EXEDIR}/Wrapper"
                DESTINATION "${CMAKE_INSTALL_BINDIR}/Audacity.app/Contents/MacOS" )
-   else()
+   elseif(UNIX)
       install( PROGRAMS "${_EXEDIR}/${AUDACITY_NAME}"
                TYPE BIN )
       install( DIRECTORY "${_DESTDIR}/${_LIBDIR}/"
@@ -1412,3 +1431,4 @@ if( NOT "${CMAKE_GENERATOR}" MATCHES "Xcode|Visual Studio*" )
    endif()
 endif()
 
+include( CPack )

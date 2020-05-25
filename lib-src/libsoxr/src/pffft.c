@@ -182,7 +182,7 @@ typedef float32x4_t v4sf;
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0x3) == 0)
 #else
 #  if !defined(PFFFT_SIMD_DISABLE)
-#    warning "building with simd disabled !\n";
+#    pragma warning "building with simd disabled !\n";
 #    define PFFFT_SIMD_DISABLE /* fallback to scalar code */
 #  endif
 #endif
