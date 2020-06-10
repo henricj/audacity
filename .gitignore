@@ -68,6 +68,7 @@ CMakeFiles/
 CTestTestfile.cmake
 cmake_install.cmake
 build/*
+/out/
 
 # Waf build output
 lib-src/lv2/.buildvars
@@ -183,7 +184,7 @@ win/Debug
 win/Release
 win/Projects/*/Debug
 win/Projects/*/Release
-win/.vs/
+/.vs/
 win/packages
 win/.nuget
 win-alt-build
