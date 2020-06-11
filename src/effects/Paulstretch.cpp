@@ -35,10 +35,12 @@
 
 #include "../WaveTrack.h"
 
+#include "RngSupport.h"
+
 // Define keys, defaults, minimums, and maximums for the effect parameters
 //
-//     Name    Type     Key                     Def      Min      Max      Scale
-Param( Amount, float,   wxT("Stretch Factor"),   10.0,    1.0,     FLT_MAX, 1   );
+//     Name    Type     Key                      Def      Min        Max      Scale
+Param( Amount, float,   wxT("Stretch Factor"),   10.0f,   1.0f,      FLT_MAX, 1   );
 Param( Time,   float,   wxT("Time Resolution"),  0.25f,   0.00099f,  FLT_MAX, 1   );
 
 /// \brief Class that helps EffectPaulStretch.  It does the FFTs and inner loop 
@@ -56,7 +58,7 @@ public:
    size_t get_nsamples_for_fill();//how many samples are required to be added for a complete buffer refill (at start of the song or after seek)
 
 private:
-   void process_spectrum(float *WXUNUSED(freq)) {};
+   void process_spectrum(float *WXUNUSED(freq)) { }
 
    const float samplerate;
    const float rap;
@@ -78,6 +80,9 @@ private:
    double remained_samples;//how many fraction of samples has remained (0..1)
 
    const Floats fft_smps, fft_c, fft_s, fft_freq, fft_tmp;
+
+   Nyq::NyqEngine generator;
+   std::uniform_real_distribution<float> distribution_two_pi{ 0.0f, static_cast<float>(2 * M_PI) };
 };
 
 //
@@ -101,9 +106,7 @@ EffectPaulstretch::EffectPaulstretch()
    SetLinearEffectFlag(true);
 }
 
-EffectPaulstretch::~EffectPaulstretch()
-{
-}
+EffectPaulstretch::~EffectPaulstretch() = default;
 
 // ComponentInterface implementation
 
@@ -246,8 +249,8 @@ size_t EffectPaulstretch::GetBufferSize(double rate)
 {
    // Audacity's fft requires a power of 2
    float tmp = rate * mTime_resolution / 2.0;
-   tmp = log(tmp) / log(2.0);
-   tmp = pow(2.0, floor(tmp + 0.5));
+   tmp = logf(tmp) / logf(2.0f);
+   tmp = powf(2.0f, floorf(tmp + 0.5f));
 
    auto stmp = size_t(tmp);
    if (stmp != tmp)
@@ -437,9 +440,7 @@ PaulStretch::PaulStretch(float rap_, size_t in_bufsize_, float samplerate_ )
 {
 }
 
-PaulStretch::~PaulStretch()
-{
-}
+PaulStretch::~PaulStretch() = default;
 
 void PaulStretch::process(float *smps, size_t nsmps)
 {
@@ -467,28 +468,26 @@ void PaulStretch::process(float *smps, size_t nsmps)
    RealFFT(poolsize, fft_smps.get(), fft_c.get(), fft_s.get());
 
    for (size_t i = 0; i < poolsize / 2; i++)
-      fft_freq[i] = sqrt(fft_c[i] * fft_c[i] + fft_s[i] * fft_s[i]);
+      fft_freq[i] = sqrtf(fft_c[i] * fft_c[i] + fft_s[i] * fft_s[i]);
    process_spectrum(fft_freq.get());
 
 
    //put randomize phases to frequencies and do a IFFT
-   float inv_2p15_2pi = 1.0 / 16384.0 * (float)M_PI;
    for (size_t i = 1; i < poolsize / 2; i++) {
-      unsigned int random = (rand()) & 0x7fff;
-      float phase = random * inv_2p15_2pi;
-      float s = fft_freq[i] * sin(phase);
-      float c = fft_freq[i] * cos(phase);
+      const auto phase = distribution_two_pi(generator);
+      const auto s = fft_freq[i] * sinf(phase);
+      const auto c = fft_freq[i] * cosf(phase);
 
       fft_c[i] = fft_c[poolsize - i] = c;
 
       fft_s[i] = s; fft_s[poolsize - i] = -s;
    }
-   fft_c[0] = fft_s[0] = 0.0;
-   fft_c[poolsize / 2] = fft_s[poolsize / 2] = 0.0;
+   fft_c[0] = fft_s[0] = 0.0f;
+   fft_c[poolsize / 2] = fft_s[poolsize / 2] = 0.0f;
 
    FFT(poolsize, true, fft_c.get(), fft_s.get(), fft_smps.get(), fft_tmp.get());
 
-   float max = 0.0, max2 = 0.0;
+   float max = 0.0f, max2 = 0.0f;
    for (size_t i = 0; i < poolsize; i++) {
       max = std::max(max, fabsf(fft_tmp[i]));
       max2 = std::max(max2, fabsf(fft_smps[i]));
@@ -496,20 +495,20 @@ void PaulStretch::process(float *smps, size_t nsmps)
 
 
    //make the output buffer
-   float tmp = 1.0 / (float) out_bufsize * M_PI;
+   float tmp = 1.0f / (float) out_bufsize * M_PI;
    float hinv_sqrt2 = 0.853553390593f;//(1.0+1.0/sqrt(2))*0.5;
 
-   float ampfactor = 1.0;
+   float ampfactor = 1.0f;
    if (rap < 1.0)
-      ampfactor = rap * 0.707;
+      ampfactor = rap * 0.707f;
    else
-      ampfactor = (out_bufsize / (float)poolsize) * 4.0;
+      ampfactor = (out_bufsize / (float)poolsize) * 4.0f;
 
    for (size_t i = 0; i < out_bufsize; i++) {
-      float a = (0.5 + 0.5 * cos(i * tmp));
-      float out = fft_smps[i + out_bufsize] * (1.0 - a) + old_out_smp_buf[i] * a;
+      float a = (0.5f + 0.5f * cosf(i * tmp));
+      float out = fft_smps[i + out_bufsize] * (1.0f - a) + old_out_smp_buf[i] * a;
       out_buf[i] =
-         out * (hinv_sqrt2 - (1.0 - hinv_sqrt2) * cos(i * 2.0 * tmp)) *
+         out * (hinv_sqrt2 - (1.0 - hinv_sqrt2) * cosf(i * 2.0f * tmp)) *
          ampfactor;
    }
 

@@ -16,6 +16,7 @@
 #include <wx/defs.h>
 
 #include "Matrix.h"
+#include "RngSupport.h"
 
 static inline int imin(int x, int y)
 {
@@ -125,8 +126,11 @@ void InterpolateAudio(float *buffer, const size_t len,
    // effective way to avoid nearly-singular matrices.  If users
    // run it more than once they get slightly different results;
    // this is sometimes even advantageous.
+   Nyq::NyqEngine rng;
+   std::uniform_real_distribution<> dist{ -0.5 / 10000.0, 0.5 / 10000.0 };
+
    for(size_t i=0; i<N; i++)
-      s[i] += (rand()-(RAND_MAX/2))/(RAND_MAX*10000.0);
+      s[i] += dist(rng);
 
    // Solve for the best autoregression coefficients
    // using a least-squares fit to all of the non-bad
