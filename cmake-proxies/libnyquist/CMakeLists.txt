@@ -8,6 +8,7 @@ list( APPEND SOURCES
       # libnyquist
 
       ${TARGET_ROOT}/nyx.c
+      ${TARGET_ROOT}/RngSupport.cpp
 
       # libnyquist/nyquist/cmt
 
