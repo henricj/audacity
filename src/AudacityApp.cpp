@@ -1775,9 +1775,9 @@ bool AudacityApp::CreateSingleInstanceChecker(const wxString &dir)
             bool ok = false;
             if (filenames.size() > 0)
             {
-               for (size_t i = 0, cnt = filenames.size(); i < cnt; i++)
+               for (size_t j = 0, cnt = filenames.size(); j < cnt; j++)
                {
-                  ok = conn->Execute(filenames[i]);
+                  ok = conn->Execute(filenames[j]);
                }
             }
             else
