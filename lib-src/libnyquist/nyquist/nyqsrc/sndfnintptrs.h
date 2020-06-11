@@ -123,6 +123,7 @@
   { "SND-TONEV",  S, xlc_snd_tonev}, 
   { "SND-UP",  S, xlc_snd_up}, 
   { "SND-WHITE",  S, xlc_snd_white}, 
+  { "SND-WHITEG",  S, xlc_snd_whiteg },
   { "SND-STKPITSHIFT",  S, xlc_snd_stkpitshift}, 
   { "SND-STKREV",  S, xlc_snd_stkrev}, 
   { "SND-STKCHORUS",  S, xlc_snd_stkchorus}, 
