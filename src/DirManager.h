@@ -13,6 +13,8 @@
 
 #include "audacity/Types.h"
 #include "xml/XMLTagHandler.h"
+#include "wxFileNameWrapper.h"
+#include "RngSupport.h"
 
 #include <functional>
 #include <memory>
@@ -277,6 +279,12 @@ class PROFILE_DLL_API DirManager final
    wxString mytemp;
    static int numDirManagers;
    static bool dontDeleteTempFiles;
+
+   Nyq::NyqEngine generator;
+   std::uniform_int_distribution<> distribution1M{ 0, 1 << 20 };
+   std::uniform_int_distribution<> distribution255{ 0, 255 };
+   std::uniform_int_distribution<> distribution4095{ 0, 4095 };
+   std::uniform_int_distribution<> distribution_rand_max{ 0, RAND_MAX };
 };
 
 #endif

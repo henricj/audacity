@@ -34,6 +34,7 @@
 #include "sound.h"
 #include "samples.h"
 #include "falloc.h"
+#include "RngSupport.h"
 
 /* use full copy */
 #define NYX_FULL_COPY 1
@@ -1234,7 +1235,7 @@ void oserror(const char *msg)
 
 long osrand(long n)
 {
-   return (((int) rand()) % n);
+   return RandomUniformLong(0, n);
 }
 
 /* cd ..

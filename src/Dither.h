@@ -14,6 +14,7 @@
 
 template< typename Enum > class EnumSetting;
 
+#include "RngSupport.h"
 
 /// These ditherers are currently available:
 enum DitherType : unsigned {
@@ -60,6 +61,10 @@ private:
     int mPhase;
     float mTriangleState;
     float mBuffer[8 /* = BUF_SIZE */];
+
+    Nyq::NyqEngine mGenerator;
+    std::uniform_real_distribution<float> mDistribution{ -0.5f, 0.5f };
+    float dither_noise();
 };
 
 #endif /* __AUDACITY_DITHER_H__ */
