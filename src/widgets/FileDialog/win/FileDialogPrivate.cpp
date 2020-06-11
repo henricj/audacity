@@ -1145,7 +1145,7 @@ int FileDialog::ShowModal()
          const wxChar* extension = filterBuffer;
          int   maxFilter = (int)(of.nFilterIndex*2L) - 1;
          
-         for( int i = 0; i < maxFilter; i++ )           // get extension
+         for( int j = 0; j < maxFilter; j++ )           // get extension
             extension = extension + wxStrlen( extension ) + 1;
          
          m_fileName = AppendExtension(fileNameBuffer, extension);
