@@ -232,6 +232,7 @@ list( APPEND SOURCES
       ${TARGET_ROOT}/nyquist/tran/tonev.c
       ${TARGET_ROOT}/nyquist/tran/upsample.c
       ${TARGET_ROOT}/nyquist/tran/white.c
+      ${TARGET_ROOT}/nyquist/tran/whiteg.c
 
       # libnyquist/nyquist/xlisp
 
