@@ -385,14 +385,14 @@ void FileDialog::MSWOnFolderChange(HWND hDlg, LPOPENFILENAME pOfn)
 {
    FilterFiles(mParentDlg, true);
 
-   wxChar path[wxMAXPATH];
-   int result = CommDlg_OpenSave_GetFolderPath(::GetParent(hDlg), path, WXSIZEOF(path));
-   if (result < 0 || result > WXSIZEOF(path))
+   std::vector<wxChar> path(wxMAXPATH);
+   int result = CommDlg_OpenSave_GetFolderPath(::GetParent(hDlg), &path[0], path.size());
+   if (result < 0 || result > path.size())
    {
       return;
    }
 
-   m_dir = path;
+   m_dir = &path[0];
 
    wxFileCtrlEvent event(wxEVT_FILECTRL_FOLDERCHANGED, this, GetId());
    event.SetDirectory(m_dir);
@@ -411,14 +411,14 @@ void FileDialog::MSWOnSelChange(HWND hDlg, LPOPENFILENAME pOfn)
       return;
    }
 
-   wxChar path[wxMAXPATH];
-   int result = CommDlg_OpenSave_GetFilePath(::GetParent(hDlg), path, WXSIZEOF(path));
+   std::vector<wxChar> path(wxMAXPATH);
+   int result = CommDlg_OpenSave_GetFilePath(::GetParent(hDlg), &path[0], path.size());
    if (result < 0 || result > WXSIZEOF(path))
    {
       return;
    }
 
-   m_path = path;
+   m_path = &path[0];
    m_fileName = wxFileNameFromPath(m_path);
    m_dir = wxPathOnly(m_path);
 
@@ -725,11 +725,11 @@ void FileDialog::SetFileExtension(const wxString& extension)
 {
    if (mParentDlg)
    {
-      wxChar path[wxMAXPATH];
+       std::vector<wxChar> path(wxMAXPATH);
 
-      if (CommDlg_OpenSave_GetFilePath(mParentDlg, path, WXSIZEOF(path)))
+      if (CommDlg_OpenSave_GetFilePath(mParentDlg, &path[0], path.size()))
       {
-         wxFileName fn(path);
+         wxFileName fn(&path[0]);
          fn.SetExt(extension);
 
          // Change the currently entered file name.
