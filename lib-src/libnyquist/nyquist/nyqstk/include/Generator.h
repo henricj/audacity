@@ -48,7 +48,7 @@ class Generator : public Stk
   // functions.
   virtual StkFloat computeSample( void ) = 0;
 
-  StkFloat lastOutput_;
+  StkFloat lastOutput_{};
 
 };
 
