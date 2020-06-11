@@ -269,7 +269,7 @@ class PROFILE_DLL_API DirManager final
 
    LoadingTarget mLoadingTarget;
    sampleFormat mLoadingFormat;
-   size_t mLoadingBlockLen;
+   size_t mLoadingBlockLen{};
 
    size_t mMaxSamples; // max samples per block
 
