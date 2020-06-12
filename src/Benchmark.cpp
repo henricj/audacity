@@ -33,6 +33,8 @@ of the BlockFile system.
 #include <wx/valtext.h>
 #include <wx/intl.h>
 
+#include <random>
+
 #include "DirManager.h"
 #include "ShuttleGui.h"
 #include "Project.h"
@@ -46,6 +48,8 @@ of the BlockFile system.
 #include "FileNames.h"
 #include "widgets/AudacityMessageBox.h"
 #include "widgets/wxPanelWrapper.h"
+
+#include "lemire_uniform_uint32_distribution.h"
 
 class BenchmarkDialog final : public wxDialogWrapper
 {
@@ -372,15 +376,25 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
 
    t->SetRate(1);
 
-   srand(randSeed);
+   // Create a seeded sequence with the same range as rand(), but specified to be
+   // repeatable (including between compilers and platforms and in the face
+   // of threads, called functions, or signal handlers).  We add some random salt
+   // to make the sequence globally unique (and MT has a ridiculous state size).
+   // From: https://beacon.nist.gov/beacon/2.0/chain/1/pulse/928384
+   std::seed_seq seed{ static_cast<int>(randSeed), 0x57F679EF, static_cast<int>(0xBD854D6D), 0x6B5E0FD9 };
+
+   std::mt19937 generator{ seed };
+   const auto rng = [&generator](uint32_t exclusive_upper_bound)
+   { return lemire_uniform_uint32_distribution::generate(generator, exclusive_upper_bound - 1); };
+   const auto rng_short = [&generator]() { return static_cast<short>(generator()); };
 
    size_t nChunks, chunkSize;
-   //chunkSize = 7500 + (rand() % 1000);
-   chunkSize = 200 + (rand() % 100);
-   nChunks = (dataSize * 1048576) / (chunkSize*sizeof(short));
-   while(nChunks < 20 || chunkSize > ((unsigned long)(blockSize)*1024)/4) {
-      chunkSize = std::max( size_t(1), (chunkSize / 2) + (rand() % 100) );
-      nChunks = (dataSize * 1048576) / (chunkSize*sizeof(short));
+   //chunkSize = 7500 + (rng() % 1000);
+   chunkSize = 200ULL + rng(100);
+   nChunks = ((dataSize * 1048576ULL) / (chunkSize * sizeof(short)));
+   while(nChunks < 20 || chunkSize > (blockSize*1024ULL)/4) {
+      chunkSize = std::max<decltype(chunkSize)>( 1, (chunkSize / 2) + rng(100) );
+      nChunks = (dataSize * 1048576LL) / (chunkSize*sizeof(short));
    }
 
    // The chunks are the pieces we move around in the test.
@@ -409,7 +423,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
    wxStopWatch timer;
 
    for (auto i = decltype(nChunks){0}; i < nChunks; i++) {
-      v = short(rand());
+      v = rng_short();
       small1[i] = v;
       std::fill_n(&block[0], chunkSize, v);
 
@@ -439,11 +453,11 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
    for (z = 0; z < trials; z++) {
       // First chunk to cut
       // 0 <= x0 < nChunks
-      const size_t x0 = rand() % nChunks;
+      const size_t x0 = rng(nChunks);
 
       // Number of chunks to cut
       // 1 <= xlen <= nChunks - x0
-      const size_t xlen = 1 + (rand() % (nChunks - x0));
+      const size_t xlen = 1u + rng(static_cast<uint32_t>(nChunks - x0));
       if (mEditDetail)
          Printf( XO("Cut: %llu - %llu \n")
             .Format( x0 * chunkSize, (x0 + xlen) * chunkSize) );
@@ -466,7 +480,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
 
       // Position to paste
       // 0 <= y0 <= nChunks - xlen
-      const size_t y0 = rand() % (nChunks - xlen + 1);
+      const size_t y0 = rng(nChunks - xlen + 1);
 
       if (mEditDetail)
          Printf( XO("Paste: %llu\n").Format( y0 * chunkSize ) );
