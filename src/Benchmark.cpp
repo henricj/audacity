@@ -352,8 +352,8 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
    gPrefs->Flush();
 
    // Remember the old blocksize, so that we can restore it later.
-   auto oldBlockSize = Sequence::GetMaxDiskBlockSize();
-   Sequence::SetMaxDiskBlockSize(blockSize * 1024);
+   const auto oldBlockSize = Sequence::GetMaxDiskBlockSize();
+   Sequence::SetMaxDiskBlockSize(blockSize * 1024ull);
 
    const auto cleanup = finally( [&] {
       Sequence::SetMaxDiskBlockSize(oldBlockSize);
@@ -387,14 +387,14 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
    // They are (and are supposed to be) a different size to
    // the blocks that make the blockfiles.  That way we get to
    // do some testing of when edit chunks cross blockfile boundaries.
-   Printf( XO("Using %ld chunks of %ld samples each, for a total of %.1f MB.\n")
-      .Format( nChunks, chunkSize, nChunks*chunkSize*sizeof(short)/1048576.0 ) );
+   Printf( XO("Using %llu chunks of %llu samples each, for a total of %.1f MB.\n")
+      .Format( nChunks, chunkSize, nChunks*sizeof(short)*chunkSize/1048576.0 ) );
 
    int trials = numEdits;
 
    using Shorts = ArrayOf < short > ;
-   Shorts small1{ nChunks };
-   Shorts block{ chunkSize };
+   const Shorts small1{ nChunks };
+   const Shorts block{ chunkSize };
 
    Printf( XO("Preparing...\n") );
 
@@ -408,23 +408,22 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
    wxString tempStr;
    wxStopWatch timer;
 
-   for (size_t i = 0; i < nChunks; i++) {
+   for (auto i = decltype(nChunks){0}; i < nChunks; i++) {
       v = short(rand());
       small1[i] = v;
-      for (size_t b = 0; b < chunkSize; b++)
-         block[b] = v;
+      std::fill_n(&block[0], chunkSize, v);
 
-      t->Append((samplePtr)block.get(), int16Sample, chunkSize);
+      t->Append(reinterpret_cast<samplePtr>(block.get()), int16Sample, chunkSize);
    }
    t->Flush();
 
    // This forces the WaveTrack to flush all of the appends (which is
    // only necessary if you want to access the Sequence class directly,
    // as we're about to do).
-   t->GetEndTime();
+   (void)t->GetEndTime();
 
    if (t->GetClipByIndex(0)->GetSequence()->GetNumSamples() != nChunks * chunkSize) {
-      Printf( XO("Expected len %ld, track len %lld.\n")
+      Printf( XO("Expected len %llu, track len %lld.\n")
          .Format(
             nChunks * chunkSize,
             t->GetClipByIndex(0)->GetSequence()->GetNumSamples()
@@ -446,7 +445,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
       // 1 <= xlen <= nChunks - x0
       const size_t xlen = 1 + (rand() % (nChunks - x0));
       if (mEditDetail)
-         Printf( XO("Cut: %ld - %ld \n")
+         Printf( XO("Cut: %llu - %llu \n")
             .Format( x0 * chunkSize, (x0 + xlen) * chunkSize) );
 
       Track::Holder tmp;
@@ -455,9 +454,9 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
       }
       catch (const AudacityException&) {
          Printf( XO("Trial %d\n").Format( z ) );
-         Printf( XO("Cut (%ld, %ld) failed.\n")
+         Printf( XO("Cut (%llu, %llu) failed.\n")
             .Format( (x0 * chunkSize), (x0 + xlen) * chunkSize) );
-         Printf( XO("Expected len %ld, track len %lld.\n")
+         Printf( XO("Expected len %llu, track len %lld.\n")
             .Format(
                nChunks * chunkSize,
                t->GetClipByIndex(0)->GetSequence()->GetNumSamples()
@@ -470,7 +469,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
       const size_t y0 = rand() % (nChunks - xlen + 1);
 
       if (mEditDetail)
-         Printf( XO("Paste: %ld\n").Format( y0 * chunkSize ) );
+         Printf( XO("Paste: %llu\n").Format( y0 * chunkSize ) );
 
       try {
          t->Paste((double)(y0 * chunkSize), tmp.get());
@@ -482,7 +481,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
 
       if (t->GetClipByIndex(0)->GetSequence()->GetNumSamples() != nChunks * chunkSize) {
          Printf( XO("Trial %d\n").Format( z ) );
-         Printf( XO("Expected len %ld, track len %lld.\n")
+         Printf( XO("Expected len %llu, track len %lld.\n")
             .Format(
                nChunks * chunkSize,
                t->GetClipByIndex(0)->GetSequence()->GetNumSamples()
@@ -491,7 +490,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
       }
 
       // Permute small1 correspondingly to the cut and paste
-      auto first = &small1[0];
+      const auto first = &small1[0];
       if (x0 + xlen < nChunks)
          std::rotate( first + x0, first + x0 + xlen, first + nChunks );
       std::rotate( first + y0, first + nChunks - xlen, first + nChunks );
@@ -529,7 +528,7 @@ void BenchmarkDialog::OnRun( wxCommandEvent & WXUNUSED(event))
          if (block[b] != v) {
             bad++;
             if (bad < 10)
-               Printf( XO("Bad: chunk %ld sample %ld\n").Format( i, b ) );
+               Printf( XO("Bad: chunk %zu sample %zu\n").Format( i, b ) );
             b = chunkSize;
          }
    }
