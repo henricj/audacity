@@ -27,6 +27,6 @@ jobs:
           build-dir: ${{ runner.workspace }}/build
           cc: gcc-10
           cxx: g++-10
-          configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local
+          configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local -DxwBUILD_MONOLITHIC:BOOL=ON
           build-type: Release
           parallel: 8
