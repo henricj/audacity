@@ -772,7 +772,7 @@ soxr_error_t soxr_process(soxr_t p,
   }
   p->flushing |= ilen == ilen0 && flush_requested;
 
-  if (!out && !in)
+  if (!out || !in)
     idone = ilen;
   else if (p->io_spec.itype & p->io_spec.otype & SOXR_SPLIT) { /* Both i & o */
 #if defined _OPENMP
