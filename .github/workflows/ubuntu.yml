@@ -14,6 +14,7 @@ jobs:
           sudo apt-get update
           sudo apt-get dist-upgrade -y
           sudo apt-get install -y libgtk2.0-dev libasound2-dev gettext ninja-build gcc-10 g++-10
+          #sudo apt-get install -y libgtk2.0-dev libasound2-dev gettext ninja-build gcc-10 g++-10 clang-tidy-10
 
       - name: Fetch repo
         uses: actions/checkout@v2
@@ -27,6 +28,7 @@ jobs:
           build-dir: ${{ runner.workspace }}/build
           cc: gcc-10
           cxx: g++-10
-          configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local -DxwBUILD_MONOLITHIC:BOOL=ON
+          configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local -DwxBUILD_MONOLITHIC:BOOL=ON
+          #configure-options: -v -G Ninja -Daudacity_use_wxwidgets:STRING=local -DxwBUILD_MONOLITHIC:BOOL=ON "-DCMAKE_CXX_CLANG_TIDY clang-tidy-10 -checks=* --header-filter=."
           build-type: Release
           parallel: 8

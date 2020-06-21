@@ -5,8 +5,8 @@ set( TARGET_ROOT ${topdir}/src )
 option( audacity_enable_clang_tidy "Run clang-tidy during build")
 
 if( audacity_enable_clang_tidy )
-    message( STATUS "Enabling clang-tidy with ${CLANG_TIDY}")
-    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY})
+    message( STATUS "Enabling clang-tidy with ${audacity_clang_tidy_bin} ${audacity_clang_tidy_args}")
+    set(CMAKE_CXX_CLANG_TIDY ${audacity_clang_tidy_bin} ${audacity_clang_tidy_args})
 endif()
 
 message( STATUS "========== Configuring ${TARGET} ==========" )

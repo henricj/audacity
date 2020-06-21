@@ -41,7 +41,8 @@ cmake_policy( SET CMP0072 NEW )
 # Include file check macros honor ``CMAKE_REQUIRED_LIBRARIES``.
 cmake_policy( SET CMP0075 NEW )
 
-set( CLANG_TIDY clang-tidy CACHE STRING "The clang-tidy executable")
+set( audacity_clang_tidy_bin clang-tidy CACHE STRING "The clang-tidy executable")
+set( audacity_clang_tidy_args "" CACHE STRING "The clang-tidy arguments")
 
 if( WIN32 )
     set( audacity_target_architecture ${CMAKE_SYSTEM_PROCESSOR} CACHE STRING "Target processor architecture" )
