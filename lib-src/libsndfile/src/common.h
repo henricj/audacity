@@ -311,7 +311,7 @@ typedef int16_t sfwchar_t ;
 static inline void *
 psf_memdup (const void *src, size_t n)
 {	void * mem = calloc (1, n & 3 ? n + 4 - (n & 3) : n) ;
-	return memcpy (mem, src, n) ;
+	return mem ? memcpy (mem, src, n) : NULL;
 } /* psf_memdup */
 
 /*
