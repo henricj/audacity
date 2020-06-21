@@ -1371,7 +1371,7 @@ static void unreversed_copy(int N, const v4sf *in, v4sf *out, int out_stride) {
 
 static
 void pffft_zreorder(PFFFT_Setup *setup, const float *in, float *out, pffft_direction_t direction) {
-  int k, N = setup->N, Ncvec = setup->Ncvec;
+  int N = setup->N, Ncvec = setup->Ncvec;
   const v4sf *vin = (const v4sf*)in;
   v4sf *vout = (v4sf*)out;
   assert(in != out);
@@ -1394,12 +1394,14 @@ void pffft_zreorder(PFFFT_Setup *setup, const float *in, float *out, pffft_direc
     }
   } else {
     if (direction == PFFFT_FORWARD) {
+      int k;
       for (k=0; k < Ncvec; ++k) {
         int kk = (k/4) + (k%4)*(Ncvec/4);
         INTERLEAVE2(vin[k*2], vin[k*2+1], vout[kk*2], vout[kk*2+1]);
       }
     } else {
-      for (k=0; k < Ncvec; ++k) {
+       int k;
+       for (k=0; k < Ncvec; ++k) {
         int kk = (k/4) + (k%4)*(Ncvec/4);
         UNINTERLEAVE2(vin[kk*2], vin[kk*2+1], vout[k*2], vout[k*2+1]);
       }
