@@ -233,6 +233,12 @@ if( MSVC )
 
     set( AUDACITY_MSVC_RELEASE_FLAGS " /Zi /O2 /Ob3 /fp:fast /DNDEBUG")
 
+    option( audacity_msvc_analyze "Enable MSVC's code analysis" )
+
+    if (audacity_msvc_analyze )
+        string( APPEND AUDACITY_MSVC_FLAGS " /analyze /analyze:WX-" )
+    endif()
+
    option( audacity_control_flow_guard "Enable Control Flow Guard (CFG)" )
 
    if( audacity_control_flow_guard )
