@@ -59,10 +59,12 @@ UNUSED static void * fifo_reserve(fifo_t * f, FIFO_SIZE_T n0)
       f->begin = 0;
       continue;
     }
-    f->data = FIFO_REALLOC(f->data, f->allocation + n, f->allocation);
+    char* f_data = FIFO_REALLOC(f->data, f->allocation + n, f->allocation);
+    if (!f_data) {
+       return 0;
+    }
+    f->data = f_data;
     f->allocation += n;
-    if (!f->data)
-      return 0;
   }
 }
 
@@ -70,7 +72,7 @@ UNUSED static void * fifo_write(fifo_t * f, FIFO_SIZE_T n0, void const * data)
 {
   size_t n = (size_t)n0;
   void * s = fifo_reserve(f, n0);
-  if (data)
+  if (s && data)
     memcpy(s, data, n * f->item_size);
   return s;
 }
