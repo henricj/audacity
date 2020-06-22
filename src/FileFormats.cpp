@@ -128,18 +128,12 @@ wxString sf_header_shortname(int format)
    format_info.format = (format & SF_FORMAT_TYPEMASK);
    sf_command(NULL, SFC_GET_FORMAT_INFO, &format_info, sizeof(format_info));
 
-   MallocString<> tmp { strdup( format_info.name ) };
-   i = 0;
-   while(tmp[i]) {
-      if (tmp[i]==' ')
-         tmp[i] = 0;
-      else
-         i++;
-   }
+   const auto first_space = strchr(format_info.name, ' ');
 
-   s = LAT1CTOWX(tmp.get());
-
-   return s;
+   if (first_space)
+      return wxString(format_info.name, wxConvISO8859_1, first_space - format_info.name);
+   else
+      return LAT1CTOWX(format_info.name);
 }
 
 wxString sf_header_extension(int format)
