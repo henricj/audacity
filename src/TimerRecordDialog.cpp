@@ -192,11 +192,14 @@ TimerRecordDialog::TimerRecordDialog(
 
 }
 
-TimerRecordDialog::~TimerRecordDialog()
-{
-}
+TimerRecordDialog::~TimerRecordDialog() = default;
 
 void TimerRecordDialog::OnTimer(wxTimerEvent& WXUNUSED(event))
+{
+   UpdateTime();
+}
+
+void TimerRecordDialog::UpdateTime()
 {
    wxDateTime dateTime_UNow = wxDateTime::UNow();
    if (m_DateTime_Start < dateTime_UNow) {
@@ -220,8 +223,7 @@ void TimerRecordDialog::OnDatePicker_Start(wxDateEvent& WXUNUSED(event))
 
    // User might have had the dialog up for a while, or
    // had a future day, set hour of day less than now's, then changed day to today.
-   wxTimerEvent dummyTimerEvent;
-   this->OnTimer(dummyTimerEvent);
+   this->UpdateTime();
 
    // Always update End for changed Start, keeping Duration constant.
    // Note that OnTimer sometimes calls UpdateEnd, so sometimes this is redundant,
@@ -574,8 +576,7 @@ int TimerRecordDialog::RunWaitDialog()
 
       // Make sure that start and end time are updated, so we always get the full
       // duration, even if there's some delay getting here.
-      wxTimerEvent dummyTimerEvent;
-      this->OnTimer(dummyTimerEvent);
+      this->UpdateTime();
 
       // Loop for progress display during recording.
       while (bIsRecording && (updateResult == ProgressResult::Success)) {
