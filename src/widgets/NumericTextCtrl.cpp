@@ -1565,6 +1565,11 @@ wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
    // We can use the screen device context since we're not drawing to it
    wxScreenDC dc;
 
+   const auto scale = dc.GetContentScaleFactor();
+
+   boxH *= scale;
+   boxW *= scale;
+
    // First calculate a rough point size
    wxFont pf(wxSize(boxW, boxH), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
    int fontSize = pf.GetPointSize();

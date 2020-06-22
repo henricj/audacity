@@ -72,6 +72,11 @@ struct Settings : PrefsListener {
          // PRL:  was it correct to include the margin?
          ( kTrackInfoWidth + kLeftMargin )
             - 2; // 2 to allow for left/right borders
+
+      const auto scale = window->GetContentScaleFactor();
+
+      allowableWidth *= scale;
+
       int textWidth;
       do {
          gFont.SetPointSize(fontSize);

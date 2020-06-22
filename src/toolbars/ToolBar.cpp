@@ -463,7 +463,8 @@ bool ToolBar::Expose( bool show )
       if( !IsPositioned() && show ){
          SetPositioned();
          pParent->CentreOnParent();
-         pParent->Move( pParent->GetPosition() + wxSize( mType*10, mType*10 ));
+         const auto scale = 10 * pParent->GetContentScaleFactor();
+         pParent->Move( pParent->GetPosition() + wxSize( mType * scale, mType * scale ));
       }
       pParent->Show( show );
    }
@@ -504,7 +505,8 @@ void ToolBar::SetToDefaultSize(){
 
 wxSize ToolBar::GetSmartDockedSize()
 {
-   const int tbs = toolbarSingle + toolbarGap;
+   const auto scale = GetContentScaleFactor();
+   const int tbs = scale * (toolbarSingle + toolbarGap);
    wxSize sz = GetSize();
    // 46 is the size where we switch from expanded to compact.
    if( sz.y < 46 )
@@ -567,10 +569,13 @@ void ToolBar::ReCreateButtons()
       SetSizerAndFit(ms.release());
    }
 
+   const auto scale = GetContentScaleFactor();
+
    // Recalculate the height to be a multiple of toolbarSingle
-   const int tbs = toolbarSingle + toolbarGap;
+   const int tbs = scale * (toolbarSingle + toolbarGap);
    wxSize sz = GetSize();
    sz.y = ( ( ( sz.y + tbs -1) / tbs ) * tbs ) - 1;
+
 
    // Set the true AND minimum sizes and do final layout
    if(IsResizable())
