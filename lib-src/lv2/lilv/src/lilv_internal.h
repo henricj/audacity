@@ -47,6 +47,7 @@ extern "C" {
 #            define snprintf _snprintf
 #        endif
 #    endif
+#    include <math.h>
 #ifndef INFINITY
 #    define INFINITY DBL_MAX + DBL_MAX
 #endif
