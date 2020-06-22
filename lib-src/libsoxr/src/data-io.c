@@ -4,7 +4,9 @@
 #include <limits.h>
 #include <math.h>
 #include <string.h>
-
+#ifdef HAVE_FENV_H
+#include <fenv.h>
+#endif
 #include "data-io.h"
 #include "internal.h"
 
