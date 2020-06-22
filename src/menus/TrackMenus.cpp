@@ -56,7 +56,7 @@ void DoMixAndRender
    auto rate = settings.GetRate();
    auto defaultFormat = QualityPrefs::SampleFormatChoice();
    auto &trackPanel = TrackPanel::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    MissingAliasFilesDialog::SetShouldShow(true);
 
@@ -130,7 +130,7 @@ void DoMixAndRender
             ++ii;
          }
          auto mid = arr.end();
-         std::advance( mid, -TrackList::Channels( pNewLeft ).size() );
+         std::advance( mid, 0u - TrackList::Channels( pNewLeft ).size() );
          std::rotate( arr.begin() + begin, mid, arr.end() );
          tracks.Permute( arr );
       }
@@ -160,7 +160,7 @@ void DoMixAndRender
 void DoPanTracks(AudacityProject &project, float PanValue)
 {
    auto &tracks = TrackList::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    // count selected wave tracks
    const auto range = tracks.Any< WaveTrack >();
@@ -611,7 +611,7 @@ void OnNewWaveTrack(const CommandContext &context)
    const auto &settings = ProjectSettings::Get( project );
    auto &tracks = TrackList::Get( project );
    auto &trackFactory = TrackFactory::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    auto defaultFormat = QualityPrefs::SampleFormatChoice();
 
@@ -635,7 +635,7 @@ void OnNewStereoTrack(const CommandContext &context)
    const auto &settings = ProjectSettings::Get( project );
    auto &tracks = TrackList::Get( project );
    auto &trackFactory = TrackFactory::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    auto defaultFormat = QualityPrefs::SampleFormatChoice();
    auto rate = settings.GetRate();
@@ -662,7 +662,7 @@ void OnNewLabelTrack(const CommandContext &context)
    auto &project = context.project;
    auto &tracks = TrackList::Get( project );
    auto &trackFactory = TrackFactory::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    auto t = tracks.Add( trackFactory.NewLabelTrack() );
 
@@ -682,7 +682,7 @@ void OnNewTimeTrack(const CommandContext &context)
    auto &project = context.project;
    auto &tracks = TrackList::Get( project );
    auto &trackFactory = TrackFactory::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    if ( *tracks.Any<TimeTrack>().begin() ) {
       AudacityMessageBox(
@@ -841,7 +841,7 @@ static void MuteTracks(const CommandContext &context, bool mute, bool selected)
    auto &project = context.project;
    const auto &settings = ProjectSettings::Get( project );
    auto &tracks = TrackList::Get( project );
-   auto &window = ProjectWindow::Get( project );
+   (void)ProjectWindow::Get( project );
 
    auto soloSimple = settings.IsSoloSimple();
    auto soloNone = settings.IsSoloNone();
