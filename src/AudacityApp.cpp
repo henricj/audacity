@@ -1363,9 +1363,11 @@ bool AudacityApp::OnInit()
       exit(1);
    }
 
+   const auto scale = wxScreenDC().GetContentScaleFactor();
+
    // BG: Create a temporary window to set as the top window
    wxImage logoimage(AudacityLogoWithName_xpm);
-   logoimage.Rescale(logoimage.GetWidth() / 2, logoimage.GetHeight() / 2);
+   logoimage.Rescale(logoimage.GetWidth() / 2 * scale, logoimage.GetHeight() / 2 * scale, wxIMAGE_QUALITY_HIGH);
    if( GetLayoutDirection() == wxLayout_RightToLeft)
       logoimage = logoimage.Mirror();
    const wxBitmap logo(logoimage);
@@ -1394,7 +1396,7 @@ bool AudacityApp::OnInit()
       // On a dual monitor screen it will appear on one screen and then 
       // possibly jump to the second.
       // We could fix this by writing our own splash screen and using Hide() 
-      // until the splash scren was correctly positioned, then Show()
+      // until the splash screen was correctly positioned, then Show()
 
       // Possibly move it on to the second screen...
       temporarywindow.SetPosition( wndRect.GetTopLeft() );

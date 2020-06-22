@@ -176,14 +176,18 @@ NumericTextCtrl * SelectionBar::AddTime(
 }
 
 void SelectionBar::AddVLine(  wxSizer * pSizer ){
+   const auto scale = GetContentScaleFactor();
+
    pSizer->Add(safenew wxStaticLine(this, -1, wxDefaultPosition,
-                                   wxSize(1, toolbarSingle-10),
+                                   wxSize(1, toolbarSingle-10).Scale(scale, scale),
                                    wxLI_VERTICAL),
-                  0,  wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
+                  0,  wxALIGN_CENTER_VERTICAL | wxRIGHT, 5 * scale);
 }
 
 void SelectionBar::Populate()
 {
+   const auto scale = GetContentScaleFactor();
+
    SetBackgroundColour( theTheme.Colour( clrMedium  ) );
 
    mStartTime = mEndTime = mLengthTime = mCenterTime = mAudioTime = nullptr;
@@ -193,7 +197,7 @@ void SelectionBar::Populate()
    // This choice makes for a nice border and internal spacing and places clear responsibility
    // on each sizer as to what spacings it creates.
    wxFlexGridSizer *mainSizer = safenew wxFlexGridSizer(SIZER_COLS, 1, 1);
-   Add(mainSizer, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+   Add(mainSizer, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5 * scale);
 
    // Top row (mostly labels)
    wxColour clrText =  theTheme.Colour( clrTrackPanelText );
@@ -222,7 +226,7 @@ void SelectionBar::Populate()
       // so that name can be set on a standard control
       mChoice->SetAccessible(safenew WindowAccessible(mChoice));
 #endif
-      mainSizer->Add(mChoice, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 6);
+      mainSizer->Add(mChoice, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 6 * scale);
    }
 
    // Bottom row, (mostly time controls)
@@ -267,7 +271,7 @@ void SelectionBar::Populate()
                       &SelectionBar::OnFocus,
                       this);
 
-   mainSizer->Add(mRateBox, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 5);
+   mainSizer->Add(mRateBox, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 5 * scale);
 
    AddVLine( mainSizer );
 
@@ -292,7 +296,7 @@ void SelectionBar::Populate()
                     &SelectionBar::OnFocus,
                     this);
 
-   mainSizer->Add(mSnapTo, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 5);
+   mainSizer->Add(mSnapTo, 0, wxEXPAND | wxALIGN_TOP | wxRIGHT, 5 * scale);
 
    AddVLine( mainSizer );
 
@@ -335,9 +339,9 @@ void SelectionBar::Populate()
 #endif
 
    // Make sure they are fully expanded to the longest item
-   mChoice->SetMinSize(wxSize(mChoice->GetBestSize().x, toolbarSingle));
-   mRateBox->SetMinSize(wxSize(mRateBox->GetBestSize().x, toolbarSingle));
-   mSnapTo->SetMinSize(wxSize(mSnapTo->GetBestSize().x, toolbarSingle));
+   mChoice->SetMinSize(wxSize(mChoice->GetBestSize().x, toolbarSingle).Scale(scale, scale));
+   mRateBox->SetMinSize(wxSize(mRateBox->GetBestSize().x, toolbarSingle).Scale(scale, scale));
+   mSnapTo->SetMinSize(wxSize(mSnapTo->GetBestSize().x, toolbarSingle).Scale(scale, scale));
 
    mChoice->MoveBeforeInTabOrder( mStartTime );
    // This shows/hides controls.
