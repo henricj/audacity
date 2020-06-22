@@ -24,6 +24,7 @@
 #include "Experimental.h"
 
 #include <math.h>
+#include <algorithm>
 #include <functional>
 #include <vector>
 #include <wx/log.h>
@@ -255,7 +256,7 @@ public:
    {
       using namespace std;
       const int *begin = &bl[0];
-      return count_if(begin + startIn, begin + endIn, bind2nd(less<int>(), 0));
+      return count_if(begin + startIn, begin + endIn, [](auto n) { return n < 0; });
    }
 
 protected:
@@ -780,10 +781,9 @@ bool WaveClip::GetWaveDisplay(WaveDisplay &display, double t0,
       isLoadingOD = mWaveCache->numODPixels > 0;
    }
    else {
-      using namespace std;
       isLoadingOD =
-         count_if(display.ownBl.begin(), display.ownBl.end(),
-                  bind2nd(less<int>(), 0)) > 0;
+         std::any_of(display.ownBl.begin(), display.ownBl.end(),
+            [](auto n) { return n < 0; });
    }
 
    return true;
