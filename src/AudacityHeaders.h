@@ -27,7 +27,10 @@
 #include <initializer_list>
 #endif
 
-
+#ifndef WX_PRECOMP
+#define WX_PRECOMP
+#include <wx/wxprec.h>
+#endif
 
 #include <wx/wx.h>
 #include <wx/bitmap.h>

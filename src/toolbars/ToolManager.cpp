@@ -49,6 +49,7 @@
 #include <wx/utils.h>
 #include <wx/window.h>
 #endif  /*  */
+#include <wx/sysopt.h>
 
 #include <wx/minifram.h>
 #include <wx/popupwin.h>
