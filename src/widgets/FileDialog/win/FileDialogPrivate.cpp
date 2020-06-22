@@ -27,8 +27,8 @@
 #endif
 
 #ifndef WX_PRECOMP
+    #include <wx/msw/wrapcctl.h>
     #include <wx/msw/wrapcdlg.h>
-    #include <wx/msw/missing.h>
     #include <wx/utils.h>
     #include <wx/msgdlg.h>
     #include <wx/filefn.h>
