@@ -82,11 +82,13 @@ public:
       wxWindow* parent, AudacityProject &project, bool bAlreadySaved);
    ~TimerRecordDialog();
 
-   void OnTimer(wxTimerEvent& event);
    ///Runs the wait for start dialog.  Returns false if the user clicks stop.
    int RunWaitDialog();
 
 private:
+   void OnTimer(wxTimerEvent& event);
+   void UpdateTime();
+
    void OnDatePicker_Start(wxDateEvent& event);
    void OnTimeText_Start(wxCommandEvent& event);
 
