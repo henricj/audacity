@@ -25,16 +25,27 @@ def_vars()
 # whenever it changes.  (Must be done at build time, not
 # configuration time.)
 if( GIT_FOUND )
-   add_custom_target(
-      version
-      COMMAND
-         ${CMAKE_COMMAND} -D GIT=${GIT_EXECUTABLE}
-                          -D _PRVDIR=${_PRVDIR}
-                          -P ${CMAKE_MODULE_PATH}/Version.cmake
-      WORKING_DIRECTORY
-         ${topdir}
-   )
-   add_dependencies( ${TARGET} version )
+  # Use a target that depends on the output of the command to
+  # prevent the command from running more than once.
+  # https://gitlab.kitware.com/cmake/cmake/-/issues/16767
+  # We add a dummy output to force the command to run
+  # every build.
+  # https://www.mattkeeter.com/blog/2018-01-06-versioning/
+  add_custom_command(
+    OUTPUT ${_PRVDIR}/RevisionIdent.h
+           ${_PRVDIR}/_RevisionIdent.h
+    COMMAND
+      ${CMAKE_COMMAND} -D GIT=${GIT_EXECUTABLE}
+                       -D _PRVDIR=${_PRVDIR}
+                       -P ${CMAKE_MODULE_PATH}/Version.cmake
+    WORKING_DIRECTORY
+      ${topdir}
+  )
+  add_custom_target(
+    version
+    DEPENDS ${_PRVDIR}/RevisionIdent.h
+  )
+  add_dependencies( ${TARGET} version )
 endif()
 
 # Handle Audio Units option
