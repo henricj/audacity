@@ -580,37 +580,32 @@ extern "C" {
       (AVCodecContext *avctx, const AVCodec *codec, AVDictionary **options),
       (avctx, codec, options);
    );
-#if defined(IS_FFMPEG_PROJECT)
-   FFMPEG_FUNCTION_WITH_RETURN(
-      int,
-      avcodec_decode_audio4,
-      (AVCodecContext *avctx, AVFrame *frame, int *got_output, const AVPacket *avpkt),
-      (avctx, frame, got_output, avpkt)
-   );
-#else
-   FFMPEG_FUNCTION_WITH_RETURN(
-      int,
-      avcodec_decode_audio4,
-      (AVCodecContext *avctx, AVFrame *frame, int *got_output, AVPacket *avpkt),
-      (avctx, frame, got_output, avpkt)
-   );
-#endif
-   FFMPEG_FUNCTION_WITH_RETURN(
-      int,
-      avcodec_encode_audio2,
-      (AVCodecContext *avctx, AVPacket *pkt, const AVFrame *frame, int *got_output),
-      (avctx, pkt, frame, got_output)
-   );
+//#if defined(IS_FFMPEG_PROJECT)
+//   FFMPEG_FUNCTION_WITH_RETURN(
+//      int,
+//      avcodec_decode_audio4,
+//      (AVCodecContext *avctx, AVFrame *frame, int *got_output, const AVPacket *avpkt),
+//      (avctx, frame, got_output, avpkt)
+//   );
+//#else
+//   FFMPEG_FUNCTION_WITH_RETURN(
+//      int,
+//      avcodec_decode_audio4,
+//      (AVCodecContext *avctx, AVFrame *frame, int *got_output, AVPacket *avpkt),
+//      (avctx, frame, got_output, avpkt)
+//   );
+//#endif
+   //FFMPEG_FUNCTION_WITH_RETURN(
+   //   int,
+   //   avcodec_encode_audio2,
+   //   (AVCodecContext *avctx, AVPacket *pkt, const AVFrame *frame, int *got_output),
+   //   (avctx, pkt, frame, got_output)
+   //);
    FFMPEG_FUNCTION_WITH_RETURN(
       int,
       avcodec_close,
       (AVCodecContext *avctx),
       (avctx)
-   );
-   FFMPEG_FUNCTION_NO_RETURN(
-      avcodec_register_all,
-      (void),
-      ()
    );
    FFMPEG_FUNCTION_WITH_RETURN(
       int,
@@ -623,6 +618,63 @@ extern "C" {
       avcodec_fill_audio_frame,
       (AVFrame *frame, int nb_channels, enum AVSampleFormat sample_fmt, const uint8_t *buf, int buf_size, int align),
       (frame, nb_channels, sample_fmt, buf, buf_size, align)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      AVCodecContext*,
+      avcodec_alloc_context3,
+      (const AVCodec* codec),
+      (codec)
+   );
+   FFMPEG_FUNCTION_NO_RETURN(
+      avcodec_free_context,
+      (AVCodecContext** avctx),
+      (avctx)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      avcodec_send_packet,
+      (AVCodecContext* avctx, const AVPacket* avpkt),
+      (avctx, avpkt)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      avcodec_receive_frame,
+      (AVCodecContext* avctx, AVFrame* frame),
+      (avctx, frame)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      avcodec_send_frame,
+      (AVCodecContext* avctx, const AVFrame* frame),
+      (avctx, frame)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      avcodec_receive_packet,
+      (AVCodecContext* avctx, AVPacket* avpkt),
+      (avctx, avpkt)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      avcodec_parameters_from_context,
+      (AVCodecParameters* par, const AVCodecContext* codec),
+      (par, codec)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      AVPacket*,
+      av_packet_alloc,
+      (void),
+      ()
+   );
+   FFMPEG_FUNCTION_NO_RETURN(
+      av_packet_free,
+      (AVPacket** packet),
+      (packet)
+   );
+   FFMPEG_FUNCTION_NO_RETURN(
+      av_packet_free_side_data,
+      (AVPacket* packet),
+      (packet)
    );
 
    //
@@ -690,10 +742,16 @@ extern "C" {
    );
 #endif
    FFMPEG_FUNCTION_WITH_RETURN(
-      AVCodec*,
-      av_codec_next,
-      (const AVCodec *c),
-      (c)
+      const  AVOutputFormat*,
+      av_muxer_iterate,
+      (void **opaque),
+      (opaque)
+   );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      const AVCodec*,
+      av_codec_iterate,
+      (void **opaque),
+      (opaque)
    );
 #if defined(IS_FFMPEG_PROJECT)
    FFMPEG_FUNCTION_WITH_RETURN(
@@ -789,9 +847,15 @@ extern "C" {
       (int64_t a, AVRational bq, AVRational cq),
       (a, bq, cq)
    );
+   FFMPEG_FUNCTION_WITH_RETURN(
+      int,
+      av_packet_ref,
+      (AVPacket* dst, const AVPacket* src),
+      (dst, src)
+   );
    FFMPEG_FUNCTION_NO_RETURN(
-      av_free_packet,
-      (AVPacket *pkt),
+      av_packet_unref,
+      (AVPacket* pkt),
       (pkt)
    );
    FFMPEG_FUNCTION_WITH_RETURN(
@@ -916,7 +980,7 @@ struct AVPacketEx : public AVPacket
    void reset()
    {
       // This does not deallocate the pointer, but it frees side data.
-      av_free_packet(this);
+      av_packet_unref(this);
    }
 
 private:
@@ -929,7 +993,7 @@ private:
    }
 };
 
-// utilites for RAII:
+// Utilities for RAII:
 
 // Deleter adaptor for functions like av_free that take a pointer
 
@@ -967,6 +1031,9 @@ template<typename T, typename R, R(*Fn)(T**)> struct AV_Deleterp {
 using AVFrameHolder = std::unique_ptr<
    AVFrame, AV_Deleterp<AVFrame, void, av_frame_free>
 >;
+using AVPacketHolder = std::unique_ptr<
+   AVPacket, AV_Deleterp<AVPacket, void, av_packet_free>
+>;
 using AVFifoBufferHolder = std::unique_ptr<
    AVFifoBuffer, AV_Deleter<AVFifoBuffer, void, av_fifo_free>
 >;
@@ -976,9 +1043,13 @@ using AVFormatContextHolder = std::unique_ptr<
 using AVCodecContextHolder = std::unique_ptr<
    AVCodecContext, AV_Deleter<AVCodecContext, int, avcodec_close>
 >;
+using AVCodecParametersHolder = std::unique_ptr<
+   AVCodecParameters, AV_Deleterp<AVCodecParameters, void, avcodec_parameters_free>
+>;
 using AVDictionaryCleanup = std::unique_ptr<
    AVDictionary*, AV_Deleter<AVDictionary*, void, av_dict_free>
 >;
+
 
 /// \brief FFmpeg structure to hold a file pointer and provide a return 
 /// value when closing the file.
@@ -1006,11 +1077,11 @@ template<typename T> using AVMallocHolder = std::unique_ptr<
    T, AV_Deleter<void, void, av_free>
 >;
 
-struct streamContext
+struct streamContext final
 {
    bool                 m_use{};                           // TRUE = this stream will be loaded into Audacity
    AVStream            *m_stream{};                        // an AVStream *
-   AVCodecContext      *m_codecCtx{};                      // pointer to m_stream->codec
+   AVCodecContextHolder m_codecCtx{};                      // our codec context
 
    Optional<AVPacketEx>    m_pkt;                           // the last AVPacket we read for this stream
    uint8_t             *m_pktDataPtr{};                    // pointer into m_pkt.data
@@ -1032,9 +1103,7 @@ struct streamContext
    sampleFormat         m_osamplefmt{ floatSample };                    // output sample format
 
    streamContext() { memset(this, 0, sizeof(*this)); }
-   ~streamContext()
-   {
-   }
+   ~streamContext();
 };
 
 using Scs = ArrayOf<std::unique_ptr<streamContext>>;

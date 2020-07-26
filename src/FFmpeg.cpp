@@ -43,6 +43,9 @@ TranslatableString GetFFmpegVersion()
 /** This pointer to the shared object has global scope and is used to track the
  * singleton object which wraps the FFmpeg codecs */
 std::unique_ptr<FFmpegLibs> FFmpegLibsPtr{};
+
+streamContext::~streamContext() = default;
+
 FFmpegLibs *FFmpegLibsInst()
 {
    return FFmpegLibsPtr.get();
@@ -377,47 +380,61 @@ int import_ffmpeg_decode_frame(streamContext *sc, bool flushing)
    AVFrameHolder frame{ av_frame_alloc() };
    int got_output = 0;
 
-   nBytesDecoded =
-      avcodec_decode_audio4(sc->m_codecCtx,
-                            frame.get(),                                   // out
-                            &got_output,                             // out
-                            &avpkt);                                 // in
-
-   if (nBytesDecoded < 0)
+   auto ret = avcodec_send_packet(sc->m_codecCtx.get(), &avpkt);
+   if (ret < 0)
    {
       // Decoding failed. Don't stop.
       return -1;
    }
 
-   sc->m_samplefmt = sc->m_codecCtx->sample_fmt;
-   sc->m_samplesize = static_cast<size_t>(av_get_bytes_per_sample(sc->m_samplefmt));
+   nBytesDecoded = nDecodeSiz;
+   sc->m_decodedAudioSamplesValidSiz = 0;
 
-   int channels = sc->m_codecCtx->channels;
-   auto newsize = sc->m_samplesize * frame->nb_samples * channels;
-   sc->m_decodedAudioSamplesValidSiz = newsize;
-   // Reallocate the audio sample buffer if it's smaller than the frame size.
-   if (newsize > sc->m_decodedAudioSamplesSiz )
+   while (ret >= 0)
    {
-      // Reallocate a bigger buffer.  But av_realloc is NOT compatible with the returns of av_malloc!
-      // So do this:
-      sc->m_decodedAudioSamples.reset(static_cast<uint8_t *>(av_malloc(newsize)));
-      sc->m_decodedAudioSamplesSiz = newsize;
-      if (!sc->m_decodedAudioSamples)
-      {
-         //Can't allocate bytes
+      ret = avcodec_receive_frame(sc->m_codecCtx.get(), frame.get());
+      if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+         return 0;
+      if (ret < 0)
          return -1;
-      }
-   }
-   if (frame->data[1]) {
-      for (int i = 0; i<frame->nb_samples; i++) {
-         for (int ch = 0; ch<channels; ch++) {
-            memcpy(sc->m_decodedAudioSamples.get() + sc->m_samplesize * (ch + channels*i),
-                  frame->extended_data[ch] + sc->m_samplesize*i,
-                  sc->m_samplesize);
+
+      sc->m_samplefmt = sc->m_codecCtx->sample_fmt;
+      sc->m_samplesize = static_cast<size_t>(av_get_bytes_per_sample(sc->m_samplefmt));
+
+      const int channels = sc->m_codecCtx->channels;
+      const auto newsize = sc->m_samplesize * frame->nb_samples * channels;
+      const auto buffer_size = sc->m_decodedAudioSamplesValidSiz + newsize;
+      const auto previous_valid_size = sc->m_decodedAudioSamplesValidSiz;
+      // Reallocate the audio sample buffer if it's smaller than the frame size.
+      if (buffer_size > sc->m_decodedAudioSamplesSiz)
+      {
+         // Reallocate a bigger buffer.  But av_realloc is NOT compatible with the returns of av_malloc!
+         // So do this:
+         AVMallocHolder<uint8_t> new_buffer {static_cast<uint8_t*>(av_malloc(buffer_size)) };
+
+         if (sc->m_decodedAudioSamplesValidSiz > 0)
+            memcpy(new_buffer.get(), sc->m_decodedAudioSamples.get(), sc->m_decodedAudioSamplesValidSiz);
+
+         sc->m_decodedAudioSamples = std::move(new_buffer);
+         sc->m_decodedAudioSamplesSiz = buffer_size;
+         if (!sc->m_decodedAudioSamples)
+         {
+            //Can't allocate bytes
+            return -1;
          }
       }
-   } else {
-      memcpy(sc->m_decodedAudioSamples.get(), frame->data[0], newsize);
+
+      if (frame->data[1]) {
+         for (int i = 0; i<frame->nb_samples; i++) {
+            for (int ch = 0; ch<channels; ch++) {
+               memcpy(sc->m_decodedAudioSamples.get() + previous_valid_size + sc->m_samplesize * (ch + channels*i),
+                     frame->extended_data[ch] + sc->m_samplesize*i,
+                     sc->m_samplesize);
+            }
+         }
+      } else {
+         memcpy(sc->m_decodedAudioSamples.get() + previous_valid_size, frame->data[0], newsize);
+      }
    }
 
    // We may not have read all of the data from this packet. If so, the user can call again.
@@ -945,7 +962,7 @@ bool FFmpegLibs::InitLibs(const wxString& libpath_format0, bool WXUNUSED(showerr
    FFMPEG_INITDYN(avformat, avformat_close_input);
    FFMPEG_INITDYN(avformat, avformat_write_header);
    FFMPEG_INITDYN(avformat, av_interleaved_write_frame);
-   FFMPEG_INITDYN(avformat, av_oformat_next);
+   FFMPEG_INITDYN(avformat, av_muxer_iterate);
    FFMPEG_INITDYN(avformat, avformat_new_stream);
    FFMPEG_INITDYN(avformat, avformat_alloc_context);
    FFMPEG_INITDYN(avformat, av_write_trailer);
@@ -958,20 +975,28 @@ bool FFmpegLibs::InitLibs(const wxString& libpath_format0, bool WXUNUSED(showerr
    FFMPEG_INITDYN(avformat, avformat_free_context);
 
    FFMPEG_INITDYN(avcodec, av_init_packet);
-   FFMPEG_INITDYN(avcodec, av_free_packet);
+   FFMPEG_INITDYN(avcodec, av_packet_alloc);
+   FFMPEG_INITDYN(avcodec, av_packet_free);
+   FFMPEG_INITDYN(avcodec, av_packet_free_side_data);
+   FFMPEG_INITDYN(avcodec, av_packet_ref);
+   FFMPEG_INITDYN(avcodec, av_packet_unref);
    FFMPEG_INITDYN(avcodec, avcodec_find_encoder);
    FFMPEG_INITDYN(avcodec, avcodec_find_encoder_by_name);
    FFMPEG_INITDYN(avcodec, avcodec_find_decoder);
    FFMPEG_INITDYN(avcodec, avcodec_get_name);
    FFMPEG_INITDYN(avcodec, avcodec_open2);
-   FFMPEG_INITDYN(avcodec, avcodec_decode_audio4);
-   FFMPEG_INITDYN(avcodec, avcodec_encode_audio2);
    FFMPEG_INITDYN(avcodec, avcodec_close);
-   FFMPEG_INITDYN(avcodec, avcodec_register_all);
    FFMPEG_INITDYN(avcodec, avcodec_version);
-   FFMPEG_INITDYN(avcodec, av_codec_next);
+   FFMPEG_INITDYN(avcodec, av_codec_iterate);
    FFMPEG_INITDYN(avcodec, av_codec_is_encoder);
    FFMPEG_INITDYN(avcodec, avcodec_fill_audio_frame);
+   FFMPEG_INITDYN(avcodec, avcodec_alloc_context3);
+   FFMPEG_INITDYN(avcodec, avcodec_free_context);
+   FFMPEG_INITDYN(avcodec, avcodec_send_packet);
+   FFMPEG_INITDYN(avcodec, avcodec_receive_frame);
+   FFMPEG_INITDYN(avcodec, avcodec_send_frame);
+   FFMPEG_INITDYN(avcodec, avcodec_receive_packet);
+   FFMPEG_INITDYN(avcodec, avcodec_parameters_from_context);
 
    FFMPEG_INITDYN(avutil, av_free);
    FFMPEG_INITDYN(avutil, av_dict_free);
@@ -1000,8 +1025,6 @@ bool FFmpegLibs::InitLibs(const wxString& libpath_format0, bool WXUNUSED(showerr
 #endif
 
    //FFmpeg initialization
-   avcodec_register_all();
-   av_register_all();
 
    wxLogMessage(wxT("Retrieving FFmpeg library version numbers:"));
    int avfver = avformat_version();

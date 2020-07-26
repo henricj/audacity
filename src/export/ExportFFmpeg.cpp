@@ -55,7 +55,9 @@ function.
 // Define this to automatically resample audio to the nearest supported sample rate
 #define FFMPEG_AUTO_RESAMPLE 1
 
-static bool CheckFFmpegPresence(bool quiet = false)
+namespace {
+
+bool CheckFFmpegPresence(bool quiet = false)
 {
    bool result = true;
    PickFFmpegLibs();
@@ -64,7 +66,7 @@ static bool CheckFFmpegPresence(bool quiet = false)
       if (!quiet)
       {
          AudacityMessageBox(XO(
-"Properly configured FFmpeg is required to proceed.\nYou can configure it at Preferences > Libraries."));
+            "Properly configured FFmpeg is required to proceed.\nYou can configure it at Preferences > Libraries."));
       }
       result = false;
    }
@@ -72,7 +74,7 @@ static bool CheckFFmpegPresence(bool quiet = false)
    return result;
 }
 
-static int AdjustFormatIndex(int format)
+int AdjustFormatIndex(int format)
 {
    int subFormat = -1;
    for (int i = 0; i <= FMT_OTHER; i++)
@@ -148,8 +150,8 @@ public:
       bool selectedOnly,
       double t0,
       double t1,
-      MixerSpec *mixerSpec = NULL,
-      const Tags *metadata = NULL,
+      MixerSpec *mixerSpec = nullptr,
+      const Tags *metadata = nullptr,
       int subformat = 0) override;
 
 private:
@@ -167,6 +169,8 @@ private:
    unsigned          mChannels{};
    bool              mSupportsUTF8{};
 
+   int64_t           mSamplesWritten;
+
    // Smart pointer fields, their order is the reverse in which they are reset in FreeResources():
    AVFifoBufferHolder   mEncAudioFifo;          // FIFO to write incoming audio samples into
    AVMallocHolder<int16_t> mEncAudioFifoOutBuf;  // buffer to read _out_ of the FIFO into
@@ -178,8 +182,8 @@ private:
 ExportFFmpeg::ExportFFmpeg()
 :  ExportPlugin()
 {
-   mEncFormatDesc = NULL;      // describes our output file to libavformat
-   mEncAudioStream = NULL;     // the output audio stream (may remain NULL)
+   mEncFormatDesc = nullptr;      // describes our output file to libavformat
+   mEncAudioStream = nullptr;     // the output audio stream (may remain NULL)
    #define MAX_AUDIO_PACKET_SIZE (128 * 1024)
    mEncAudioFifoOutBufSiz = 0;
 
@@ -197,9 +201,9 @@ ExportFFmpeg::ExportFFmpeg()
       if (newfmt < FMT_OTHER && FFmpegLibsInst()->ValidLibsLoaded())
       {
          // Format/Codec support is compiled in?
-         AVOutputFormat *avoformat = av_guess_format(shortname.mb_str(), NULL, NULL);
+         AVOutputFormat *avoformat = av_guess_format(shortname.mb_str(), nullptr, nullptr);
          AVCodec *avcodec = avcodec_find_encoder(ExportFFmpegOptions::fmts[newfmt].codecid);
-         if (avoformat == NULL || avcodec == NULL)
+         if (avoformat == nullptr || avcodec == nullptr)
          {
             ExportFFmpegOptions::fmts[newfmt].compiledIn = false;
             continue;
@@ -251,7 +255,7 @@ bool ExportFFmpeg::CheckFileName(wxFileName & WXUNUSED(filename), int WXUNUSED(f
    // Show "Locate FFmpeg" dialog
    if (!CheckFFmpegPresence(true))
    {
-      FFmpegLibsInst()->FindLibs(NULL);
+      FFmpegLibsInst()->FindLibs(nullptr);
       FFmpegLibsInst()->FreeLibs();
       return LoadFFmpeg(true);
    }
@@ -280,7 +284,7 @@ bool ExportFFmpeg::Init(const char *shortname, AudacityProject *project, const T
    // will describe the functions used to write the format (used internally by libavformat)
    // and the default video/audio codecs that the format uses.
    const auto path = mName.GetFullPath();
-   if ((mEncFormatDesc = av_guess_format(shortname, OSINPUT(path), NULL)) == NULL)
+   if ((mEncFormatDesc = av_guess_format(shortname, OSINPUT(path), nullptr)) == nullptr)
    {
       AudacityMessageBox(
          XO(
@@ -305,33 +309,11 @@ bool ExportFFmpeg::Init(const char *shortname, AudacityProject *project, const T
    // Initialise the output format context.
    mEncFormatCtx->oformat = mEncFormatDesc;
 
-   memcpy(mEncFormatCtx->filename, OSINPUT(path), strlen(OSINPUT(path))+1);
+   if (mEncFormatCtx->url) av_free(mEncFormatCtx->url);
 
-   // At the moment Audacity can export only one audio stream
-   if ((mEncAudioStream = avformat_new_stream(mEncFormatCtx.get(), NULL)) == NULL)
-   {
-      AudacityMessageBox(
-         XO("FFmpeg : ERROR - Can't add audio stream to output file \"%s\".")
-            .Format( path ),
-         XO("FFmpeg Error"),
-         wxOK|wxCENTER|wxICON_EXCLAMATION);
-      return false;
-   }
-
-   // Documentation for avformat_new_stream says
-   // "User is required to call avcodec_close() and avformat_free_context() to clean
-   // up the allocation by avformat_new_stream()."
-
-   // We use smart pointers that ensure these cleanups either in their destructors or
-   // sooner if they are reset.  These are std::unique_ptr with nondefault deleter
-   // template parameters.
-
-   // mEncFormatCtx takes care of avformat_free_context(), so
-   // mEncAudioStream can be a plain pointer.
-
-   // mEncAudioCodecCtx now becomes responsible for closing the codec:
-   mEncAudioCodecCtx.reset(mEncAudioStream->codec);
-   mEncAudioStream->id = 0;
+   const auto path_size = strlen(OSINPUT(path)) + 1;
+   mEncFormatCtx->url = static_cast<char *>(av_malloc(path_size));
+   memcpy(mEncFormatCtx->url, OSINPUT(path), path_size);
 
    // Open the output file.
    if (!(mEncFormatDesc->flags & AVFMT_NOFILE))
@@ -353,7 +335,46 @@ bool ExportFFmpeg::Init(const char *shortname, AudacityProject *project, const T
    if (!InitCodecs(project))
       return false;
 
-   if (metadata == NULL)
+   // At the moment Audacity can export only one audio stream
+   if ((mEncAudioStream = avformat_new_stream(mEncFormatCtx.get(), mEncAudioCodecCtx->codec)) == nullptr)
+   {
+      AudacityMessageBox(
+         XO("FFmpeg : ERROR - Can't add audio stream to output file \"%s\".")
+         .Format(path),
+         XO("FFmpeg Error"),
+         wxOK | wxCENTER | wxICON_EXCLAMATION);
+      return false;
+   }
+
+
+   // Documentation for avformat_new_stream says
+   // "User is required to call avcodec_close() and avformat_free_context() to clean
+   // up the allocation by avformat_new_stream()."
+
+   // We use smart pointers that ensure these cleanups either in their destructors or
+   // sooner if they are reset.  These are std::unique_ptr with nondefault deleter
+   // template parameters.
+
+   // mEncFormatCtx takes care of avformat_free_context(), so
+   // mEncAudioStream can be a plain pointer.
+
+   mEncAudioStream->id = mEncFormatCtx->nb_streams - 1;
+
+   mEncAudioStream->time_base = mEncAudioCodecCtx->time_base;
+
+   { // Scope
+   /* copy the stream parameters to the muxer */
+      auto rc = avcodec_parameters_from_context(mEncAudioStream->codecpar, mEncAudioCodecCtx.get());
+      if (rc < 0) {
+         AudacityMessageBox(
+            XO("FFmpeg : Could not copy the stream parameters."),
+            XO("FFmpeg Error"),
+            wxOK | wxCENTER | wxICON_EXCLAMATION
+         );
+      }
+   }
+
+   if (metadata == nullptr)
       metadata = &Tags::Get( *project );
 
    // Add metadata BEFORE writing the header.
@@ -365,7 +386,7 @@ bool ExportFFmpeg::Init(const char *shortname, AudacityProject *project, const T
    }
 
    // Write headers to the output file.
-   if ((err = avformat_write_header(mEncFormatCtx.get(), NULL)) < 0)
+   if ((err = avformat_write_header(mEncFormatCtx.get(), nullptr)) < 0)
    {
       AudacityMessageBox(
          XO("FFmpeg : ERROR - Can't write headers to output file \"%s\". Error code is %d.")
@@ -377,7 +398,7 @@ bool ExportFFmpeg::Init(const char *shortname, AudacityProject *project, const T
 
    // Only now, we can keep all the resources until after Finalize().
    // Cancel the local cleanup.
-   cleanup.release();
+   (void)cleanup.release();
 
    return true;
 }
@@ -406,7 +427,7 @@ bool ExportFFmpeg::CheckSampleRate(int rate, int lowrate, int highrate, const in
    return false;
 }
 
-static int set_dict_int(AVDictionary **dict, const char *key, int val)
+int set_dict_int(AVDictionary** dict, const char* key, int val)
 {
    char val_str[256];
    snprintf(val_str, sizeof(val_str), "%d", val);
@@ -416,8 +437,8 @@ static int set_dict_int(AVDictionary **dict, const char *key, int val)
 bool ExportFFmpeg::InitCodecs(AudacityProject *project)
 {
    const auto &settings = ProjectSettings::Get( *project );
-   AVCodec *codec = NULL;
-   AVDictionary *options = NULL;
+   AVCodec *codec = nullptr;
+   AVDictionary *options = nullptr;
    AVDictionaryCleanup cleanup{ &options };
 
    // Get the sample rate from the passed settings if we haven't set it before.
@@ -426,14 +447,43 @@ bool ExportFFmpeg::InitCodecs(AudacityProject *project)
    // dialogs in the event the codec can't support the specified rate.
    if (!mSampleRate)
    {
-      mSampleRate = (int)settings.GetRate();
+      mSampleRate = static_cast<int>(settings.GetRate());
+   }
+
+   if (mSubFormat == FMT_OTHER)
+   {
+      codec = avcodec_find_encoder_by_name(gPrefs->Read(wxT("/FileFormats/FFmpegCodec")).ToUTF8());
+   
+      if (codec && codec->id == AV_CODEC_ID_AC3)
+      {
+         // As of Jan 4, 2011, the default AC3 encoder only accept SAMPLE_FMT_FLT samples.
+         // But, currently, Audacity only supports SAMPLE_FMT_S16.  So, for now, look for the
+         // "older" AC3 codec.  this is not a proper solution, but will suffice until other
+         // encoders no longer support SAMPLE_FMT_S16.
+         codec = avcodec_find_encoder_by_name("ac3_fixed");
+      }
+   }
+
+   if (!codec)
+      codec = avcodec_find_encoder(ExportFFmpegOptions::fmts[mSubFormat].codecid);
+
+   // Is the required audio codec compiled into libavcodec?
+   if (codec == nullptr)
+   {
+      AudacityMessageBox(
+         XO(
+            /* i18n-hint: "codec" is short for a "coder-decoder" algorithm */
+            "FFmpeg cannot find audio codec 0x%x.\nSupport for this codec is probably not compiled in.")
+         .Format(static_cast<unsigned int>(mEncAudioCodecCtx->codec_id)),
+         XO("FFmpeg Error"),
+         wxOK | wxCENTER | wxICON_EXCLAMATION);
+      return false;
    }
 
    // Configure the audio stream's codec context.
 
-   mEncAudioCodecCtx->codec_id = ExportFFmpegOptions::fmts[mSubFormat].codecid;
-   mEncAudioCodecCtx->codec_type = AVMEDIA_TYPE_AUDIO;
-   mEncAudioCodecCtx->codec_tag = av_codec_get_tag(mEncFormatCtx->oformat->codec_tag,mEncAudioCodecCtx->codec_id);
+   mEncAudioCodecCtx.reset(avcodec_alloc_context3(codec));
+
    mEncAudioCodecCtx->global_quality = -99999; //quality mode is off by default;
 
    // Each export type has its own settings
@@ -497,7 +547,6 @@ bool ExportFFmpeg::InitCodecs(AudacityProject *project)
       set_dict_int(&options, "prediction_order_method", gPrefs->Read(wxT("/FileFormats/FFmpegPredOrderMethod"),(long)0));
       set_dict_int(&options, "muxrate",                 gPrefs->Read(wxT("/FileFormats/FFmpegMuxRate"),(long)0));
       mEncFormatCtx->packet_size = gPrefs->Read(wxT("/FileFormats/FFmpegPacketSize"),(long)0);
-      codec = avcodec_find_encoder_by_name(gPrefs->Read(wxT("/FileFormats/FFmpegCodec")).ToUTF8());
       if (!codec)
          mEncAudioCodecCtx->codec_id = mEncFormatDesc->audio_codec;
       break;
@@ -513,6 +562,7 @@ bool ExportFFmpeg::InitCodecs(AudacityProject *project)
       mEncAudioCodecCtx->flags |= AV_CODEC_FLAG_QSCALE;
    }
    else mEncAudioCodecCtx->global_quality = 0;
+
    mEncAudioCodecCtx->global_quality = mEncAudioCodecCtx->global_quality * FF_QP2LAMBDA;
    mEncAudioCodecCtx->sample_rate = mSampleRate;
    mEncAudioCodecCtx->channels = mChannels;
@@ -521,33 +571,6 @@ bool ExportFFmpeg::InitCodecs(AudacityProject *project)
    mEncAudioCodecCtx->time_base.den = mEncAudioCodecCtx->sample_rate;
    mEncAudioCodecCtx->sample_fmt = AV_SAMPLE_FMT_S16;
    mEncAudioCodecCtx->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL;
-
-   if (mEncAudioCodecCtx->codec_id == AV_CODEC_ID_AC3)
-   {
-      // As of Jan 4, 2011, the default AC3 encoder only accept SAMPLE_FMT_FLT samples.
-      // But, currently, Audacity only supports SAMPLE_FMT_S16.  So, for now, look for the
-      // "older" AC3 codec.  this is not a proper solution, but will suffice until other
-      // encoders no longer support SAMPLE_FMT_S16.
-      codec = avcodec_find_encoder_by_name("ac3_fixed");
-   }
-
-   if (!codec)
-   {
-      codec = avcodec_find_encoder(mEncAudioCodecCtx->codec_id);
-   }
-
-   // Is the required audio codec compiled into libavcodec?
-   if (codec == NULL)
-   {
-      AudacityMessageBox(
-         XO(
-/* i18n-hint: "codec" is short for a "coder-decoder" algorithm */
-"FFmpeg cannot find audio codec 0x%x.\nSupport for this codec is probably not compiled in.")
-            .Format( (unsigned int) mEncAudioCodecCtx->codec_id ),
-         XO("FFmpeg Error"),
-         wxOK|wxCENTER|wxICON_EXCLAMATION);
-      return false;
-   }
 
    if (codec->sample_fmts) {
       for (int i=0; codec->sample_fmts[i] != AV_SAMPLE_FMT_NONE; i++) {
@@ -665,98 +688,102 @@ bool ExportFFmpeg::InitCodecs(AudacityProject *project)
 }
 
 // Returns 0 if no more output, 1 if more output, negative if error
-static int encode_audio(AVCodecContext *avctx, AVPacket *pkt, int16_t *audio_samples, int nb_samples)
+int encode_audio(AVCodecContext *avctx, AVFormatContext* avfctx, AVStream* audio_stream, AVPacket* pkt, const int16_t *audio_samples, int nb_samples, int64_t pts)
 {
    // Assume *pkt is already initialized.
 
-   int i, ch, buffer_size, ret, got_output = 0;
-   AVMallocHolder<uint8_t> samples;
-   AVFrameHolder frame;
+   int buffer_size, ret, got_output = 0;
 
    if (audio_samples) {
-      frame.reset(av_frame_alloc());
+      AVFrameHolder frame{ av_frame_alloc() };
       if (!frame)
          return AVERROR(ENOMEM);
 
-      frame->nb_samples     = nb_samples;
-      frame->format         = avctx->sample_fmt;
+      frame->nb_samples = nb_samples;
+      frame->format = avctx->sample_fmt;
+      frame->sample_rate = avctx->sample_rate;
 #if !defined(DISABLE_DYNAMIC_LOADING_FFMPEG) || (LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(54, 13, 0))
       frame->channel_layout = avctx->channel_layout;
 #endif
 
-      buffer_size = av_samples_get_buffer_size(NULL, avctx->channels, frame->nb_samples,
-                                              avctx->sample_fmt, 0);
+      frame->pts = pts; // av_rescale_q(xyz, AVRational{ 1, avctx->sample_rate }, avctx->time_base);
+
+      buffer_size = av_samples_get_buffer_size(nullptr, avctx->channels, frame->nb_samples,
+         avctx->sample_fmt, 0);
       if (buffer_size < 0) {
          AudacityMessageBox(
             XO("FFmpeg : ERROR - Could not get sample buffer size"),
             XO("FFmpeg Error"),
-            wxOK|wxCENTER|wxICON_EXCLAMATION
+            wxOK | wxCENTER | wxICON_EXCLAMATION
          );
          return buffer_size;
       }
-      samples.reset(static_cast<uint8_t*>(av_malloc(buffer_size)));
+
+      const AVMallocHolder<uint8_t> samples{ static_cast<uint8_t*>(av_malloc(buffer_size)) };
       if (!samples) {
          AudacityMessageBox(
             XO("FFmpeg : ERROR - Could not allocate bytes for samples buffer"),
             XO("FFmpeg Error"),
-            wxOK|wxCENTER|wxICON_EXCLAMATION
+            wxOK | wxCENTER | wxICON_EXCLAMATION
          );
          return AVERROR(ENOMEM);
       }
       /* setup the data pointers in the AVFrame */
       ret = avcodec_fill_audio_frame(frame.get(), avctx->channels, avctx->sample_fmt,
-                                  samples.get(), buffer_size, 0);
+         samples.get(), buffer_size, 0);
+
       if (ret < 0) {
          AudacityMessageBox(
             XO("FFmpeg : ERROR - Could not setup audio frame"),
             XO("FFmpeg Error"),
-            wxOK|wxCENTER|wxICON_EXCLAMATION
+            wxOK | wxCENTER | wxICON_EXCLAMATION
          );
          return ret;
       }
 
-      for (ch = 0; ch < avctx->channels; ch++) {
-         for (i = 0; i < frame->nb_samples; i++) {
-            switch(avctx->sample_fmt) {
+      for (auto ch = 0; ch < avctx->channels; ch++) {
+         for (auto i = 0; i < frame->nb_samples; i++) {
+            switch (avctx->sample_fmt) {
             case AV_SAMPLE_FMT_U8:
-               ((uint8_t*)(frame->data[0]))[ch + i*avctx->channels] = audio_samples[ch + i*avctx->channels]/258 + 128;
+               static_cast<uint8_t*>(frame->data[0])[ch + i * avctx->channels] = audio_samples[ch + i * avctx->channels] / 258 + 128;
                break;
             case AV_SAMPLE_FMT_U8P:
-               ((uint8_t*)(frame->data[ch]))[i] = audio_samples[ch + i*avctx->channels]/258 + 128;
+               static_cast<uint8_t*>(frame->data[ch])[i] = audio_samples[ch + i * avctx->channels] / 258 + 128;
                break;
             case AV_SAMPLE_FMT_S16:
-               ((int16_t*)(frame->data[0]))[ch + i*avctx->channels] = audio_samples[ch + i*avctx->channels];
+               reinterpret_cast<int16_t*>(frame->data[0])[ch + i * avctx->channels] = audio_samples[ch + i * avctx->channels];
                break;
             case AV_SAMPLE_FMT_S16P:
-               ((int16_t*)(frame->data[ch]))[i] = audio_samples[ch + i*avctx->channels];
+               reinterpret_cast<int16_t*>(frame->data[ch])[i] = audio_samples[ch + i * avctx->channels];
                break;
             case AV_SAMPLE_FMT_S32:
-               ((int32_t*)(frame->data[0]))[ch + i*avctx->channels] = audio_samples[ch + i*avctx->channels]<<16;
+               reinterpret_cast<int32_t*>(frame->data[0])[ch + i * avctx->channels] = audio_samples[ch + i * avctx->channels] << 16;
                break;
             case AV_SAMPLE_FMT_S32P:
-               ((int32_t*)(frame->data[ch]))[i] = audio_samples[ch + i*avctx->channels]<<16;
+               reinterpret_cast<int32_t*>(frame->data[ch])[i] = audio_samples[ch + i * avctx->channels] << 16;
                break;
             case AV_SAMPLE_FMT_FLT:
-               ((float*)(frame->data[0]))[ch + i*avctx->channels] = audio_samples[ch + i*avctx->channels] / 32767.0;
+               reinterpret_cast<float*>(frame->data[0])[ch + i * avctx->channels] = static_cast<float>(audio_samples[ch + i * avctx->channels]) / 32767.0f;
                break;
             case AV_SAMPLE_FMT_FLTP:
-               ((float*)(frame->data[ch]))[i] = audio_samples[ch + i*avctx->channels] / 32767.;
+               reinterpret_cast<float*>(frame->data[ch])[i] = static_cast<float>(audio_samples[ch + i * avctx->channels]) / 32767.f;
                break;
             case AV_SAMPLE_FMT_NONE:
             case AV_SAMPLE_FMT_DBL:
             case AV_SAMPLE_FMT_DBLP:
             case AV_SAMPLE_FMT_NB:
+            default:
                wxASSERT(false);
                break;
             }
          }
       }
+
+      ret = avcodec_send_frame(avctx, frame.get());
    }
+   else
+      ret = avcodec_send_frame(avctx, nullptr);
 
-   pkt->data = NULL; // packet data will be allocated by the encoder
-   pkt->size = 0;
-
-   ret = avcodec_encode_audio2(avctx, pkt, frame.get(), &got_output);
    if (ret < 0) {
       AudacityMessageBox(
          XO("FFmpeg : ERROR - encoding frame failed"),
@@ -766,7 +793,66 @@ static int encode_audio(AVCodecContext *avctx, AVPacket *pkt, int16_t *audio_sam
       return ret;
    }
 
-   pkt->dts = pkt->pts = AV_NOPTS_VALUE; // we dont set frame.pts thus dont trust the AVPacket ts
+
+   /* read all the available output packets(in general there may be any
+    * number of them */
+   while (ret >= 0)
+   {
+      pkt->data = nullptr; // packet data will be allocated by the encoder
+      pkt->size = 0;
+
+      pkt->dts = pkt->pts = AV_NOPTS_VALUE; // we don't set frame.pts thus don't trust the AVPacket ts
+
+      ret = avcodec_receive_packet(avctx, pkt);
+      if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+         continue;
+
+      if (ret < 0) {
+         AudacityMessageBox(
+            XO("FFmpeg : ERROR - Can't encode audio frame."),
+            XO("FFmpeg Error"),
+            wxOK | wxCENTER | wxICON_EXCLAMATION
+         );
+         return false;
+      }
+
+      // Rescale from the codec time_base to the AVStream time_base.
+      if (pkt->pts != int64_t(AV_NOPTS_VALUE))
+         pkt->pts = av_rescale_q(pkt->pts, avctx->time_base, avctx->time_base);
+      if (pkt->dts != int64_t(AV_NOPTS_VALUE))
+         pkt->dts = av_rescale_q(pkt->dts, avctx->time_base, avctx->time_base);
+      //wxLogDebug(wxT("FFmpeg : (%d) Writing audio frame with PTS: %lld."), mEncAudioCodecCtx->frame_number, (long long) pkt.pts);
+
+      pkt->stream_index = audio_stream->index;
+
+      // Write the encoded audio frame to the output file.
+      if ((ret = av_interleaved_write_frame(avfctx, pkt)) < 0)
+      {
+         AudacityMessageBox(
+            XO("FFmpeg : ERROR - Failed to write audio frame to file."),
+            XO("FFmpeg Error"),
+            wxOK | wxCENTER | wxICON_EXCLAMATION
+         );
+         return false;
+      }
+
+      ++got_output;
+   }
+
+   if(!audio_samples)
+   {
+      // Flush the mux.
+      if ((ret = av_interleaved_write_frame(avfctx, nullptr)) < 0)
+      {
+         AudacityMessageBox(
+            XO("FFmpeg : ERROR - Failed to write audio frame to file."),
+            XO("FFmpeg Error"),
+            wxOK | wxCENTER | wxICON_EXCLAMATION
+         );
+         return false;
+      }
+   }
+
 
    return got_output;
 }
@@ -774,12 +860,14 @@ static int encode_audio(AVCodecContext *avctx, AVPacket *pkt, int16_t *audio_sam
 
 bool ExportFFmpeg::Finalize()
 {
+   int encodeResult = 0;
+
+   AVPacketEx pkt;
+
    // Flush the audio FIFO and encoder.
    for (;;)
    {
-      AVPacketEx pkt;
       const int nFifoBytes = av_fifo_size(mEncAudioFifo.get()); // any bytes left in audio FIFO?
-      int encodeResult = 0;
 
       // Flush the audio FIFO first if necessary. It won't contain a _full_ audio frame because
       // if it did we'd have pulled it from the FIFO during the last encodeAudioFrame() call
@@ -811,12 +899,13 @@ bool ExportFFmpeg::Finalize()
          // Fill audio buffer with zeroes. If codec tries to read the whole buffer,
          // it will just read silence. If not - who cares?
          memset(mEncAudioFifoOutBuf.get(), 0, mEncAudioFifoOutBufSiz);
-         //const AVCodec *codec = mEncAudioCodecCtx->codec;
 
          // Pull the bytes out from the FIFO and feed them to the encoder.
-         if (av_fifo_generic_read(mEncAudioFifo.get(), mEncAudioFifoOutBuf.get(), nFifoBytes, NULL) == 0)
+         if (av_fifo_generic_read(mEncAudioFifo.get(), mEncAudioFifoOutBuf.get(), nFifoBytes, nullptr) == 0)
          {
-            encodeResult = encode_audio(mEncAudioCodecCtx.get(), &pkt, mEncAudioFifoOutBuf.get(), frame_size);
+            const auto pts = av_rescale_q(mSamplesWritten, AVRational{ 1, mEncAudioCodecCtx->sample_rate }, mEncAudioCodecCtx->time_base);
+            mSamplesWritten += frame_size;
+            encodeResult = encode_audio(mEncAudioCodecCtx.get(), mEncFormatCtx.get(), mEncAudioStream, &pkt, mEncAudioFifoOutBuf.get(), frame_size, pts);
          }
          else
          {
@@ -826,18 +915,19 @@ bool ExportFFmpeg::Finalize()
             return false;
          }
       }
-      else
-      {
-         // Fifo is empty, flush encoder. May be called multiple times.
-         encodeResult = encode_audio(mEncAudioCodecCtx.get(), &pkt, NULL, 0);
-      }
+      //else
+      //{
+      //   // Fifo is empty, flush encoder. May be called multiple times.
+      //   encodeResult = encode_audio(mEncAudioCodecCtx.get(), mEncFormatCtx.get(), &pkt, nullptr, 0);
+      //}
 
       if (encodeResult < 0) {
          // TODO: more precise message
          AudacityMessageBox( XO("Unable to export") );
          return false;
       }
-      else if (encodeResult == 0)
+
+      if (encodeResult == 0)
          break;
 
       // We have a packet, send to the muxer
@@ -858,6 +948,17 @@ bool ExportFFmpeg::Finalize()
             XO("FFmpeg Error"),
             wxOK | wxCENTER | wxICON_EXCLAMATION
          );
+         return false;
+      }
+   }
+
+
+   { // Scope
+      const auto pts = av_rescale_q(mSamplesWritten, AVRational{ 1, mEncAudioCodecCtx->sample_rate }, mEncAudioCodecCtx->time_base);
+      encodeResult = encode_audio(mEncAudioCodecCtx.get(), mEncFormatCtx.get(), mEncAudioStream, &pkt, nullptr, 0, pts);
+      if (encodeResult < 0) {
+         // TODO: more precise message
+         AudacityMessageBox(XO("Unable to export"));
          return false;
       }
    }
@@ -894,17 +995,16 @@ void ExportFFmpeg::FreeResources()
 bool ExportFFmpeg::EncodeAudioFrame(int16_t *pFrame, size_t frameSize)
 {
    int nBytesToWrite = 0;
-   uint8_t *pRawSamples = NULL;
-   int nAudioFrameSizeOut = default_frame_size * mEncAudioCodecCtx->channels * sizeof(int16_t);
-   int ret;
+   uint8_t *pRawSamples = nullptr;
+   const int nAudioFrameSizeOut = default_frame_size * mEncAudioCodecCtx->channels * sizeof(int16_t);
 
    nBytesToWrite = frameSize;
-   pRawSamples  = (uint8_t*)pFrame;
+   pRawSamples  = reinterpret_cast<uint8_t*>(pFrame);
    if (av_fifo_realloc2(mEncAudioFifo.get(), av_fifo_size(mEncAudioFifo.get()) + frameSize) < 0)
       return false;
 
    // Put the raw audio samples into the FIFO.
-   ret = av_fifo_generic_write(mEncAudioFifo.get(), pRawSamples, nBytesToWrite,NULL);
+   int ret = av_fifo_generic_write(mEncAudioFifo.get(), pRawSamples, nBytesToWrite, nullptr);
 
    if(ret != nBytesToWrite)
       return false;
@@ -918,48 +1018,32 @@ bool ExportFFmpeg::EncodeAudioFrame(int16_t *pFrame, size_t frameSize)
       return false;
    }
 
+   AVPacketEx pkt;
+
    // Read raw audio samples out of the FIFO in nAudioFrameSizeOut byte-sized groups to encode.
    while ( av_fifo_size(mEncAudioFifo.get()) >= nAudioFrameSizeOut)
    {
-      ret = av_fifo_generic_read(mEncAudioFifo.get(), mEncAudioFifoOutBuf.get(), nAudioFrameSizeOut, NULL);
+      ret = av_fifo_generic_read(mEncAudioFifo.get(), mEncAudioFifoOutBuf.get(), nAudioFrameSizeOut, nullptr);
 
-      AVPacketEx pkt;
+      const auto pts = av_rescale_q(mSamplesWritten, AVRational{ 1, mEncAudioCodecCtx->sample_rate }, mEncAudioCodecCtx->time_base);
 
-      ret= encode_audio(mEncAudioCodecCtx.get(),
-         &pkt,                          // out
+      ret = encode_audio(mEncAudioCodecCtx.get(), mEncFormatCtx.get(), mEncAudioStream,
+         &pkt,
          mEncAudioFifoOutBuf.get(), // in
-         default_frame_size);
+         default_frame_size,
+         pts);
+
       if (ret < 0)
       {
          AudacityMessageBox(
             XO("FFmpeg : ERROR - Can't encode audio frame."),
             XO("FFmpeg Error"),
-            wxOK|wxCENTER|wxICON_EXCLAMATION
+            wxOK | wxCENTER | wxICON_EXCLAMATION
          );
          return false;
       }
-      if (ret == 0)
-         continue;
 
-      // Rescale from the codec time_base to the AVStream time_base.
-      if (pkt.pts != int64_t(AV_NOPTS_VALUE))
-         pkt.pts = av_rescale_q(pkt.pts, mEncAudioCodecCtx->time_base, mEncAudioStream->time_base);
-      if (pkt.dts != int64_t(AV_NOPTS_VALUE))
-         pkt.dts = av_rescale_q(pkt.dts, mEncAudioCodecCtx->time_base, mEncAudioStream->time_base);
-      //wxLogDebug(wxT("FFmpeg : (%d) Writing audio frame with PTS: %lld."), mEncAudioCodecCtx->frame_number, (long long) pkt.pts);
-
-      pkt.stream_index = mEncAudioStream->index;
-
-      // Write the encoded audio frame to the output file.
-      if ((ret = av_interleaved_write_frame(mEncFormatCtx.get(), &pkt)) < 0)
-      {
-         AudacityMessageBox(
-            XO("FFmpeg : ERROR - Failed to write audio frame to file."),
-            XO("FFmpeg Error"),
-            wxOK|wxCENTER|wxICON_EXCLAMATION
-         );
-         return false;
-      }
+      mSamplesWritten += default_frame_size;
    }
    return true;
 }
@@ -1074,7 +1158,7 @@ void AddStringTagANSI(char field[], int size, wxString value)
 
 bool ExportFFmpeg::AddTags(const Tags *tags)
 {
-   if (tags == NULL)
+   if (tags == nullptr)
    {
       return false;
    }
@@ -1241,6 +1325,8 @@ void ExportFFmpeg::OptionsCreate(ShuttleGui &S, int format)
 
    ExportPlugin::OptionsCreate(S, format);
 }
+
+} // namespace
 
 static Exporter::RegisteredExportPlugin sRegisteredPlugin{ "FFmpeg",
    []{ return std::make_unique< ExportFFmpeg >(); }
