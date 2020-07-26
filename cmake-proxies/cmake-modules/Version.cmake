@@ -52,7 +52,7 @@ execute_process(
 if( NOT "${REV_REPO_BRANCH}" STREQUAL "master" )
     execute_process(
        COMMAND
-          ${GIT} merge-base master HEAD
+          ${GIT} merge-base origin/master HEAD
        OUTPUT_VARIABLE REV_MASTER_MERGE_BASE
        OUTPUT_STRIP_TRAILING_WHITESPACE
        ERROR_QUIET
