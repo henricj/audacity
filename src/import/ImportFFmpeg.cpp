@@ -352,8 +352,6 @@ FFmpegImportFileHandle::FFmpegImportFileHandle(const FilePath & name)
 
 bool FFmpegImportFileHandle::Init()
 {
-   //FFmpegLibsInst()->LoadLibs(NULL,false); //Loaded at startup or from Prefs now
-
    if (!FFmpegLibsInst()->ValidLibsLoaded())
       return false;
 
