@@ -91,6 +91,8 @@ jobs:
           Export-WorkflowValue 'PROJECT_INSTALLER_ZIP' (Join-Path $build -ChildPath $exe_zip_name)
           Export-WorkflowValue 'PROJECT_INSTALLER_ZIP_NAME' $exe_zip_name
           Export-WorkflowValue 'PROJECT_LATEST_TAG' 'latest-${{matrix.config.platform}}${{matrix.config.name_postfix}}'
+          $git_diff_log = (Join-Path $build -ChildPath ('git-diff-{0}.log' -f $platform))
+          git diff --submodule > "$git_diff_log"
           Exit 0
 
       - name: Cache tools
@@ -172,7 +174,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: wix-logs-${{env.PROJECT_OUTPUT_NAME}}
+          name: logs-${{env.PROJECT_OUTPUT_NAME}}
           path: ${{env.PROJECT_BUILD}}/**/*.log
 
       - name: Prepare for release
