@@ -45,6 +45,7 @@ jobs:
 
       - name: Export Environment
         run: |
+          $ErrorActionPreference = "SilentlyContinue"
           function Export-WorkflowValue ([string]$name, [string]$value) {
             Write-Host ( '::set-env name={0}::{1}' -f $name, $value )
           }
@@ -88,6 +89,7 @@ jobs:
           Export-WorkflowValue 'PROJECT_INSTALLER_ZIP' (Join-Path $build -ChildPath $exe_zip_name)
           Export-WorkflowValue 'PROJECT_INSTALLER_ZIP_NAME' $exe_zip_name
           Export-WorkflowValue 'PROJECT_LATEST_TAG' 'latest-${{matrix.config.platform}}${{matrix.config.name_postfix}}'
+          Exit 0
 
       - name: Cache tools
         uses: actions/cache@v2
