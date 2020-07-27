@@ -92,7 +92,16 @@ jobs:
           Export-WorkflowValue 'PROJECT_INSTALLER_ZIP_NAME' $exe_zip_name
           Export-WorkflowValue 'PROJECT_LATEST_TAG' 'latest-${{matrix.config.platform}}${{matrix.config.name_postfix}}'
           $git_diff_log = (Join-Path $build -ChildPath ('git-diff-{0}.log' -f $platform))
-          git diff --submodule > "$git_diff_log"
+          echo "Top-level diff" > "$git_diff_log"
+          git diff --submodule=diff >> "$git_diff_log"
+          echo "wxWidgets diff" >> "$git_diff_log"
+          git -C "$source\lib-src\wxWidgets" diff --submodule=diff >> "$git_diff_log"
+          echo "wxWidgets expat diff" >> "$git_diff_log"
+          git -C "$source\lib-src\wxWidgets\src\expat" diff --submodule=diff >> "$git_diff_log"
+          echo "Recursive raw diff" >> "$git_diff_log"
+          git submodule foreach --recursive 'git diff --raw' >> "$git_diff_log"
+          echo "Recursive status" >> "$git_diff_log"
+          git submodule foreach --recursive 'git status -vv' >> "$git_diff_log"
           Exit 0
 
       - name: Cache tools
