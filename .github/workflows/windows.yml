@@ -64,8 +64,8 @@ jobs:
           $git_master_ref = (git ls-remote "$git_origin_url" master) -split '\s+' | select -First 1
           git merge-base --is-ancestor "$git_master_ref" HEAD
           If($LASTEXITCODE -ne 0) {
-            git fetch --deepen 100 origin master:master
-            $git_master_ref = (git merge-base master $Env:GITHUB_SHA)
+            git fetch --deepen 500 origin master:master
+            $git_master_ref = (git merge-base origin/master HEAD)
           }
           $git_describe = git describe --tags --dirty --always --exclude "latest-*" --exclude "build-*"
           $git_describe_master = git describe --always --tags $git_master_ref
