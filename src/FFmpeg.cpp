@@ -128,6 +128,7 @@ TranslatableString GetFFmpegVersion()
    return versionString;
 }
 
+extern "C"
 void av_log_wx_callback(void* ptr, int level, const char* fmt, va_list vl)
 {
    //Most of this stuff is taken from FFmpeg tutorials and FFmpeg itself
@@ -1005,6 +1006,8 @@ bool FFmpegLibs::InitLibs(const wxString& libpath_format0, bool WXUNUSED(showerr
    FFMPEG_INITDYN(avutil, av_get_bytes_per_sample);
    FFMPEG_INITDYN(avutil, av_log_set_callback);
    FFMPEG_INITDYN(avutil, av_log_default_callback);
+   FFMPEG_INITDYN(avutil, av_log_set_level);
+   FFMPEG_INITDYN(avutil, av_log);
    FFMPEG_INITDYN(avutil, av_fifo_alloc);
    FFMPEG_INITDYN(avutil, av_fifo_generic_read);
    FFMPEG_INITDYN(avutil, av_fifo_realloc2);

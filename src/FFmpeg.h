@@ -163,6 +163,7 @@ class wxDynamicLibrary;
 // if you needed them, any other audacity header files would go here
 
 /// Callback function to catch FFmpeg log messages.
+extern "C"
 void av_log_wx_callback(void* ptr, int level, const char* fmt, va_list vl);
 
 //----------------------------------------------------------------------------
@@ -516,6 +517,16 @@ extern "C" {
       av_log_default_callback,
       (void* ptr, int level, const char* fmt, va_list vl),
       (ptr, level, fmt, vl)
+   );
+   FFMPEG_FUNCTION_NO_RETURN(
+      av_log_set_level,
+      (int level),
+      (level)
+   );
+   FFMPEG_FUNCTION_NO_RETURN(
+      av_log,
+      (void* avcl, int level, const char* fmt, ...),
+      (avcl, level, fmt)
    );
    FFMPEG_FUNCTION_NO_RETURN(
       av_free,
