@@ -87,6 +87,10 @@ void AudacityLogger::Flush()
 
 void AudacityLogger::DoLogText(const wxString & str)
 {
+#if defined(_WIN32) && defined(_DEBUG)
+   OutputDebugStringW((str + '\n').wc_str());
+#endif
+
    if (!wxIsMainThread()) {
       wxMutexGuiEnter();
    }
