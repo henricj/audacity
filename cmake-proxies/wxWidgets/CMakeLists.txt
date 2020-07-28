@@ -152,9 +152,9 @@ else()
    message(STATUS "wxBUILD_MONOLITHIC is ${wxBUILD_MONOLITHIC}")
 
    if( wxBUILD_MONOLITHIC )
-      set(wx_targets mono)
+      set(wx_targets wxmono)
    else()
-      set(wx_targets adv base core html net qa xml)
+      set(wx_targets wxadv wxbase wxcore wxhtml wxnet wxqa wxxml)
    endif()
 
    add_dependencies(wxWidgets ${wx_targets})
