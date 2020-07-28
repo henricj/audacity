@@ -58,6 +58,8 @@ jobs:
           $root = (Resolve-Path -LiteralPath $Env:GITHUB_WORKSPACE).Path
           $source = (Resolve-Path -LiteralPath (Join-Path $root -ChildPath 'source')).Path
           cd $source
+          # Hack to avoid false dirty...
+          git -C "$source\lib-src\wxWidgets\src\expat" add --renormalize .
           $git_origin_url = (git config --get remote.origin.url)
           $git_master_ref = (git ls-remote "$git_origin_url" master) -split '\s+' | select -First 1
           git merge-base --is-ancestor "$git_master_ref" HEAD
