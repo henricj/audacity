@@ -57,7 +57,7 @@ jobs:
           $platform = '${{matrix.config.platform}}'
           $root = (Resolve-Path -LiteralPath $Env:GITHUB_WORKSPACE).Path
           $source = (Resolve-Path -LiteralPath (Join-Path $root -ChildPath 'source')).Path
-          cd $source
+          cd "$source"
           # Hack to avoid false dirty...
           git -C "$source\lib-src\wxWidgets\src\expat" add --renormalize .
           $git_origin_url = (git config --get remote.origin.url)
