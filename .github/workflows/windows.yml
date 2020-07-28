@@ -67,7 +67,7 @@ jobs:
             git fetch --deepen 100 origin master:master
             $git_master_ref = (git merge-base master $Env:GITHUB_SHA)
           }
-          $git_describe = git describe --tags --dirty --always --exclude "latest-*"
+          $git_describe = git describe --tags --dirty --always --exclude "latest-*" --exclude "build-*"
           $git_describe_master = git describe --always --tags $git_master_ref
           Export-WorkflowValue 'PROJECT_GIT_ORIGIN_URL' $git_origin_url
           Export-WorkflowValue 'PROJECT_GIT_MASTER_REF' $git_master_ref
