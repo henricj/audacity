@@ -138,12 +138,12 @@ wxSize TimeToolBar::GetDockedSize()
    wxSize sz = GetSize();
 
    // Anything less than a single height bar becomes single height
-   if (sz.y <= toolbarSingle) {
-      sz.y = toolbarSingle;
+   if (sz.y <= toolbarSingle()) {
+      sz.y = toolbarSingle();
    }
    // Otherwise it will be a double height bar
    else {
-      sz.y = 2 * toolbarSingle + toolbarGap;
+      sz.y = 2 * toolbarSingle() + toolbarGap();
    }
 
    return sz;
@@ -219,11 +219,9 @@ void TimeToolBar::SetResizingLimits()
    SetMinSize(wxDefaultSize);
    SetMaxSize(wxDefaultSize);
 
-   const auto scale = GetContentScaleFactor();
-
    // If docked we use the current bar height since it's always a single or double height
    // toolbar.  For floaters, single height toolbar is the minimum height.
-   int minH = IsDocked() ? GetSize().y : static_cast<int>(scale * toolbarSingle);
+   int minH = IsDocked() ? GetSize().y : toolbarSingle();
 
    // Get the content size given the smallest digit height we allow
    wxSize minSize = ComputeSizing(minDigitH);

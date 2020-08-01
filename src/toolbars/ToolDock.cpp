@@ -151,11 +151,11 @@ void ToolBarConfiguration::Insert(ToolBar *bar, Position position)
          tree.pBar = bar;
 
          // Do adoption
-         const auto barHeight = bar->GetSize().GetY() + toolbarGap;
+         const auto barHeight = bar->GetSize().GetY() + ToolBar::unscaledToolbarGap();
          auto totalHeight = 0;
          while (iter != pForest->end() &&
             barHeight >=
-               (totalHeight += (iter->pBar->GetSize().GetY() + toolbarGap))) {
+               (totalHeight += (iter->pBar->GetSize().GetY() + ToolBar::unscaledToolbarGap()))) {
             tree.children.push_back(Tree{});
             auto &child = tree.children.back();
             child.pBar = iter->pBar;
@@ -488,11 +488,13 @@ void ToolDock::VisitLayout(LayoutVisitor &visitor,
    // Get size of our parent since we haven't been sized yet
    int width, height;
    GetParent()->GetClientSize( &width, &height );
-   width -= toolbarGap;
-   height -= toolbarGap;
+   const auto toolbar_gap = static_cast<int>(GetDPIScaleFactor() * ToolBar::unscaledToolbarGap());
+
+   width -= toolbar_gap;
+   height -= toolbar_gap;
 
    // Rectangle of space to allocate
-   wxRect main{ toolbarGap, toolbarGap,
+   wxRect main{ toolbar_gap, toolbar_gap,
       // Allow limited width, but arbitrary height, for the root rectangle
       width, std::numeric_limits<int>::max() };
 
@@ -547,8 +549,8 @@ void ToolDock::VisitLayout(LayoutVisitor &visitor,
       }
 
       // Inflate the size to leave margins
-      int tw = sz.GetWidth() + toolbarGap;
-      int th = sz.GetHeight() + toolbarGap;
+      int tw = sz.GetWidth() + toolbar_gap;
+      int th = sz.GetHeight() + toolbar_gap;
 
       // Choose the rectangle to subdivide
       // Find a box that we fit in by going up the tree as needed --
@@ -635,8 +637,8 @@ void ToolDock::VisitLayout(LayoutVisitor &visitor,
             position { this->mBars[ item.myBarID ], item.lastWrappedChild },
             prevPosition {};
          visitor.ModifySize(nullptr, globalRect, prevPosition, position, sz);
-         int tw = sz.GetWidth() + toolbarGap;
-         int th = sz.GetHeight() + toolbarGap;
+         int tw = sz.GetWidth() + toolbar_gap;
+         int th = sz.GetHeight() + toolbar_gap;
 
          // Test fit
          bool bTooWide = tw > rect.GetWidth();
@@ -653,7 +655,7 @@ void ToolDock::VisitLayout(LayoutVisitor &visitor,
    // you can insert a NEW bar at bottom left.
    ToolBarConfiguration::Position finalPosition { nullptr, lastRoot };
    visitor.FinalRect(
-      wxRect { toolbarGap, toolbarGap, main.width, main.y }, finalPosition
+      wxRect { toolbar_gap, toolbar_gap, main.width, main.y }, finalPosition
    );
 }
 

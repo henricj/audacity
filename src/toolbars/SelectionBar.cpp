@@ -179,9 +179,9 @@ void SelectionBar::AddVLine(  wxSizer * pSizer ){
    const auto scale = GetContentScaleFactor();
 
    pSizer->Add(safenew wxStaticLine(this, -1, wxDefaultPosition,
-                                   wxSize(1, toolbarSingle-10).Scale(scale, scale),
+                                   wxSize(1, unscaledToolbarSingle()-10).Scale(scale, scale),
                                    wxLI_VERTICAL),
-                  0,  wxALIGN_CENTER_VERTICAL | wxRIGHT, 5 * scale);
+                  0,  wxALIGN_CENTER_VERTICAL | wxRIGHT, static_cast<int>(5 * scale));
 }
 
 void SelectionBar::Populate()
@@ -339,9 +339,9 @@ void SelectionBar::Populate()
 #endif
 
    // Make sure they are fully expanded to the longest item
-   mChoice->SetMinSize(wxSize(mChoice->GetBestSize().x, toolbarSingle).Scale(scale, scale));
-   mRateBox->SetMinSize(wxSize(mRateBox->GetBestSize().x, toolbarSingle).Scale(scale, scale));
-   mSnapTo->SetMinSize(wxSize(mSnapTo->GetBestSize().x, toolbarSingle).Scale(scale, scale));
+   mChoice->SetMinSize(wxSize(mChoice->GetBestSize().x, unscaledToolbarSingle()).Scale(scale, scale));
+   mRateBox->SetMinSize(wxSize(mRateBox->GetBestSize().x, unscaledToolbarSingle()).Scale(scale, scale));
+   mSnapTo->SetMinSize(wxSize(mSnapTo->GetBestSize().x, unscaledToolbarSingle()).Scale(scale, scale));
 
    mChoice->MoveBeforeInTabOrder( mStartTime );
    // This shows/hides controls.

@@ -52,16 +52,6 @@ class ToolBarResizer;
 DECLARE_EXPORTED_EVENT_TYPE(AUDACITY_DLL_API, EVT_TOOLBAR_UPDATED, -1);
 
 //
-// Height of a single line toolbar
-//
-#define toolbarSingle 27
-
-//
-// Size of border around toolbars
-//
-#define toolbarGap 1
-
-//
 // ToolBar IDs
 //
 enum ToolBarID
@@ -182,6 +172,18 @@ public:
    static void MakeButtonBackgroundsSmall();
    static void MakeButtonBackgroundsLarge();
    virtual void ResizingDone() {};
+
+   //
+   // Height of a single line toolbar
+   //
+   static constexpr int unscaledToolbarSingle() noexcept { return 27; };
+   int toolbarSingle() const { return static_cast<int>(GetDPIScaleFactor() * unscaledToolbarSingle());  };
+
+   //
+   // Size of border around toolbars
+   //
+   static constexpr int unscaledToolbarGap() noexcept { return 1; }
+   int toolbarGap() const { return static_cast<int>(GetDPIScaleFactor() * unscaledToolbarGap()); };
 
  protected:
    void SetButton(bool down, AButton *button);

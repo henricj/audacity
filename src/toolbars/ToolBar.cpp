@@ -508,7 +508,7 @@ void ToolBar::SetToDefaultSize(){
 wxSize ToolBar::GetSmartDockedSize()
 {
    const auto scale = GetContentScaleFactor();
-   const int tbs = scale * (toolbarSingle + toolbarGap);
+   const int tbs = scale * (unscaledToolbarSingle() + unscaledToolbarGap());
    wxSize sz = GetSize();
    // 46 is the size where we switch from expanded to compact.
    if( sz.y < 46 )
@@ -574,7 +574,7 @@ void ToolBar::ReCreateButtons()
    const auto scale = GetContentScaleFactor();
 
    // Recalculate the height to be a multiple of toolbarSingle
-   const int tbs = scale * (toolbarSingle + toolbarGap);
+   const int tbs = scale * (unscaledToolbarSingle() + unscaledToolbarGap());
    wxSize sz = GetSize();
    sz.y = ( ( ( sz.y + tbs -1) / tbs ) * tbs ) - 1;
 

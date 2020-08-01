@@ -1266,7 +1266,7 @@ void ToolManager::OnMouse( wxMouseEvent & event )
                // high when docked, so the triangular drop indicator
                // needs to use that height, h, not the bar height
                // for calculating where to be drawn.
-               const int tbs = toolbarSingle + toolbarGap;
+               const int tbs = ToolBar::unscaledToolbarSingle() + ToolBar::unscaledToolbarGap();
                int h = wxMin(r.GetHeight(), 2*tbs-1);
                p.x = dr.GetLeft() + r.GetLeft();
                p.y = dr.GetTop() + r.GetTop() +
