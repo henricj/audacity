@@ -1363,7 +1363,21 @@ bool AudacityApp::OnInit()
       exit(1);
    }
 
-   const auto scale = wxScreenDC().GetContentScaleFactor();
+#ifdef WIN32
+   const auto scale = [] {
+      wxRect wndRect;
+      bool bMaximized = false;
+      bool bIconized = false;
+      GetNextWindowPlacement(&wndRect, &bMaximized, &bIconized);
+
+      wxTopLevelWindow window{ nullptr, wxID_ANY, "Temporary", wndRect.GetTopLeft(), wxSize{ 1, 1 }, wxTRANSPARENT_WINDOW };
+
+      return window.GetDPIScaleFactor();
+   }();
+#else
+   const auto scale = 1.0;;
+#endif // WIN32
+
 
    // BG: Create a temporary window to set as the top window
    wxImage logoimage(AudacityLogoWithName_xpm);
