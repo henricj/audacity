@@ -53,7 +53,7 @@ class MeterToolBar final : public ToolBar {
    wxSize GetDockedSize() override {
       return GetSmartDockedSize();
    };
-   virtual void SetDocked(ToolDock *dock, bool pushed)override;
+   void SetDocked(ToolDock* dock, bool pushed) override;
 
  private:
    void RegenerateTooltips() override;
