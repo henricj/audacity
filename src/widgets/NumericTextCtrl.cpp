@@ -1447,9 +1447,7 @@ NumericTextCtrl::NumericTextCtrl(wxWindow *parent, wxWindowID id,
 
 }
 
-NumericTextCtrl::~NumericTextCtrl()
-{
-}
+NumericTextCtrl::~NumericTextCtrl() = default;
 
 void NumericTextCtrl::SetName( const TranslatableString &name )
 {
@@ -1630,7 +1628,7 @@ wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
 
          // Remember metrics for each digit
          for (int j = 0, dcnt = mFields[i].digits; j < dcnt; ++j) {
-            mDigits.push_back(DigitInfo(i, j, pos, wxRect(x, mBorderTop, boxW, boxH)));
+            mDigits.emplace_back(i, j, pos, wxRect(x, mBorderTop, boxW, boxH));
             x += boxW;
             pos++;
          }

@@ -56,9 +56,7 @@ TimeToolBar::TimeToolBar(AudacityProject &project)
    project.Bind(EVT_PROJECT_SETTINGS_CHANGE, &TimeToolBar::OnSettingsChanged, this);
 }
 
-TimeToolBar::~TimeToolBar()
-{
-}
+TimeToolBar::~TimeToolBar() = default;
 
 TimeToolBar &TimeToolBar::Get(AudacityProject &project)
 {
