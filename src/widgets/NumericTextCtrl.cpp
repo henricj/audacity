@@ -1405,8 +1405,13 @@ NumericTextCtrl::NumericTextCtrl(wxWindow *parent, wxWindowID id,
 {
    mAllowInvalidValue = false;
 
-   mDigitBoxW = 11;
-   mDigitBoxH = 19;
+   mUnscaledDigitBoxW = 11;
+   mUnscaledDigitBoxH = 19;
+
+   const auto scale = GetDPIScaleFactor();
+
+   mDigitBoxW = static_cast<int>(11 * scale);
+   mDigitBoxH = static_cast<int>(19 * scale);
 
    mBorderLeft = 1;
    mBorderTop = 1;
@@ -1510,8 +1515,11 @@ void NumericTextCtrl::SetValue(double newValue)
 
 void NumericTextCtrl::SetDigitSize(int width, int height)
 {
-   mDigitBoxW = width;
-   mDigitBoxH = height;
+   const auto scale = GetDPIScaleFactor();
+
+   mUnscaledDigitBoxW = width / scale;
+   mUnscaledDigitBoxH = height / scale;
+
    Layout();
    Fit();
 }
@@ -1550,6 +1558,11 @@ void NumericTextCtrl::SetInvalidValue(double invalidValue)
 
 wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
 {
+   const auto scale = GetDPIScaleFactor();
+
+   mDigitBoxH = static_cast<int>(mUnscaledDigitBoxH * scale);
+   mDigitBoxW = static_cast<int>(mUnscaledDigitBoxW * scale);
+
    // Get current box size
    if (boxW == 0) {
       boxW = mDigitBoxW;
@@ -1558,17 +1571,12 @@ wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
    if (boxH == 0) {
       boxH = mDigitBoxH;
    }
-   boxH -= (mBorderTop + mBorderBottom);
+   boxH -= mBorderTop + mBorderBottom;
 
    // We can use the screen device context since we're not drawing to it
    wxScreenDC dc;
 
    dc.SetLayoutDirection(wxLayout_LeftToRight);
-
-   const auto scale = GetDPIScaleFactor();
-
-   boxH *= scale;
-   boxW *= scale;
 
    // First calculate a rough point size
    wxFont pf(wxSize(boxW, boxH), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);

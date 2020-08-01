@@ -125,9 +125,9 @@ void TimeToolBar::SetToDefaultSize()
    SetAudioTimeFormat(NumericConverter::HoursMinsSecondsFormat());
 
    // Set the default size
-   SetSize(GetInitialWidth(), 48);
+   SetSize(GetInitialWidth(), static_cast<int>(48 * GetDPIScaleFactor()));
 
-   // Inform others the toobar has changed
+   // Inform others the toolbar has changed
    Updated();
 }
 
@@ -222,7 +222,7 @@ void TimeToolBar::SetResizingLimits()
    int minH = IsDocked() ? GetSize().y : toolbarSingle();
 
    // Get the content size given the smallest digit height we allow
-   wxSize minSize = ComputeSizing(minDigitH);
+   wxSize minSize = ComputeSizing(minDigitH * GetDPIScaleFactor());
 
    // Account for any borders added by the window manager
    minSize.x += (mAudioTime->GetSize().x - mAudioTime->GetClientSize().x);
@@ -242,7 +242,7 @@ void TimeToolBar::SetResizingLimits()
 
    // Get the content size using the digit height, if docked. Otherwise use the
    // maximum digit height we allow.
-   wxSize maxSize = ComputeSizing(IsDocked() ? digH : maxDigitH);
+   wxSize maxSize = ComputeSizing(IsDocked() ? digH : maxDigitH * GetDPIScaleFactor());
 
    // Account for the other controls and sizer borders within this toolbar
    maxSize.x += outer.x;
@@ -333,7 +333,7 @@ void TimeToolBar::OnSize(wxSizeEvent &evt)
       do {
          h++;
          timeBR = ComputeSizing(h);
-      } while (h < maxDigitH && sizerBR.x >= timeBR.x && sizerBR.y >= timeBR.y);
+      } while (h < maxDigitH * GetDPIScaleFactor() && sizerBR.x >= timeBR.x && sizerBR.y >= timeBR.y);
       h--;
    }
    // In all other cases, we need to decrease current size to fit within new size
@@ -341,7 +341,7 @@ void TimeToolBar::OnSize(wxSizeEvent &evt)
       do {
          h--;
          timeBR = ComputeSizing(h);
-      } while (h >= minDigitH && (sizerBR.x < timeBR.x || sizerBR.y < timeBR.y));
+      } while (h >= minDigitH * GetDPIScaleFactor() && (sizerBR.x < timeBR.x || sizerBR.y < timeBR.y));
    }
 
    if (h != mAudioTime->GetDigitSize().y) {

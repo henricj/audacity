@@ -270,6 +270,8 @@ private:
    std::unique_ptr<wxBitmap> mBackgroundBitmap;
 
    std::unique_ptr<wxFont> mDigitFont, mLabelFont;
+   double         mUnscaledDigitBoxW;
+   double         mUnscaledDigitBoxH;
    int            mDigitBoxW;
    int            mDigitBoxH;
    int            mDigitW;
