@@ -1567,7 +1567,7 @@ wxSize NumericTextCtrl::ComputeSizing(bool update, wxCoord boxW, wxCoord boxH)
 
    dc.SetLayoutDirection(wxLayout_LeftToRight);
 
-   const auto scale = dc.GetContentScaleFactor();
+   const auto scale = GetDPIScaleFactor();
 
    boxH *= scale;
    boxW *= scale;

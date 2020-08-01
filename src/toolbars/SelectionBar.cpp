@@ -176,7 +176,7 @@ NumericTextCtrl * SelectionBar::AddTime(
 }
 
 void SelectionBar::AddVLine(  wxSizer * pSizer ){
-   const auto scale = GetContentScaleFactor();
+   const auto scale = GetDPIScaleFactor();
 
    pSizer->Add(safenew wxStaticLine(this, -1, wxDefaultPosition,
                                    wxSize(1, unscaledToolbarSingle()-10).Scale(scale, scale),
@@ -186,7 +186,7 @@ void SelectionBar::AddVLine(  wxSizer * pSizer ){
 
 void SelectionBar::Populate()
 {
-   const auto scale = GetContentScaleFactor();
+   const auto scale = GetDPIScaleFactor();
 
    SetBackgroundColour( theTheme.Colour( clrMedium  ) );
 

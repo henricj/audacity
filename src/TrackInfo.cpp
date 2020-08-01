@@ -73,7 +73,7 @@ struct Settings : PrefsListener {
          ( kTrackInfoWidth + kLeftMargin )
             - 2; // 2 to allow for left/right borders
 
-      const auto scale = window->GetContentScaleFactor();
+      const auto scale = window->GetDPIScaleFactor();
 
       allowableWidth *= scale;
 

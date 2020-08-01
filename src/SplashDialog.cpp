@@ -106,7 +106,7 @@ void SplashDialog::Populate( ShuttleGui & S )
    // JKC: Resize to 50% of size.  Later we may use a smaller xpm as
    // our source, but this allows us to tweak the size - if we want to.
    // It also makes it easier to revert to full size if we decide to.
-   const float fScale=static_cast<float>(0.5f * GetContentScaleFactor());// smaller size.
+   const float fScale=static_cast<float>(0.5f * GetDPIScaleFactor());// smaller size.
    wxImage RescaledImage( m_pLogo->ConvertToImage() );
    wxColour MainColour( 
       RescaledImage.GetRed(1,1), 
@@ -131,7 +131,7 @@ void SplashDialog::Populate( ShuttleGui & S )
 
    mpHtml = safenew LinkingHtmlWindow(S.GetParent(), -1,
                                          wxDefaultPosition,
-            wxSize(506 * GetContentScaleFactor(), 280 * GetContentScaleFactor()),
+            wxSize(506 * GetDPIScaleFactor(), 280 * GetDPIScaleFactor()),
                                          wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER );
    mpHtml->SetPage(HelpText( wxT("welcome") ));
    S.Prop(1)
