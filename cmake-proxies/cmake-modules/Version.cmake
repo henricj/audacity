@@ -43,7 +43,7 @@ execute_process(
 
 execute_process(
    COMMAND
-      ${GIT} describe --tags --always --dirty --exclude "latest-*"
+      ${GIT} describe --tags --always --dirty --exclude "latest-*" --exclude "build-*"
    OUTPUT_VARIABLE REV_DESCRIBE
    OUTPUT_STRIP_TRAILING_WHITESPACE
    ERROR_QUIET
