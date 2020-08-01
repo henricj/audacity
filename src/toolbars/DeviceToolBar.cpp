@@ -79,9 +79,7 @@ DeviceToolBar::DeviceToolBar( AudacityProject &project )
       &DeviceToolBar::OnRescannedDevices, this );
 }
 
-DeviceToolBar::~DeviceToolBar()
-{
-}
+DeviceToolBar::~DeviceToolBar() = default;
 
 DeviceToolBar &DeviceToolBar::Get( AudacityProject &project )
 {
